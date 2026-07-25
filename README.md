@@ -25,12 +25,51 @@ See [OSS/EE Boundary](https://github.com/axisrobo/aegivela-open/blob/main/docs/o
 
 ## Quick Start
 
+### Binary Download
+
+Download the latest `aegivela-api` binary from [GitHub Releases](https://github.com/axisrobo/aegivela-open/releases):
+
 ```bash
-# Coming soon — binary release and Docker image
+# Linux / macOS
+curl -L -o aegivela-api https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api
+chmod +x aegivela-api
+
+# Windows (PowerShell)
+Invoke-WebRequest -Uri "https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api.exe" -OutFile aegivela-api.exe
+```
+
+### Docker Image
+
+```bash
+# Coming soon
 docker pull ghcr.io/axisrobo/aegivela:latest
 ```
 
-Until the binary release is published, follow the [development guide](https://github.com/axisrobo/aegivela-open/blob/main/docs/development.md) to build from source.
+### Runtime Configuration
+
+The API requires PostgreSQL and the following environment variables:
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `DATABASE_URL` | yes | PostgreSQL connection string |
+| `AEGIVELA_INTERNAL_AUTH_TOKEN` | yes | Internal service authentication |
+| `AEGIVELA_IDENTITY_ISSUERS_FILE` | no | Path to OIDC issuer configuration JSON |
+| `AEGIVELA_POLICY_DECISION_SIGNING_KEY_FILE` | see below | Ed25519 private key for policy decision signing |
+| `AEGIVELA_POLICY_DECISION_SIGNING_KEY_ID` | see below | Key ID (kid) |
+| `AEGIVELA_POLICY_DECISION_ISSUER` | see below | Issuer URL |
+| `AEGIVELA_EXECUTION_GRANT_SIGNING_KEY_FILE` | see below | Ed25519 private key for execution grant signing |
+| `AEGIVELA_EXECUTION_GRANT_SIGNING_KEY_ID` | see below | Key ID (kid) |
+| `AEGIVELA_EXECUTION_GRANT_ISSUER` | see below | Issuer URL |
+| `AEGIVELA_GRANT_AUDIENCE_REGISTRY_FILE` | see below | Grant audience allowlist JSON |
+
+Signing keys are required when decision/grant signing is enabled. Generate keys with:
+
+```bash
+openssl genpkey -algorithm ed25519 -out decision.key
+openssl genpkey -algorithm ed25519 -out grant.key
+```
+
+For local development, see the [development guide](docs/api/identity-bridge.md).
 
 ## Integration Profiles
 
