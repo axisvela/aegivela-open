@@ -1,0 +1,7 @@
+go 1.21
+
+use (
+	./sdk/go
+	./examples/web-api-pep
+	./examples/grant-verify
+)
