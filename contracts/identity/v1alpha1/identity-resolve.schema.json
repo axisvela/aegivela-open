@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/identity/v1alpha1/identity-resolve.schema.json",
+  "title": "AEGIVELA Identity Resolve",
+  "oneOf": [
+    { "$ref": "#/$defs/identity_resolve_request" },
+    { "$ref": "#/$defs/identity_resolve_response" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/unauthenticated_error" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/identity_unavailable_error" }
+  ],
+  "$defs": {
+    "identity_resolve_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "bearer_token", "audience"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "bearer_token": { "type": "string", "minLength": 1 },
+        "audience": { "type": "string", "minLength": 1 },
+        "trace_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "identity_resolve_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "principal"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "principal": { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/principal" }
+      }
+    }
+  }
+}

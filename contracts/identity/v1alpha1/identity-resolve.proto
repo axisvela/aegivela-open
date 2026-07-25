@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package identity.v1alpha1;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/identitycontract/pb;pb";
+
+service IdentityBridgeService {
+  rpc Resolve(IdentityResolveRequest) returns (IdentityResolveResponse);
+}
+
+message IdentityResolveRequest {
+  string api_version = 1;
+  string bearer_token = 2;
+  string audience = 3;
+  optional string trace_id = 4;
+}
+
+message IdentityResolveResponse {
+  string api_version = 1;
+  Principal principal = 2;
+}
+
+message Principal {
+  string tenant_id = 1;
+  optional string subject_ref = 2;
+  string actor_ref = 3;
+  optional string client_id = 4;
+  optional string workload_ref = 5;
+  optional string agent_id = 6;
+  optional string agent_class = 7;
+  optional string master_id = 8;
+  optional string organization_authority_root = 9;
+  optional int64 lifecycle_epoch = 10;
+  optional string attestation_ref = 11;
+}

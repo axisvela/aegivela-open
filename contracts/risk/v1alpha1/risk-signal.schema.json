@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/risk/v1alpha1/risk-signal.schema.json",
+  "title": "AEGIVELA Risk Signal v1alpha1",
+  "description": "CAEP-style continuous evaluation risk signal intake. Signals map risk levels to PDP re-evaluation and revocation triggers.",
+  "oneOf": [
+    { "$ref": "#/$defs/risk_signal_request" },
+    { "$ref": "#/$defs/risk_signal_response" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/unauthenticated_error" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/authorization_denied_error" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/revocation_unavailable_error" }
+  ],
+  "$defs": {
+    "risk_level": { "enum": ["low", "medium", "high", "critical"] },
+    "risk_signal_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "subject_ref", "risk_level", "risk_ref", "trace_id"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "subject_ref": { "type": "string", "minLength": 1 },
+        "session_ref": { "type": "string", "minLength": 1 },
+        "risk_level": { "$ref": "#/$defs/risk_level" },
+        "risk_ref": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 },
+        "trace_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "risk_signal_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "signal_id", "risk_level", "action", "trace_id"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "signal_id": { "type": "string", "minLength": 1 },
+        "risk_level": { "$ref": "#/$defs/risk_level" },
+        "action": { "enum": ["logged", "revoked_subject", "revoked_subject_and_grants"] },
+        "trace_id": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

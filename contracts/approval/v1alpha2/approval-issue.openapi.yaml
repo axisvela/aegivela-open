@@ -1,0 +1,80 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Approval API
+  version: v1alpha2
+paths:
+  /v1/approvals/issue:
+    post:
+      operationId: issueApproval
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApprovalIssueRequest'
+      responses:
+        '200':
+          description: Issued approval with signed artifact
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApprovalIssueResponse'
+        '400':
+          $ref: '#/components/responses/InvalidApprovalRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/RevocationUnavailable'
+components:
+  responses:
+    InvalidApprovalRequest:
+      description: invalid_approval_request
+    Unauthenticated:
+      description: unauthenticated
+    AuthorizationDenied:
+      description: authorization_denied
+    RevocationUnavailable:
+      description: revocation_unavailable
+  schemas:
+    ApprovalIssueRequest:
+      type: object
+      additionalProperties: false
+      required: [api_version, bearer_token, action, resource, scope, expiry, reason, policy_version, trace_id]
+      properties:
+        api_version: { const: aegivela.io/v1alpha2 }
+        bearer_token: { type: string, minLength: 1 }
+        action: { type: string, minLength: 1 }
+        resource:
+          type: object
+          additionalProperties: false
+          required: [kind, reference]
+          properties:
+            kind: { type: string, minLength: 1 }
+            reference: { type: string, minLength: 1 }
+        scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        expiry: { type: string, format: date-time }
+        reason: { type: string, minLength: 1 }
+        policy_version: { type: string, minLength: 1 }
+        session: { type: string, minLength: 1 }
+        lifecycle: { type: string, minLength: 1 }
+        evidence_refs: { type: array, items: { type: string, minLength: 1 }, maxItems: 32 }
+        structured_resource_digest: { type: string, pattern: ^[0-9a-f]{64}$ }
+        descriptor_version: { type: string, minLength: 1 }
+        trace_id: { type: string, minLength: 1 }
+    ApprovalIssueResponse:
+      type: object
+      additionalProperties: false
+      required: [api_version, approval_id, approval_artifact]
+      properties:
+        api_version: { const: aegivela.io/v1alpha2 }
+        approval_id: { type: string, minLength: 1 }
+        approval_artifact: { type: string, minLength: 1, maxLength: 8192 }

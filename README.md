@@ -1,0 +1,101 @@
+# AEGIVELA Open
+
+**AEGIVELA** is the AxisRobo Agent Identity, Authorization, and Security Fabric — a general-purpose security platform for agentic systems.
+
+This is the public-facing repository for the AEGIVELA Open Core (OSS) edition. It contains the project overview, installation guide, Go SDK reference, quickstart examples, and links to binary releases. The core implementation lives in a private repository pending an open-source decision.
+
+## What AEGIVELA Does
+
+AEGIVELA provides profile-neutral security primitives for any agentic system:
+
+- **Identity Binding** — Human, Agent, and Workload identity resolution from enterprise IdP tokens, workload assertions, and agent binding records
+- **Policy Decision Point** — Versioned policy evaluation with fail-closed semantics, structured resource descriptors, and risk-level thresholds
+- **Approvals** — Signed approval artifacts with scope/expiry/resource binding, non-amplifying delegation chains
+- **Execution Grants** — Short-lived, audience-bound Ed25519 JWS grants with revocation selectors
+- **Revocation** — Generic tenant-scoped revocation across grants, decisions, approvals, subjects, sessions, and policies
+- **Attestation** — Artifact digest verification, signer identity, runtime/workload evidence
+- **PEP SDK** — Go middleware for web/API authorization (`human_web`, `system_api`, `delegated_api`, twin agent, service agent modes)
+- **Security Evidence** — Redacted, SIEM-compatible JSON evidence envelopes with cross-repository correlation
+
+## OSS / Enterprise Boundary
+
+The Open Core edition includes every profile-neutral security primitive and versioned integration contract. The Enterprise Edition (`aegivela-ee`) adds enterprise infrastructure integration: SAML federation, SCIM enrichment, SPIFFE/SVID, CAEP risk signals, SIEM export, policy simulation, key rotation, and tenant administration.
+
+See [OSS/EE Boundary](https://github.com/axisrobo/aegivela-open/blob/main/docs/oss-ee-boundary.md) for the full split.
+
+## Quick Start
+
+```bash
+# Coming soon — binary release and Docker image
+docker pull ghcr.io/axisrobo/aegivela:latest
+```
+
+Until the binary release is published, follow the [development guide](https://github.com/axisrobo/aegivela-open/blob/main/docs/development.md) to build from source.
+
+## Integration Profiles
+
+AEGIVELA is consumed through three integration profiles that share the same identity, decision, grant, revocation, and evidence contracts:
+
+| Profile | Consumer | Actions |
+| --- | --- | --- |
+| **MODUREGIS Capability Governance** | MODUREGIS Console/Broker | `capability:read`, `capability:publish`, `adapter:activate`, `capability:invoke` |
+| **Web/API Gateway** | Product APIs, API Gateways | `human_web`, `system_api`, `delegated_api` |
+| **Agent Gateway Runtime** | AXIS-gateway Client/Server | `connection:open`, `tool:invoke`, `backend:request`, `credential:inject` |
+
+## Go SDK
+
+```go
+import "github.com/axisrobo/aegivela-open/pepsdk"
+
+client := pepsdk.NewClient("https://aegivela.internal:8080", http.DefaultClient)
+result, err := client.Authorize(ctx, route, input)
+```
+
+Full SDK reference: [docs/sdk/](https://github.com/axisrobo/aegivela-open/blob/main/docs/sdk/)
+
+## Documentation
+
+- [Architecture](https://github.com/axisrobo/aegivela-open/blob/main/docs/architecture.md)
+- [Roadmap](https://github.com/axisrobo/aegivela-open/blob/main/docs/roadmap.md)
+- [Authorization Modes](https://github.com/axisrobo/aegivela-open/blob/main/docs/authorization-modes.md)
+- [OSS/EE Boundary](https://github.com/axisrobo/aegivela-open/blob/main/docs/oss-ee-boundary.md)
+- [ADR Index](https://github.com/axisrobo/aegivela-open/blob/main/docs/adr/)
+
+## Repository Layout
+
+```
+aegivela-open/        ← You are here. Project homepage, docs, SDK reference, examples.
+├── README.md
+├── LICENSE            (Apache 2.0)
+├── docs/              Architecture, roadmap, ADRs, API contracts
+├── contracts/         Versioned JSON Schema / OpenAPI / protobuf contracts
+├── sdk/go/
+│   ├── go.mod         Go module (github.com/axisrobo/aegivela-open/sdk/go)
+│   └── pepsdk/        PEP middleware and authorization client
+└── examples/
+    └── web-api-pep/   HTTP API protected by the PEP SDK
+aegivela/              Core Go implementation (private, AGPL-3.0)
+aegivela-ee/           Enterprise extensions (private, Enterprise License)
+```
+
+## License
+
+The AEGIVELA Open Core (`aegivela-open`) is licensed under the [Apache License 2.0](LICENSE).
+
+| Repository | License |
+| --- | --- |
+| `aegivela-open` (this repo) | Apache 2.0 |
+| `aegivela` (core implementation) | GNU Affero GPL v3.0 |
+| `aegivela-ee` (enterprise extensions) | Enterprise License |
+
+## Development
+
+The `aegivela-open` repository is synced from the private `aegivela` core repository via `aegivela/scripts/sync-oss.ps1`. To update the open repository after a core change:
+
+```powershell
+.\scripts\sync-oss.ps1 -SourceRoot ..\Aegivela -TargetRoot .
+```
+
+Test files are excluded from sync (they reference internal packages). The open SDK is tested via the examples.
+
+Open documentation edits may be made directly in this repository. Contract and SDK files are authoritative in the core repository and should be synced rather than manually edited here.

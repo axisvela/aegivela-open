@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package policy.v1alpha1;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/policycontract/pb;pb";
+
+import "google/protobuf/timestamp.proto";
+
+service PolicyDecisionService {
+  rpc Evaluate(PolicyDecisionRequest) returns (PolicyDecisionResponse);
+}
+
+enum AuthorizationMode {
+  AUTHORIZATION_MODE_UNSPECIFIED = 0;
+  HUMAN_WEB = 1;
+  SYSTEM_API = 2;
+  DELEGATED_API = 3;
+  SERVICE_AGENT_API = 4;
+  TWIN_AGENT_API = 5;
+}
+
+enum DecisionOutcome {
+  DECISION_OUTCOME_UNSPECIFIED = 0;
+  ALLOW = 1;
+  DENY = 2;
+  APPROVAL_REQUIRED = 3;
+  REVOKED = 4;
+}
+
+message Principal {
+  string tenant_id = 1;
+  optional string subject_ref = 2;
+  string actor_ref = 3;
+  optional string client_id = 4;
+  optional string workload_ref = 5;
+  optional string agent_id = 6;
+  optional string agent_class = 7;
+  optional string master_id = 8;
+  optional string organization_authority_root = 9;
+  optional int64 lifecycle_epoch = 10;
+  optional string attestation_ref = 11;
+}
+
+message ParentAuthority {
+  string authority_ref = 1;
+  repeated string parent_scope = 2;
+  repeated string parent_audience = 3;
+  google.protobuf.Timestamp parent_expires_at = 4;
+  string parent_task_binding = 5;
+}
+
+message Resource {
+  string kind = 1;
+  string reference = 2;
+}
+
+message RiskContext {
+  string risk_level = 1;
+  string risk_ref = 2;
+}
+
+message PolicyDecisionRequest {
+  string api_version = 1;
+  AuthorizationMode authorization_mode = 2;
+  Principal principal = 3;
+  string action = 4;
+  Resource resource = 5;
+  repeated string requested_scope = 6;
+  string audience = 7;
+  google.protobuf.Timestamp requested_expires_at = 8;
+  optional string task_binding = 9;
+  ParentAuthority parent_authority = 10;
+  RiskContext risk_context = 11;
+  string trace_id = 12;
+}
+
+message PolicyDecisionResponse {
+  string api_version = 1;
+  string decision_id = 2;
+  DecisionOutcome outcome = 3;
+  string policy_version = 4;
+  google.protobuf.Timestamp expires_at = 5;
+  repeated string obligations = 6;
+  repeated string evidence_refs = 7;
+}

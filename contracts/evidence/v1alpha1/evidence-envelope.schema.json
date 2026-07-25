@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/evidence/v1alpha1/evidence-envelope.schema.json",
+  "title": "AEGIVELA Security Evidence Envelope v1alpha1",
+  "description": "Redacted security evidence envelope for SIEM export, product audit indexing, and cross-repository correlation. Never carries raw bearer tokens, credentials, payloads, or unrestricted resource attributes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["api_version", "evidence_id", "tenant_id", "domain", "outcome", "timestamp", "trace_id"],
+  "properties": {
+    "api_version": { "const": "aegivela.io/v1alpha1" },
+    "evidence_id": { "type": "string", "minLength": 1 },
+    "tenant_id": { "type": "string", "minLength": 1 },
+    "domain": { "enum": ["decision", "grant", "approval", "attestation", "revocation", "risk", "gateway", "exchange", "identity"] },
+    "outcome": { "type": "string", "minLength": 1 },
+    "reason_code": { "type": "string", "minLength": 1 },
+    "trace_id": { "type": "string", "minLength": 1 },
+    "decision_id": { "type": "string", "minLength": 1 },
+    "grant_jti": { "type": "string", "minLength": 1 },
+    "approval_jti": { "type": "string", "minLength": 1 },
+    "policy_version": { "type": "string", "minLength": 1 },
+    "subject_digest": { "type": "string", "minLength": 1 },
+    "actor_id": { "type": "string", "minLength": 1 },
+    "action": { "type": "string", "minLength": 1 },
+    "resource_digest": { "type": "string", "minLength": 1 },
+    "resource_kind": { "type": "string", "minLength": 1 },
+    "risk_level": { "type": "string", "minLength": 1 },
+    "risk_ref": { "type": "string", "minLength": 1 },
+    "audience": { "type": "string", "minLength": 1 },
+    "evidence_refs": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "timestamp": { "type": "string", "format": "date-time" }
+  }
+}

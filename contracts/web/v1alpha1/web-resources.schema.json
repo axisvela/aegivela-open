@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/web/v1alpha1/web-resources.schema.json",
+  "title": "AEGIVELA Web Resource Authorization",
+  "oneOf": [
+    { "$ref": "#/$defs/web_resource_registration" },
+    { "$ref": "#/$defs/web_resource_policy_rule" },
+    { "$ref": "#/$defs/permission_resolution_request" },
+    { "$ref": "#/$defs/web_resource" },
+    { "$ref": "#/$defs/web_resource_list" },
+    { "$ref": "#/$defs/accepted" },
+    { "$ref": "#/$defs/permission_resolution_response" },
+    { "$ref": "#/$defs/invalid_web_resource_request_error" },
+    { "$ref": "#/$defs/unauthenticated_error" },
+    { "$ref": "#/$defs/web_resource_not_found_error" },
+    { "$ref": "#/$defs/web_resource_unavailable_error" },
+    { "$ref": "#/$defs/request_too_large_error" }
+  ],
+  "$defs": {
+    "api_version": { "const": "aegivela.io/v1alpha1" },
+    "resource_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$" },
+    "reference": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
+    "product_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$" },
+    "resource_kind": { "type": "string", "enum": ["page", "menu", "section", "button", "form", "field"] },
+    "action": { "type": "string", "enum": ["visible", "enabled", "read", "edit", "submit"] },
+    "effect": { "type": "string", "enum": ["allow", "deny"] },
+    "subject_selector": {
+      "oneOf": [
+        { "$ref": "#/$defs/verified_subject_selector" },
+        { "$ref": "#/$defs/role_selector" },
+        { "$ref": "#/$defs/organization_context_selector" }
+      ]
+    },
+    "verified_subject_selector": {
+      "type": "object", "additionalProperties": false,
+      "required": ["selector_type", "verified_subject_ref"],
+      "properties": { "selector_type": { "const": "verified_subject" }, "verified_subject_ref": { "$ref": "#/$defs/reference" } }
+    },
+    "role_selector": {
+      "type": "object", "additionalProperties": false,
+      "required": ["selector_type", "role_ref"],
+      "properties": { "selector_type": { "const": "role" }, "role_ref": { "$ref": "#/$defs/reference" } }
+    },
+    "organization_context_selector": {
+      "type": "object", "additionalProperties": false,
+      "required": ["selector_type", "organization_context_ref"],
+      "properties": { "selector_type": { "const": "organization_context" }, "organization_context_ref": { "$ref": "#/$defs/reference" } }
+    },
+    "web_resource_registration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "product_id", "resource_id", "kind", "display_name", "projection_actions"],
+      "properties": {
+        "api_version": { "$ref": "#/$defs/api_version" }, "product_id": { "$ref": "#/$defs/product_id" }, "resource_id": { "$ref": "#/$defs/resource_id" }, "parent_resource_id": { "$ref": "#/$defs/resource_id" }, "kind": { "$ref": "#/$defs/resource_kind" }, "display_name": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "projection_actions": { "type": "array", "items": { "$ref": "#/$defs/action" }, "minItems": 1, "maxItems": 5, "uniqueItems": true }
+      }
+    },
+    "web_resource_policy_rule": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "product_id", "rule_id", "resource_id", "descendants", "subject_selector", "actions", "effect"],
+      "properties": {
+        "api_version": { "$ref": "#/$defs/api_version" }, "product_id": { "$ref": "#/$defs/product_id" }, "rule_id": { "$ref": "#/$defs/resource_id" }, "resource_id": { "$ref": "#/$defs/resource_id" }, "descendants": { "type": "boolean" }, "subject_selector": { "$ref": "#/$defs/subject_selector" },
+        "actions": { "type": "array", "items": { "$ref": "#/$defs/action" }, "minItems": 1, "maxItems": 5, "uniqueItems": true }, "effect": { "$ref": "#/$defs/effect" }
+      }
+    },
+    "permission_resolution_request": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "product_id"],
+      "properties": { "api_version": { "$ref": "#/$defs/api_version" }, "product_id": { "$ref": "#/$defs/product_id" }, "root_resource_id": { "$ref": "#/$defs/resource_id" } }
+    },
+    "web_resource": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "tenant_id", "product_id", "resource_id", "kind", "projection_actions", "state", "version", "created_at", "updated_at"],
+      "properties": {
+        "api_version": { "$ref": "#/$defs/api_version" }, "tenant_id": { "$ref": "#/$defs/resource_id" }, "product_id": { "$ref": "#/$defs/product_id" }, "resource_id": { "$ref": "#/$defs/resource_id" }, "parent_resource_id": { "$ref": "#/$defs/resource_id" }, "kind": { "$ref": "#/$defs/resource_kind" }, "projection_actions": { "type": "array", "items": { "$ref": "#/$defs/action" }, "minItems": 1, "maxItems": 5, "uniqueItems": true }, "state": { "type": "string", "enum": ["active", "deprecated"] }, "version": { "type": "string", "minLength": 1, "maxLength": 256 }, "created_at": { "type": "string", "format": "date-time", "maxLength": 64 }, "updated_at": { "type": "string", "format": "date-time", "maxLength": 64 }, "deprecated_at": { "type": "string", "format": "date-time", "maxLength": 64 }
+      }
+    },
+    "web_resource_list": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "resources"],
+      "properties": { "api_version": { "$ref": "#/$defs/api_version" }, "resources": { "type": "array", "items": { "$ref": "#/$defs/web_resource" }, "maxItems": 10000 } }
+    },
+    "accepted": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version"], "properties": { "api_version": { "$ref": "#/$defs/api_version" } }
+    },
+    "permission_resolution_response": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "permission_set_id", "resource_permissions", "policy_version", "resource_tree_version", "expires_at", "evidence_refs"],
+      "properties": {
+        "api_version": { "$ref": "#/$defs/api_version" }, "permission_set_id": { "type": "string", "minLength": 1, "maxLength": 256 }, "resource_permissions": { "type": "object", "propertyNames": { "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}:(visible|enabled|read|edit|submit)$" }, "additionalProperties": { "type": "boolean" }, "minProperties": 1, "maxProperties": 10000 }, "policy_version": { "type": "string", "minLength": 1, "maxLength": 256 }, "resource_tree_version": { "type": "string", "minLength": 1, "maxLength": 256 }, "expires_at": { "type": "string", "format": "date-time", "maxLength": 64 }, "evidence_refs": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 2048 }, "minItems": 1, "maxItems": 100, "uniqueItems": true }
+      }
+    },
+    "error": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "code"],
+      "properties": { "api_version": { "$ref": "#/$defs/api_version" }, "code": { "type": "string" } }
+    },
+    "invalid_web_resource_request_error": { "allOf": [{ "$ref": "#/$defs/error" }, { "properties": { "code": { "const": "invalid_web_resource_request" } } }] },
+    "unauthenticated_error": { "allOf": [{ "$ref": "#/$defs/error" }, { "properties": { "code": { "const": "unauthenticated" } } }] },
+    "web_resource_not_found_error": { "allOf": [{ "$ref": "#/$defs/error" }, { "properties": { "code": { "const": "web_resource_not_found" } } }] },
+    "web_resource_unavailable_error": { "allOf": [{ "$ref": "#/$defs/error" }, { "properties": { "code": { "const": "web_resource_unavailable" } } }] },
+    "request_too_large_error": { "allOf": [{ "$ref": "#/$defs/error" }, { "properties": { "code": { "const": "request_too_large" } } }] }
+  }
+}

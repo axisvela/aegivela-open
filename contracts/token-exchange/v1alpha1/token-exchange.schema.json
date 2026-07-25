@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/token-exchange/v1alpha1/token-exchange.schema.json",
+  "title": "AEGIVELA Token Exchange",
+  "oneOf": [
+    { "$ref": "#/$defs/token_exchange_request" },
+    { "$ref": "#/$defs/token_exchange_response" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/unauthenticated_error" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/authorization_denied_error" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/identity_unavailable_error" }
+  ],
+  "$defs": {
+    "subject_token_type": {
+      "type": "string",
+      "enum": ["urn:ietf:params:oauth:token-type:jwt", "urn:aegivela:token-type:execution-grant"]
+    },
+    "token_exchange_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "subject_token", "subject_token_type", "requested_audience", "requested_scope", "trace_id"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "subject_token": { "type": "string", "minLength": 1 },
+        "subject_token_type": { "$ref": "#/$defs/subject_token_type" },
+        "requested_audience": { "type": "string", "minLength": 1 },
+        "requested_scope": { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/scope" },
+        "requested_resource_ref": { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/resource_ref" },
+        "requested_task_ref": { "type": "string", "minLength": 1 },
+        "trace_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "token_exchange_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "token_id", "principal", "scope", "audience", "expires_at", "issued_at", "evidence_refs"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "token_id": { "type": "string", "minLength": 1 },
+        "principal": { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/principal" },
+        "scope": { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/scope" },
+        "audience": { "type": "string", "minLength": 1 },
+        "expires_at": { "type": "string", "format": "date-time" },
+        "issued_at": { "type": "string", "format": "date-time" },
+        "task_binding": { "type": "string", "minLength": 1 },
+        "resource_binding": { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/resource_ref" },
+        "evidence_refs": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 }
+      }
+    }
+  }
+}

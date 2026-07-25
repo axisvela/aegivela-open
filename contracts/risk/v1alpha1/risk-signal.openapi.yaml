@@ -1,0 +1,67 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Risk Signal API
+  version: v1alpha1
+paths:
+  /v1/risk/signals:
+    post:
+      operationId: processRiskSignal
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RiskSignalRequest'
+      responses:
+        '200':
+          description: Signal processed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskSignalResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRiskSignal'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '503':
+          $ref: '#/components/responses/RevocationUnavailable'
+components:
+  responses:
+    InvalidRiskSignal:
+      description: invalid_risk_signal
+    Unauthenticated:
+      description: unauthenticated
+    RevocationUnavailable:
+      description: revocation_unavailable
+  schemas:
+    RiskLevel:
+      enum: [low, medium, high, critical]
+    RiskSignalRequest:
+      type: object
+      additionalProperties: false
+      required: [api_version, subject_ref, risk_level, risk_ref, trace_id]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        subject_ref: { type: string, minLength: 1 }
+        session_ref: { type: string, minLength: 1 }
+        risk_level: { $ref: '#/components/schemas/RiskLevel' }
+        risk_ref: { type: string, minLength: 1 }
+        reason: { type: string, minLength: 1 }
+        trace_id: { type: string, minLength: 1 }
+    RiskSignalResponse:
+      type: object
+      additionalProperties: false
+      required: [api_version, signal_id, risk_level, action, trace_id]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        signal_id: { type: string, minLength: 1 }
+        risk_level: { $ref: '#/components/schemas/RiskLevel' }
+        action: { enum: [logged, revoked_subject, revoked_subject_and_grants] }
+        trace_id: { type: string, minLength: 1 }

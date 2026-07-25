@@ -1,0 +1,82 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Identity Bridge API
+  version: v1alpha1
+paths:
+  /v1/identity/resolve:
+    post:
+      operationId: resolveIdentity
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentityResolveRequest'
+      responses:
+        '200':
+          description: Resolved principal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityResolveResponse'
+        '400':
+          $ref: '#/components/responses/InvalidIdentityRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+components:
+  parameters:
+    PEPHeader:
+      name: X-AEGIVELA-PEP
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 1
+  responses:
+    InvalidIdentityRequest:
+      description: invalid_identity_request
+    Unauthenticated:
+      description: unauthenticated
+    IdentityUnavailable:
+      description: identity_unavailable
+  schemas:
+    IdentityResolveRequest:
+      type: object
+      additionalProperties: false
+      required: [api_version, bearer_token, audience]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        bearer_token: { type: string, minLength: 1 }
+        audience: { type: string, minLength: 1 }
+        trace_id: { type: string, minLength: 1 }
+    IdentityResolveResponse:
+      type: object
+      additionalProperties: false
+      required: [api_version, principal]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        principal:
+          type: object
+          additionalProperties: false
+          required: [tenant_id, actor_ref]
+          properties:
+            tenant_id: { type: string, minLength: 1 }
+            subject_ref: { type: string, minLength: 1 }
+            actor_ref: { type: string, minLength: 1 }
+            client_id: { type: string, minLength: 1 }
+            workload_ref: { type: string, minLength: 1 }
+            agent_id: { type: string, minLength: 1 }
+            agent_class: { type: string }
+            master_id: { type: string, minLength: 1 }
+            organization_authority_root: { type: string, minLength: 1 }
+            lifecycle_epoch: { type: integer, minimum: 0 }
+            attestation_ref: { type: string, minLength: 1 }

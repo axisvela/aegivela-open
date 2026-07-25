@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/workload/v1alpha1/workload-assertion.schema.json",
+  "title": "AEGIVELA Workload Assertion API",
+  "oneOf": [
+    {"$ref": "#/$defs/binding_registration"},
+    {"$ref": "#/$defs/assertion_issue_request"},
+    {"$ref": "#/$defs/binding"},
+    {"$ref": "#/$defs/assertion_issue_response"},
+    {"$ref": "#/$defs/jwks"},
+    {"$ref": "#/$defs/error"}
+  ],
+  "$defs": {
+    "api_version": {"const": "aegivela.io/v1alpha1"},
+    "identifier": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "trace_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "evidence_ref": {"type": "string", "pattern": "^evidence://[a-z0-9][a-z0-9_-]{0,63}/[a-f0-9]{64}$"},
+    "binding_registration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "actor_ref", "organization_authority_root", "client_id", "workload_id", "evidence_ref", "trace_id"],
+      "properties": {
+        "api_version": {"$ref": "#/$defs/api_version"}, "actor_ref": {"$ref": "#/$defs/identifier"}, "organization_authority_root": {"$ref": "#/$defs/identifier"}, "client_id": {"$ref": "#/$defs/identifier"}, "workload_id": {"$ref": "#/$defs/identifier"}, "evidence_ref": {"$ref": "#/$defs/evidence_ref"}, "trace_id": {"$ref": "#/$defs/trace_id"}
+      }
+    },
+    "assertion_issue_request": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "actor_ref", "organization_authority_root", "client_id", "workload_id", "audience", "expires_at", "trace_id"],
+      "properties": {
+        "api_version": {"$ref": "#/$defs/api_version"}, "actor_ref": {"$ref": "#/$defs/identifier"}, "organization_authority_root": {"$ref": "#/$defs/identifier"}, "client_id": {"$ref": "#/$defs/identifier"}, "workload_id": {"$ref": "#/$defs/identifier"}, "audience": {"$ref": "#/$defs/identifier"}, "expires_at": {"type": "string", "format": "date-time"}, "trace_id": {"$ref": "#/$defs/trace_id"}
+      }
+    },
+    "binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["tenant_id", "binding_id", "version", "client_id", "workload_id", "organization_authority_root", "lifecycle_state", "evidence_ref", "created_at"],
+      "properties": {
+        "tenant_id": {"$ref": "#/$defs/identifier"}, "binding_id": {"$ref": "#/$defs/identifier"}, "version": {"$ref": "#/$defs/identifier"}, "client_id": {"$ref": "#/$defs/identifier"}, "workload_id": {"$ref": "#/$defs/identifier"}, "organization_authority_root": {"$ref": "#/$defs/identifier"}, "lifecycle_state": {"enum": ["active", "revoked"]}, "evidence_ref": {"$ref": "#/$defs/evidence_ref"}, "created_at": {"type": "string", "format": "date-time"}, "revoked_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "assertion_issue_response": {
+      "type": "object", "additionalProperties": false, "required": ["workload_assertion"],
+      "properties": {"workload_assertion": {"type": "string", "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$", "maxLength": 16384}}
+    },
+    "jwk": {
+      "type": "object", "additionalProperties": false, "required": ["kty", "crv", "use", "alg", "kid", "x"],
+      "properties": {"kty": {"const": "OKP"}, "crv": {"const": "Ed25519"}, "use": {"const": "sig"}, "alg": {"const": "EdDSA"}, "kid": {"$ref": "#/$defs/identifier"}, "x": {"type": "string", "pattern": "^[A-Za-z0-9_-]+$"}}
+    },
+    "jwks": {"type": "object", "additionalProperties": false, "required": ["keys"], "properties": {"keys": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/jwk"}}}},
+    "error": {"type": "object", "additionalProperties": false, "required": ["code"], "properties": {"code": {"type": "string", "enum": ["unauthenticated", "invalid_workload_binding_request", "invalid_workload_assertion_request", "workload_binding_unavailable", "workload_assertion_unavailable"]}}}
+  }
+}

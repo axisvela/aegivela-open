@@ -1,0 +1,67 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Web API PEP
+  version: v1alpha1
+paths:
+  /web-api-pep/authorize:
+    post:
+      operationId: authorizeWebAPIPEP
+      description: >-
+        Logical SDK operation for Web/API PEP authorization. This is not a new
+        AEGIVELA server route; PEP consumers call this through the SDK contract.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizationInput'
+      responses:
+        '200':
+          $ref: '#/components/responses/Authorized'
+        '400':
+          $ref: '#/components/responses/InvalidPEPRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/AuthorizationUnavailable'
+components:
+  schemas:
+    AuthorizationInput:
+      $ref: './web-api-pep.schema.json#/$defs/authorization_input'
+    AllowResult:
+      $ref: './web-api-pep.schema.json#/$defs/allow_result'
+    ErrorEnvelope:
+      $ref: './web-api-pep.schema.json#/$defs/error_envelope'
+  responses:
+    Authorized:
+      description: Authorization granted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AllowResult'
+    InvalidPEPRequest:
+      description: invalid_pep_request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    Unauthenticated:
+      description: unauthenticated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    AuthorizationDenied:
+      description: authorization_denied
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    AuthorizationUnavailable:
+      description: authorization_unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'

@@ -1,0 +1,73 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Revocation Check API
+  version: v1alpha1
+paths:
+  /v1/revocations/check:
+    post:
+      operationId: checkRevocation
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevocationCheckRequest'
+      responses:
+        '200':
+          description: Revocation check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevocationCheckResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRevocationCheckRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '503':
+          $ref: '#/components/responses/RevocationUnavailable'
+components:
+  responses:
+    InvalidRevocationCheckRequest:
+      description: invalid_revocation_check_request
+    Unauthenticated:
+      description: unauthenticated
+    RevocationUnavailable:
+      description: revocation_unavailable
+  schemas:
+    RevocationCheckRequest:
+      type: object
+      additionalProperties: false
+      required: [api_version, class, selectors, trace_id]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        class: { enum: [pre_dispatch, continuation, connection] }
+        selectors:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [kind, value]
+            properties:
+              kind: { enum: [grant_jti, decision_jti, approval_jti, exchange_jti, pre_authorization_jti, subject_ref, session_ref, policy_version, resource_ref] }
+              value: { type: string, minLength: 1, maxLength: 256 }
+          minItems: 1
+          maxItems: 16
+        lifecycle_epoch: { type: integer, minimum: 0 }
+        trace_id: { type: string, minLength: 1 }
+    RevocationCheckResponse:
+      type: object
+      additionalProperties: false
+      required: [api_version, class, outcome, checked_at, trace_id]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        class: { enum: [pre_dispatch, continuation, connection] }
+        outcome: { enum: [clear, revoked] }
+        checked_at: { type: string, format: date-time }
+        trace_id: { type: string, minLength: 1 }

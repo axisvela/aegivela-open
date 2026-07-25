@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/decision/v1alpha1/policy-decision-verify.schema.json",
+  "title": "AEGIVELA Policy Decision Verification",
+  "oneOf": [
+    { "$ref": "#/$defs/policy_decision_verify_request" },
+    { "$ref": "#/$defs/policy_decision_verify_response" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/unauthenticated_error" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/authorization_denied_error" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/decision_unavailable_error" }
+  ],
+  "$defs": {
+    "decision_outcome": {
+      "type": "string",
+      "enum": ["allow", "deny", "approval_required", "revoked"]
+    },
+    "policy_decision_verify_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "signed_decision", "expected_bindings"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "signed_decision": { "type": "string", "minLength": 1 },
+        "expected_bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["principal", "action", "resource"],
+          "properties": {
+            "principal": { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/principal" },
+            "action": { "type": "string", "minLength": 1 },
+            "resource": { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/resource_ref" },
+            "scope": { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/scope" },
+            "audience": { "type": "string", "minLength": 1 },
+            "trace_id": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "policy_decision_verify_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "decision_id", "valid", "outcome", "policy_version", "expires_at", "evidence_refs"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "decision_id": { "type": "string", "minLength": 1 },
+        "valid": { "type": "boolean" },
+        "outcome": { "$ref": "#/$defs/decision_outcome" },
+        "policy_version": { "type": "string", "minLength": 1 },
+        "expires_at": { "type": "string", "format": "date-time" },
+        "obligations": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "evidence_refs": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+        "revoked": { "type": "boolean" }
+      }
+    }
+  }
+}

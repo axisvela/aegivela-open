@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package token_exchange.v1alpha1;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/tokenexchangecontract/pb;pb";
+
+import "google/protobuf/timestamp.proto";
+
+service TokenExchangeService {
+  rpc Exchange(TokenExchangeRequest) returns (TokenExchangeResponse);
+}
+
+enum SubjectTokenType {
+  SUBJECT_TOKEN_TYPE_UNSPECIFIED = 0;
+  URN_IETF_PARAMS_OAUTH_TOKEN_TYPE_JWT = 1;
+  URN_AEGIVELA_TOKEN_TYPE_EXECUTION_GRANT = 2;
+}
+
+message Principal {
+  string tenant_id = 1;
+  optional string subject_ref = 2;
+  string actor_ref = 3;
+  optional string client_id = 4;
+  optional string workload_ref = 5;
+  optional string agent_id = 6;
+  optional string agent_class = 7;
+  optional string master_id = 8;
+  optional string organization_authority_root = 9;
+  optional int64 lifecycle_epoch = 10;
+  optional string attestation_ref = 11;
+}
+
+message ResourceRef {
+  string kind = 1;
+  string reference = 2;
+}
+
+message TokenExchangeRequest {
+  string api_version = 1;
+  string subject_token = 2;
+  SubjectTokenType subject_token_type = 3;
+  string requested_audience = 4;
+  repeated string requested_scope = 5;
+  optional ResourceRef requested_resource_ref = 6;
+  optional string requested_task_ref = 7;
+  string trace_id = 8;
+}
+
+message TokenExchangeResponse {
+  string api_version = 1;
+  string token_id = 2;
+  Principal principal = 3;
+  repeated string scope = 4;
+  string audience = 5;
+  google.protobuf.Timestamp expires_at = 6;
+  google.protobuf.Timestamp issued_at = 7;
+  optional string task_binding = 8;
+  optional ResourceRef resource_binding = 9;
+  repeated string evidence_refs = 10;
+}

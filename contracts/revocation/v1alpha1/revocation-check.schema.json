@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/revocation/v1alpha1/revocation-check.schema.json",
+  "title": "AEGIVELA Revocation Check v1alpha1",
+  "oneOf": [
+    { "$ref": "#/$defs/revocation_check_request" },
+    { "$ref": "#/$defs/revocation_check_response" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/unauthenticated_error" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/revocation_unavailable_error" }
+  ],
+  "$defs": {
+    "selector_kind": { "enum": ["grant_jti", "decision_jti", "approval_jti", "exchange_jti", "pre_authorization_jti", "subject_ref", "session_ref", "policy_version", "resource_ref"] },
+    "selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": { "$ref": "#/$defs/selector_kind" },
+        "value": { "type": "string", "minLength": 1, "maxLength": 256 }
+      }
+    },
+    "revocation_check_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "class", "selectors", "trace_id"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "class": { "enum": ["pre_dispatch", "continuation", "connection"] },
+        "selectors": { "type": "array", "items": { "$ref": "#/$defs/selector" }, "minItems": 1, "maxItems": 16 },
+        "lifecycle_epoch": { "type": "integer", "minimum": 0 },
+        "trace_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "revocation_check_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "class", "outcome", "checked_at", "trace_id"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "class": { "enum": ["pre_dispatch", "continuation", "connection"] },
+        "outcome": { "enum": ["clear", "revoked"] },
+        "checked_at": { "type": "string", "format": "date-time" },
+        "trace_id": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

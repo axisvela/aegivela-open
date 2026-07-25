@@ -1,0 +1,6 @@
+﻿# Build artifacts
+*.exe
+*.test
+*.out
+.DS_Store
+Thumbs.db

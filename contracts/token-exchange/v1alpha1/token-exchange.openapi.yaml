@@ -1,0 +1,102 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Token Exchange API
+  version: v1alpha1
+paths:
+  /v1/token-exchange:
+    post:
+      operationId: exchangeToken
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenExchangeRequest'
+      responses:
+        '200':
+          description: Exchanged token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenExchangeResponse'
+        '400':
+          $ref: '#/components/responses/InvalidTokenExchangeRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+components:
+  responses:
+    InvalidTokenExchangeRequest:
+      description: invalid_token_exchange_request
+    Unauthenticated:
+      description: unauthenticated
+    AuthorizationDenied:
+      description: authorization_denied
+    IdentityUnavailable:
+      description: identity_unavailable
+  schemas:
+    TokenExchangeRequest:
+      type: object
+      additionalProperties: false
+      required: [api_version, subject_token, subject_token_type, requested_audience, requested_scope, trace_id]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        subject_token: { type: string, minLength: 1 }
+        subject_token_type: { type: string, enum: [urn:ietf:params:oauth:token-type:jwt, urn:aegivela:token-type:execution-grant] }
+        requested_audience: { type: string, minLength: 1 }
+        requested_scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        requested_resource_ref:
+          type: object
+          additionalProperties: false
+          required: [kind, reference]
+          properties:
+            kind: { type: string, minLength: 1 }
+            reference: { type: string, minLength: 1 }
+        requested_task_ref: { type: string, minLength: 1 }
+        trace_id: { type: string, minLength: 1 }
+    TokenExchangeResponse:
+      type: object
+      additionalProperties: false
+      required: [api_version, token_id, principal, scope, audience, expires_at, issued_at, evidence_refs]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        token_id: { type: string, minLength: 1 }
+        principal:
+          type: object
+          additionalProperties: false
+          required: [tenant_id, actor_ref]
+          properties:
+            tenant_id: { type: string, minLength: 1 }
+            subject_ref: { type: string, minLength: 1 }
+            actor_ref: { type: string, minLength: 1 }
+            client_id: { type: string, minLength: 1 }
+            workload_ref: { type: string, minLength: 1 }
+            agent_id: { type: string, minLength: 1 }
+            agent_class: { type: string }
+            master_id: { type: string, minLength: 1 }
+            organization_authority_root: { type: string, minLength: 1 }
+            lifecycle_epoch: { type: integer, minimum: 0 }
+            attestation_ref: { type: string, minLength: 1 }
+        scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        audience: { type: string, minLength: 1 }
+        expires_at: { type: string, format: date-time }
+        issued_at: { type: string, format: date-time }
+        task_binding: { type: string, minLength: 1 }
+        resource_binding:
+          type: object
+          additionalProperties: false
+          required: [kind, reference]
+          properties:
+            kind: { type: string, minLength: 1 }
+            reference: { type: string, minLength: 1 }
+        evidence_refs: { type: array, items: { type: string, minLength: 1 }, minItems: 1 }

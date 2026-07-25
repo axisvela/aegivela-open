@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package pre_authorization.v1alpha1;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/preauthorizationcontract/pb;pb";
+
+import "google/protobuf/timestamp.proto";
+
+service PreAuthorizationService {
+  rpc Issue(PreAuthorizationIssueRequest) returns (PreAuthorizationIssueResponse);
+}
+
+message Principal {
+  string tenant_id = 1;
+  optional string subject_ref = 2;
+  string actor_ref = 3;
+  optional string client_id = 4;
+  optional string workload_ref = 5;
+  optional string agent_id = 6;
+  optional string agent_class = 7;
+  optional string master_id = 8;
+  optional string organization_authority_root = 9;
+  optional int64 lifecycle_epoch = 10;
+  optional string attestation_ref = 11;
+}
+
+message ResourceRef {
+  string kind = 1;
+  string reference = 2;
+}
+
+message PreAuthorizationIssueRequest {
+  string api_version = 1;
+  string bearer_token = 2;
+  string action = 3;
+  ResourceRef resource = 4;
+  repeated string scope = 5;
+  string audience = 6;
+  google.protobuf.Timestamp expiry = 7;
+  string policy_version = 8;
+  optional string task = 9;
+  optional string session = 10;
+  optional string lifecycle = 11;
+  int32 max_grants = 12;
+  string trace_id = 13;
+}
+
+message PreAuthorizationIssueResponse {
+  string api_version = 1;
+  string pre_authorization_id = 2;
+  Principal principal = 3;
+  string action = 4;
+  ResourceRef resource = 5;
+  repeated string scope = 6;
+  string audience = 7;
+  google.protobuf.Timestamp expires_at = 8;
+  google.protobuf.Timestamp issued_at = 9;
+  string policy_version = 10;
+  int32 max_grants = 11;
+  int32 remaining_grants = 12;
+  optional string task = 13;
+  optional string session = 14;
+  optional string lifecycle = 15;
+  repeated string evidence_refs = 16;
+}

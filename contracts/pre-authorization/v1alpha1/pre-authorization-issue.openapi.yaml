@@ -1,0 +1,113 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Pre-Authorization API
+  version: v1alpha1
+paths:
+  /v1/pre-authorizations/issue:
+    post:
+      operationId: issuePreAuthorization
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreAuthorizationIssueRequest'
+      responses:
+        '200':
+          description: Issued pre-authorization
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreAuthorizationIssueResponse'
+        '400':
+          $ref: '#/components/responses/InvalidPreAuthorizationRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/RevocationUnavailable'
+components:
+  responses:
+    InvalidPreAuthorizationRequest:
+      description: invalid_pre_authorization_request
+    Unauthenticated:
+      description: unauthenticated
+    AuthorizationDenied:
+      description: authorization_denied
+    RevocationUnavailable:
+      description: revocation_unavailable
+  schemas:
+    PreAuthorizationIssueRequest:
+      type: object
+      additionalProperties: false
+      required: [api_version, bearer_token, action, resource, scope, audience, expiry, policy_version, max_grants, trace_id]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        bearer_token: { type: string, minLength: 1 }
+        action: { type: string, minLength: 1 }
+        resource:
+          type: object
+          additionalProperties: false
+          required: [kind, reference]
+          properties:
+            kind: { type: string, minLength: 1 }
+            reference: { type: string, minLength: 1 }
+        scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        audience: { type: string, minLength: 1 }
+        expiry: { type: string, format: date-time }
+        policy_version: { type: string, minLength: 1 }
+        task: { type: string, minLength: 1 }
+        session: { type: string, minLength: 1 }
+        lifecycle: { type: string, minLength: 1 }
+        max_grants: { type: integer, minimum: 1, maximum: 100 }
+        trace_id: { type: string, minLength: 1 }
+    PreAuthorizationIssueResponse:
+      type: object
+      additionalProperties: false
+      required: [api_version, pre_authorization_id, principal, action, resource, scope, audience, expires_at, issued_at, policy_version, max_grants, remaining_grants, evidence_refs]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        pre_authorization_id: { type: string, minLength: 1 }
+        principal:
+          type: object
+          additionalProperties: false
+          required: [tenant_id, actor_ref]
+          properties:
+            tenant_id: { type: string, minLength: 1 }
+            subject_ref: { type: string, minLength: 1 }
+            actor_ref: { type: string, minLength: 1 }
+            client_id: { type: string, minLength: 1 }
+            workload_ref: { type: string, minLength: 1 }
+            agent_id: { type: string, minLength: 1 }
+            agent_class: { type: string }
+            master_id: { type: string, minLength: 1 }
+            organization_authority_root: { type: string, minLength: 1 }
+            lifecycle_epoch: { type: integer, minimum: 0 }
+            attestation_ref: { type: string, minLength: 1 }
+        action: { type: string, minLength: 1 }
+        resource:
+          type: object
+          additionalProperties: false
+          required: [kind, reference]
+          properties:
+            kind: { type: string, minLength: 1 }
+            reference: { type: string, minLength: 1 }
+        scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        audience: { type: string, minLength: 1 }
+        expires_at: { type: string, format: date-time }
+        issued_at: { type: string, format: date-time }
+        policy_version: { type: string, minLength: 1 }
+        max_grants: { type: integer, minimum: 1, maximum: 100 }
+        remaining_grants: { type: integer, minimum: 0 }
+        task: { type: string, minLength: 1 }
+        session: { type: string, minLength: 1 }
+        lifecycle: { type: string, minLength: 1 }
+        evidence_refs: { type: array, items: { type: string, minLength: 1 }, minItems: 1 }

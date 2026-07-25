@@ -1,0 +1,61 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Policy Decision API
+  version: v1alpha3
+paths:
+  /v1/policy/decisions/evaluate:
+    post:
+      operationId: evaluatePolicyDecisionV1Alpha3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PolicyDecisionRequest' }
+      responses:
+        '200': { description: Policy decision }
+        '400': { description: invalid_policy_request }
+        '401': { description: unauthenticated }
+        '403': { description: policy_request_denied }
+        '503': { description: parent_execution_grant_verification_unavailable }
+  /v1/policy/decisions/sign:
+    post:
+      operationId: signPolicyDecisionV1Alpha3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PolicyDecisionRequest' }
+      responses:
+        '200': { description: Signed policy decision }
+        '400': { description: invalid_policy_request }
+        '401': { description: unauthenticated }
+        '403': { description: policy_request_denied }
+        '503': { description: parent_execution_grant_verification_unavailable }
+components:
+  schemas:
+    PolicyDecisionRequest:
+      type: object
+      additionalProperties: false
+      required: [api_version, authorization_mode, principal, action, resource, requested_scope, audience, requested_expires_at, trace_id]
+      properties:
+        api_version: { const: aegivela.io/v1alpha3 }
+        authorization_mode: { type: string, enum: [human_web, system_api, delegated_api, service_agent_api, twin_agent_api] }
+        principal: { type: object }
+        action: { type: string, minLength: 1 }
+        resource: { type: object }
+        requested_scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        audience: { type: string, minLength: 1 }
+        requested_expires_at: { type: string, format: date-time }
+        task_binding: { type: string, minLength: 1 }
+        parent_authority: { type: object }
+        parent_execution_grant: { type: string, minLength: 1 }
+        risk_context: { type: object }
+        trace_id: { type: string, minLength: 1 }
+      allOf:
+        - if: { properties: { authorization_mode: { const: delegated_api } } }
+          then:
+            required: [parent_execution_grant]
+            not: { required: [parent_authority] }
+    PolicyDecisionResponse:
+      type: object
+      required: [api_version, structured_resource_digest, decision_id, outcome, policy_version, expires_at, obligations, evidence_refs]

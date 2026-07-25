@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package risk.v1alpha1;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/risksignal/pb/v1alpha1;v1alpha1";
+
+service RiskSignalService {
+  rpc Process(RiskSignalRequest) returns (RiskSignalResponse);
+}
+
+enum RiskLevel {
+  RISK_LEVEL_UNSPECIFIED = 0;
+  RISK_LEVEL_LOW = 1;
+  RISK_LEVEL_MEDIUM = 2;
+  RISK_LEVEL_HIGH = 3;
+  RISK_LEVEL_CRITICAL = 4;
+}
+
+message RiskSignalRequest {
+  string api_version = 1;
+  string subject_ref = 2;
+  optional string session_ref = 3;
+  RiskLevel risk_level = 4;
+  string risk_ref = 5;
+  optional string reason = 6;
+  string trace_id = 7;
+}
+
+message RiskSignalResponse {
+  string api_version = 1;
+  string signal_id = 2;
+  RiskLevel risk_level = 3;
+  string action = 4;
+  string trace_id = 5;
+}

@@ -1,0 +1,76 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Web Resource Authorization API
+  version: v1alpha1
+servers:
+  - url: https://api.aegivela.io
+    description: AEGIVELA API
+paths:
+  /v1/web-resources:
+    post:
+      operationId: createWebResource
+      security: [{InternalToken: []}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/WebResourceRegistration'}}}}
+      responses: {'201': {$ref: '#/components/responses/WebResourceCreated'}, '400': {$ref: '#/components/responses/InvalidWebResourceRequest'}, '401': {$ref: '#/components/responses/Unauthenticated'}, '413': {$ref: '#/components/responses/RequestTooLarge'}, '503': {$ref: '#/components/responses/WebResourceUnavailable'}}
+  /v1/web-resources/{productID}:
+    get:
+      operationId: listWebResources
+      security: [{InternalToken: []}]
+      parameters: [{name: productID, in: path, required: true, schema: {$ref: './web-resources.schema.json#/$defs/product_id'}}, {name: parent_resource_id, in: query, schema: {$ref: './web-resources.schema.json#/$defs/resource_id'}}]
+      responses: {'200': {$ref: '#/components/responses/WebResourceList'}, '401': {$ref: '#/components/responses/Unauthenticated'}, '404': {$ref: '#/components/responses/WebResourceNotFound'}, '503': {$ref: '#/components/responses/WebResourceUnavailable'}}
+  /v1/web-resources/{productID}/{resourceID}:
+    get:
+      operationId: getWebResource
+      security: [{InternalToken: []}]
+      parameters: [{name: productID, in: path, required: true, schema: {$ref: './web-resources.schema.json#/$defs/product_id'}}, {name: resourceID, in: path, required: true, schema: {$ref: './web-resources.schema.json#/$defs/resource_id'}}]
+      responses: {'200': {$ref: '#/components/responses/WebResourceFound'}, '401': {$ref: '#/components/responses/Unauthenticated'}, '404': {$ref: '#/components/responses/WebResourceNotFound'}, '503': {$ref: '#/components/responses/WebResourceUnavailable'}}
+  /v1/web-resources/{productID}/{resourceID}:deprecate:
+    post:
+      operationId: deprecateWebResource
+      security: [{InternalToken: []}]
+      parameters: [{name: productID, in: path, required: true, schema: {$ref: './web-resources.schema.json#/$defs/product_id'}}, {name: resourceID, in: path, required: true, schema: {$ref: './web-resources.schema.json#/$defs/resource_id'}}]
+      responses: {'200': {$ref: '#/components/responses/WebResourceDeprecated'}, '401': {$ref: '#/components/responses/Unauthenticated'}, '404': {$ref: '#/components/responses/WebResourceNotFound'}, '503': {$ref: '#/components/responses/WebResourceUnavailable'}}
+  /v1/web-resource-policies:
+    post:
+      operationId: createWebResourcePolicy
+      security: [{InternalToken: []}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/WebResourcePolicyRule'}}}}
+      responses: {'201': {$ref: '#/components/responses/Accepted'}, '400': {$ref: '#/components/responses/InvalidWebResourceRequest'}, '401': {$ref: '#/components/responses/Unauthenticated'}, '413': {$ref: '#/components/responses/RequestTooLarge'}, '404': {$ref: '#/components/responses/WebResourceNotFound'}, '503': {$ref: '#/components/responses/WebResourceUnavailable'}}
+  /v1/web-permissions:resolve:
+    post:
+      operationId: resolveWebPermissions
+      summary: Resolve web resource permissions
+      security: [{InternalToken: []}]
+      parameters:
+        - {name: Authorization, in: header, required: true, description: Enterprise OIDC bearer JWT, schema: {type: string, pattern: '^Bearer [^[:space:]]+$'}}
+        - {name: X-Aegivela-Identity-Audience, in: header, required: true, description: Intended audience for Identity Bridge verification, schema: {type: string, minLength: 1}}
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/PermissionResolutionRequest'}}}}
+      responses: {'200': {$ref: '#/components/responses/PermissionResolution'}, '400': {$ref: '#/components/responses/InvalidWebResourceRequest'}, '401': {$ref: '#/components/responses/Unauthenticated'}, '413': {$ref: '#/components/responses/RequestTooLarge'}, '404': {$ref: '#/components/responses/WebResourceNotFound'}, '503': {$ref: '#/components/responses/WebResourceUnavailable'}}
+components:
+  securitySchemes:
+    InternalToken: {type: apiKey, in: header, name: X-Aegivela-Internal-Token}
+  responses:
+    WebResourceCreated: {description: Created web resource, content: {application/json: {schema: {$ref: '#/components/schemas/WebResource'}}}}
+    WebResourceFound: {description: Active web resource, content: {application/json: {schema: {$ref: '#/components/schemas/WebResource'}}}}
+    WebResourceDeprecated: {description: Deprecated web resource, content: {application/json: {schema: {$ref: '#/components/schemas/WebResource'}}}}
+    WebResourceList: {description: Active web resources, content: {application/json: {schema: {$ref: '#/components/schemas/WebResourceList'}}}}
+    Accepted: {description: Accepted web resource policy, content: {application/json: {schema: {$ref: '#/components/schemas/Accepted'}}}}
+    PermissionResolution: {description: Resolved web resource permissions, content: {application/json: {schema: {$ref: '#/components/schemas/PermissionResolutionResponse'}}}}
+    InvalidWebResourceRequest: {description: Invalid web resource request, content: {application/json: {schema: {$ref: '#/components/schemas/InvalidWebResourceRequestError'}}}}
+    Unauthenticated: {description: unauthenticated, content: {application/json: {schema: {$ref: '#/components/schemas/UnauthenticatedError'}}}}
+    WebResourceNotFound: {description: web_resource_not_found, content: {application/json: {schema: {$ref: '#/components/schemas/WebResourceNotFoundError'}}}}
+    WebResourceUnavailable: {description: web_resource_unavailable, content: {application/json: {schema: {$ref: '#/components/schemas/WebResourceUnavailableError'}}}}
+    RequestTooLarge: {description: request_too_large, content: {application/json: {schema: {$ref: '#/components/schemas/RequestTooLargeError'}}}}
+  schemas:
+    WebResourceRegistration: {$ref: './web-resources.schema.json#/$defs/web_resource_registration'}
+    WebResourcePolicyRule: {$ref: './web-resources.schema.json#/$defs/web_resource_policy_rule'}
+    PermissionResolutionRequest: {$ref: './web-resources.schema.json#/$defs/permission_resolution_request'}
+    WebResource: {$ref: './web-resources.schema.json#/$defs/web_resource'}
+    WebResourceList: {$ref: './web-resources.schema.json#/$defs/web_resource_list'}
+    Accepted: {$ref: './web-resources.schema.json#/$defs/accepted'}
+    PermissionResolutionResponse: {$ref: './web-resources.schema.json#/$defs/permission_resolution_response'}
+    InvalidWebResourceRequestError: {$ref: './web-resources.schema.json#/$defs/invalid_web_resource_request_error'}
+    UnauthenticatedError: {$ref: './web-resources.schema.json#/$defs/unauthenticated_error'}
+    WebResourceNotFoundError: {$ref: './web-resources.schema.json#/$defs/web_resource_not_found_error'}
+    WebResourceUnavailableError: {$ref: './web-resources.schema.json#/$defs/web_resource_unavailable_error'}
+    RequestTooLargeError: {$ref: './web-resources.schema.json#/$defs/request_too_large_error'}

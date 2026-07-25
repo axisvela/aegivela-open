@@ -1,0 +1,163 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Agent Lifecycle API
+  version: v1alpha1
+paths:
+  /v1/agents:
+    post:
+      operationId: registerAgent
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentRegisterRequest'
+      responses:
+        '201':
+          description: Registered agent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRecord'
+        '400':
+          $ref: '#/components/responses/InvalidAgentRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+  /v1/agents/{agent_id}:
+    get:
+      operationId: getAgent
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - name: agent_id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Agent record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRecord'
+        '400':
+          $ref: '#/components/responses/InvalidAgentRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '404':
+          $ref: '#/components/responses/AgentNotFound'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+  /v1/agents/{agent_id}/lifecycle:
+    post:
+      operationId: manageAgentLifecycle
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - name: agent_id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentLifecycleRequest'
+      responses:
+        '200':
+          description: Updated agent record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRecord'
+        '400':
+          $ref: '#/components/responses/InvalidAgentRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '404':
+          $ref: '#/components/responses/AgentNotFound'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+components:
+  responses:
+    InvalidAgentRequest:
+      description: invalid_agent_request
+    Unauthenticated:
+      description: unauthenticated
+    AuthorizationDenied:
+      description: authorization_denied
+    AgentNotFound:
+      description: agent_not_found
+    IdentityUnavailable:
+      description: identity_unavailable
+  schemas:
+    AgentRegisterRequest:
+      type: object
+      additionalProperties: false
+      required: [api_version, agent_class, tenant_id, actor_ref, agent_id, trace_id]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        agent_class: { type: string, enum: [twin, service] }
+        tenant_id: { type: string, minLength: 1 }
+        actor_ref: { type: string, minLength: 1 }
+        agent_id: { type: string, minLength: 1 }
+        workload_ref: { type: string, minLength: 1 }
+        attestation_ref: { type: string, minLength: 1 }
+        metadata: { type: object, additionalProperties: true }
+        trace_id: { type: string, minLength: 1 }
+    AgentLifecycleRequest:
+      type: object
+      additionalProperties: false
+      required: [api_version, agent_id, action, reason, trace_id]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        agent_id: { type: string, minLength: 1 }
+        action: { type: string, enum: [suspend, restore] }
+        reason: { type: string, minLength: 1 }
+        trace_id: { type: string, minLength: 1 }
+    AgentRecord:
+      type: object
+      additionalProperties: false
+      required: [api_version, agent_id, agent_class, tenant_id, actor_ref, lifecycle_state, lifecycle_epoch, registered_at]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        agent_id: { type: string, minLength: 1 }
+        agent_class: { type: string, enum: [twin, service] }
+        tenant_id: { type: string, minLength: 1 }
+        actor_ref: { type: string, minLength: 1 }
+        lifecycle_state: { type: string, enum: [active, suspended] }
+        lifecycle_epoch: { type: integer, minimum: 0 }
+        workload_ref: { type: string, minLength: 1 }
+        attestation_ref: { type: string, minLength: 1 }
+        metadata: { type: object, additionalProperties: true }
+        registered_at: { type: string, format: date-time }
+        suspended_at: { type: string, format: date-time }
+        restored_at: { type: string, format: date-time }

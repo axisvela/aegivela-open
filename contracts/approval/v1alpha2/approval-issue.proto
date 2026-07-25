@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package approval.v1alpha2;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/approvalcontract/pb/v1alpha2;v1alpha2";
+
+import "google/protobuf/timestamp.proto";
+
+service ApprovalService {
+  rpc Issue(ApprovalIssueRequest) returns (ApprovalIssueResponse);
+}
+
+message ResourceRef {
+  string kind = 1;
+  string reference = 2;
+}
+
+message ApprovalIssueRequest {
+  string api_version = 1;
+  string bearer_token = 2;
+  string action = 3;
+  ResourceRef resource = 4;
+  repeated string scope = 5;
+  google.protobuf.Timestamp expiry = 6;
+  string reason = 7;
+  string policy_version = 8;
+  optional string session = 9;
+  optional string lifecycle = 10;
+  repeated string evidence_refs = 11;
+  string trace_id = 12;
+  optional string structured_resource_digest = 13;
+  optional string descriptor_version = 14;
+}
+
+message ApprovalIssueResponse {
+  string api_version = 1;
+  string approval_id = 2;
+  string approval_artifact = 3;
+}

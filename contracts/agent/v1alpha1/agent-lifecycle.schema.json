@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/agent/v1alpha1/agent-lifecycle.schema.json",
+  "title": "AEGIVELA Agent Lifecycle",
+  "oneOf": [
+    { "$ref": "#/$defs/agent_register_request" },
+    { "$ref": "#/$defs/agent_register_response" },
+    { "$ref": "#/$defs/agent_enroll_request" },
+    { "$ref": "#/$defs/agent_enroll_response" },
+    { "$ref": "#/$defs/agent_get_request" },
+    { "$ref": "#/$defs/agent_get_response" },
+    { "$ref": "#/$defs/agent_lifecycle_request" },
+    { "$ref": "#/$defs/agent_lifecycle_response" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/unauthenticated_error" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/authorization_denied_error" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/identity_unavailable_error" }
+  ],
+  "$defs": {
+    "agent_class": {
+      "type": "string",
+      "enum": ["twin", "service"]
+    },
+    "lifecycle_state": {
+      "type": "string",
+      "enum": ["active", "suspended"]
+    },
+    "lifecycle_action": {
+      "type": "string",
+      "enum": ["suspend", "restore"]
+    },
+    "agent_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "agent_id", "agent_class", "tenant_id", "actor_ref", "lifecycle_state", "lifecycle_epoch", "registered_at"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "agent_id": { "type": "string", "minLength": 1 },
+        "agent_class": { "$ref": "#/$defs/agent_class" },
+        "tenant_id": { "type": "string", "minLength": 1 },
+        "actor_ref": { "type": "string", "minLength": 1 },
+        "lifecycle_state": { "$ref": "#/$defs/lifecycle_state" },
+        "lifecycle_epoch": { "type": "integer", "minimum": 0 },
+        "workload_ref": { "type": "string", "minLength": 1 },
+        "attestation_ref": { "type": "string", "minLength": 1 },
+        "metadata": { "type": "object", "additionalProperties": true },
+        "registered_at": { "type": "string", "format": "date-time" },
+        "suspended_at": { "type": "string", "format": "date-time" },
+        "restored_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "agent_register_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "agent_class", "tenant_id", "actor_ref", "agent_id", "trace_id"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "agent_class": { "$ref": "#/$defs/agent_class" },
+        "tenant_id": { "type": "string", "minLength": 1 },
+        "actor_ref": { "type": "string", "minLength": 1 },
+        "agent_id": { "type": "string", "minLength": 1 },
+        "workload_ref": { "type": "string", "minLength": 1 },
+        "attestation_ref": { "type": "string", "minLength": 1 },
+        "metadata": { "type": "object", "additionalProperties": true },
+        "trace_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "agent_register_response": {
+      "$ref": "#/$defs/agent_record"
+    },
+    "agent_get_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "agent_id"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "agent_id": { "type": "string", "minLength": 1 },
+        "trace_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "agent_get_response": {
+      "$ref": "#/$defs/agent_record"
+    },
+    "agent_lifecycle_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "agent_id", "action", "reason", "trace_id"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "agent_id": { "type": "string", "minLength": 1 },
+        "action": { "$ref": "#/$defs/lifecycle_action" },
+        "reason": { "type": "string", "minLength": 1 },
+        "trace_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "agent_lifecycle_response": {
+      "$ref": "#/$defs/agent_record"
+    }
+  }
+}

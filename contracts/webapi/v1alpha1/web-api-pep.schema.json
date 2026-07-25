@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/webapi/v1alpha1/web-api-pep.schema.json",
+  "title": "AEGIVELA Web API PEP Contract",
+  "oneOf": [
+    {"$ref": "#/$defs/route"},
+    {"$ref": "#/$defs/authorization_input"},
+    {"$ref": "#/$defs/allow_result"},
+    {"$ref": "#/$defs/error_envelope"}
+  ],
+  "$defs": {
+    "api_version": {"const": "aegivela.io/v1alpha1"},
+    "v1alpha3_api_version": {"const": "aegivela.io/v1alpha3"},
+    "identifier": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "trace_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "compact_token": {"type": "string", "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$", "maxLength": 16384},
+    "scope": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+    "mode": {"type": "string", "enum": ["human_web", "system_api", "delegated_api", "service_agent_api", "twin_agent_api"]},
+    "route": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "path", "method", "audience", "trace_id"],
+      "properties": {
+        "api_version": {"$ref": "#/$defs/api_version"},
+        "path": {"type": "string", "minLength": 1},
+        "method": {"type": "string", "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]},
+        "audience": {"$ref": "#/$defs/identifier"},
+        "trace_id": {"$ref": "#/$defs/trace_id"}
+      }
+    },
+    "authorization_input": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "mode", "requested_scope", "audience", "trace_id"],
+      "properties": {
+        "api_version": {"type": "string"},
+        "mode": {"$ref": "#/$defs/mode"},
+        "bearer_token": {"$ref": "#/$defs/compact_token"},
+        "workload_assertion": {"$ref": "#/$defs/compact_token"},
+        "parent_execution_grant": {"$ref": "#/$defs/execution_grant"},
+        "requested_scope": {"$ref": "#/$defs/scope"},
+        "audience": {"$ref": "#/$defs/identifier"},
+        "route": {"$ref": "#/$defs/route"},
+        "trace_id": {"$ref": "#/$defs/trace_id"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"mode": {"const": "human_web"}}},
+          "then": {
+            "required": ["bearer_token"],
+            "properties": {"api_version": {"const": "aegivela.io/v1alpha1"}},
+            "allOf": [
+              {"not": {"required": ["workload_assertion"]}},
+              {"not": {"required": ["parent_execution_grant"]}},
+              {"not": {"required": ["parent_authority"]}}
+            ]
+          }
+        },
+        {
+          "if": {"properties": {"mode": {"const": "system_api"}}},
+          "then": {
+            "required": ["workload_assertion"],
+            "properties": {"api_version": {"const": "aegivela.io/v1alpha1"}},
+            "allOf": [
+              {"not": {"required": ["bearer_token"]}},
+              {"not": {"required": ["parent_execution_grant"]}},
+              {"not": {"required": ["parent_authority"]}}
+            ]
+          }
+        },
+        {
+          "if": {"properties": {"mode": {"const": "delegated_api"}}},
+          "then": {
+            "required": ["bearer_token", "workload_assertion", "parent_execution_grant"],
+            "properties": {"api_version": {"const": "aegivela.io/v1alpha3"}},
+            "allOf": [
+              {"not": {"required": ["parent_authority"]}}
+            ]
+          }
+        },
+        {
+          "if": {"properties": {"mode": {"const": "service_agent_api"}}},
+          "then": {
+            "required": ["workload_assertion"],
+            "properties": {"api_version": {"const": "aegivela.io/v1alpha1"}},
+            "allOf": [
+              {"not": {"required": ["bearer_token"]}},
+              {"not": {"required": ["parent_execution_grant"]}},
+              {"not": {"required": ["parent_authority"]}}
+            ]
+          }
+        },
+        {
+          "if": {"properties": {"mode": {"const": "twin_agent_api"}}},
+          "then": {
+            "required": ["workload_assertion"],
+            "properties": {"api_version": {"const": "aegivela.io/v1alpha1"}},
+            "allOf": [
+              {"not": {"required": ["bearer_token"]}},
+              {"not": {"required": ["parent_execution_grant"]}},
+              {"not": {"required": ["parent_authority"]}}
+            ]
+          }
+        }
+      ]
+    },
+    "execution_grant": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "grant_id", "principal", "scope", "audience", "expires_at", "issued_at", "evidence_refs"],
+      "properties": {
+        "api_version": {"const": "aegivela.io/v1alpha1"},
+        "grant_id": {"type": "string", "minLength": 1},
+        "principal": {"$ref": "#/$defs/principal"},
+        "scope": {"$ref": "#/$defs/scope"},
+        "audience": {"type": "string", "minLength": 1},
+        "expires_at": {"type": "string", "format": "date-time"},
+        "issued_at": {"type": "string", "format": "date-time"},
+        "task_binding": {"type": "string", "minLength": 1},
+        "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1}
+      }
+    },
+    "principal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["tenant_id", "actor_ref"],
+      "properties": {
+        "tenant_id": {"type": "string", "minLength": 1},
+        "subject_ref": {"type": "string", "minLength": 1},
+        "actor_ref": {"type": "string", "minLength": 1},
+        "client_id": {"type": "string", "minLength": 1},
+        "workload_ref": {"type": "string", "minLength": 1},
+        "agent_id": {"type": "string", "minLength": 1},
+        "agent_class": {"type": "string"},
+        "master_id": {"type": "string", "minLength": 1},
+        "organization_authority_root": {"type": "string", "minLength": 1},
+        "lifecycle_epoch": {"type": "integer", "minimum": 0},
+        "attestation_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "allow_result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "result", "decision_id", "evidence_refs"],
+      "properties": {
+        "api_version": {"$ref": "#/$defs/api_version"},
+        "result": {"const": "allow"},
+        "decision_id": {"type": "string", "minLength": 1},
+        "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1}
+      }
+    },
+    "error_envelope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_version", "code"],
+      "properties": {
+        "api_version": {"$ref": "#/$defs/api_version"},
+        "code": {"type": "string", "enum": ["invalid_pep_request", "unauthenticated", "authorization_denied", "authorization_unavailable"]}
+      }
+    }
+  }
+}

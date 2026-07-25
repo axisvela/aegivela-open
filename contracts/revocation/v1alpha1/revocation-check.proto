@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package revocation.v1alpha1;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/revocationcontract/pb/v1alpha1;v1alpha1";
+
+import "google/protobuf/timestamp.proto";
+
+service RevocationService {
+  rpc Check(RevocationCheckRequest) returns (RevocationCheckResponse);
+}
+
+enum SLOClass {
+  SLO_CLASS_UNSPECIFIED = 0;
+  SLO_CLASS_PRE_DISPATCH = 1;
+  SLO_CLASS_CONTINUATION = 2;
+  SLO_CLASS_CONNECTION = 3;
+}
+
+enum CheckOutcome {
+  CHECK_OUTCOME_UNSPECIFIED = 0;
+  CHECK_OUTCOME_CLEAR = 1;
+  CHECK_OUTCOME_REVOKED = 2;
+}
+
+message Selector {
+  string kind = 1;
+  string value = 2;
+}
+
+message RevocationCheckRequest {
+  string api_version = 1;
+  SLOClass class = 2;
+  repeated Selector selectors = 3;
+  optional int64 lifecycle_epoch = 4;
+  string trace_id = 5;
+}
+
+message RevocationCheckResponse {
+  string api_version = 1;
+  SLOClass class = 2;
+  CheckOutcome outcome = 3;
+  google.protobuf.Timestamp checked_at = 4;
+  string trace_id = 5;
+}

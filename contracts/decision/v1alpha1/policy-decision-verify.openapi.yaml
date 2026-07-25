@@ -1,0 +1,111 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Policy Decision Verification API
+  version: v1alpha1
+paths:
+  /v1/policy/decisions/verify:
+    post:
+      operationId: verifyPolicyDecision
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyDecisionVerifyRequest'
+      responses:
+        '200':
+          description: Policy decision verification result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyDecisionVerifyResponse'
+        '400':
+          $ref: '#/components/responses/InvalidDecisionRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/DecisionUnavailable'
+  /v1/policy/decisions/jwks:
+    get:
+      operationId: getPolicyDecisionJWKS
+      responses:
+        '200':
+          description: Public JWKS
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+components:
+  responses:
+    InvalidDecisionRequest:
+      description: invalid_decision_request
+    Unauthenticated:
+      description: unauthenticated
+    AuthorizationDenied:
+      description: authorization_denied
+    DecisionUnavailable:
+      description: decision_unavailable
+  schemas:
+    PolicyDecisionVerifyRequest:
+      type: object
+      additionalProperties: false
+      required: [api_version, signed_decision, expected_bindings]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        signed_decision: { type: string, minLength: 1 }
+        expected_bindings:
+          type: object
+          additionalProperties: false
+          required: [principal, action, resource]
+          properties:
+            principal:
+              type: object
+              additionalProperties: false
+              required: [tenant_id, actor_ref]
+              properties:
+                tenant_id: { type: string, minLength: 1 }
+                subject_ref: { type: string, minLength: 1 }
+                actor_ref: { type: string, minLength: 1 }
+                client_id: { type: string, minLength: 1 }
+                workload_ref: { type: string, minLength: 1 }
+                agent_id: { type: string, minLength: 1 }
+                agent_class: { type: string }
+                master_id: { type: string, minLength: 1 }
+                organization_authority_root: { type: string, minLength: 1 }
+                lifecycle_epoch: { type: integer, minimum: 0 }
+                attestation_ref: { type: string, minLength: 1 }
+            action: { type: string, minLength: 1 }
+            resource:
+              type: object
+              additionalProperties: false
+              required: [kind, reference]
+              properties:
+                kind: { type: string, minLength: 1 }
+                reference: { type: string, minLength: 1 }
+            scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+            audience: { type: string, minLength: 1 }
+            trace_id: { type: string, minLength: 1 }
+    PolicyDecisionVerifyResponse:
+      type: object
+      additionalProperties: false
+      required: [api_version, decision_id, valid, outcome, policy_version, expires_at, evidence_refs]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        decision_id: { type: string, minLength: 1 }
+        valid: { type: boolean }
+        outcome: { type: string, enum: [allow, deny, approval_required, revoked] }
+        policy_version: { type: string, minLength: 1 }
+        expires_at: { type: string, format: date-time }
+        obligations: { type: array, items: { type: string, minLength: 1 } }
+        evidence_refs: { type: array, items: { type: string, minLength: 1 }, minItems: 1 }
+        revoked: { type: boolean }

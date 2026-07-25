@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package agent.v1alpha1;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/agentcontract/pb;pb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+service AgentLifecycleService {
+  rpc Register(AgentRegisterRequest) returns (AgentRecord);
+  rpc Get(AgentGetRequest) returns (AgentRecord);
+  rpc Lifecycle(AgentLifecycleRequest) returns (AgentRecord);
+}
+
+enum AgentClass {
+  AGENT_CLASS_UNSPECIFIED = 0;
+  TWIN = 1;
+  SERVICE = 2;
+}
+
+enum LifecycleState {
+  LIFECYCLE_STATE_UNSPECIFIED = 0;
+  ACTIVE = 1;
+  SUSPENDED = 2;
+}
+
+enum LifecycleAction {
+  LIFECYCLE_ACTION_UNSPECIFIED = 0;
+  SUSPEND = 1;
+  RESTORE = 2;
+}
+
+message AgentRegisterRequest {
+  string api_version = 1;
+  AgentClass agent_class = 2;
+  string tenant_id = 3;
+  string actor_ref = 4;
+  string agent_id = 5;
+  optional string workload_ref = 6;
+  optional string attestation_ref = 7;
+  google.protobuf.Struct metadata = 8;
+  string trace_id = 9;
+}
+
+message AgentGetRequest {
+  string api_version = 1;
+  string agent_id = 2;
+  optional string trace_id = 3;
+}
+
+message AgentLifecycleRequest {
+  string api_version = 1;
+  string agent_id = 2;
+  LifecycleAction action = 3;
+  string reason = 4;
+  string trace_id = 5;
+}
+
+message AgentRecord {
+  string api_version = 1;
+  string agent_id = 2;
+  AgentClass agent_class = 3;
+  string tenant_id = 4;
+  string actor_ref = 5;
+  LifecycleState lifecycle_state = 6;
+  int64 lifecycle_epoch = 7;
+  optional string workload_ref = 8;
+  optional string attestation_ref = 9;
+  google.protobuf.Struct metadata = 10;
+  google.protobuf.Timestamp registered_at = 11;
+  optional google.protobuf.Timestamp suspended_at = 12;
+  optional google.protobuf.Timestamp restored_at = 13;
+}

@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package grant.v1alpha1;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/grantcontract/pb;pb";
+
+import "google/protobuf/timestamp.proto";
+
+service ExecutionGrantService {
+  rpc Issue(GrantIssueRequest) returns (GrantIssueResponse);
+  rpc Verify(GrantVerifyRequest) returns (GrantVerifyResponse);
+}
+
+message Principal {
+  string tenant_id = 1;
+  optional string subject_ref = 2;
+  string actor_ref = 3;
+  optional string client_id = 4;
+  optional string workload_ref = 5;
+  optional string agent_id = 6;
+  optional string agent_class = 7;
+  optional string master_id = 8;
+  optional string organization_authority_root = 9;
+  optional int64 lifecycle_epoch = 10;
+  optional string attestation_ref = 11;
+}
+
+message GrantIssueRequest {
+  string api_version = 1;
+  string bearer_token = 2;
+  string signed_allow_decision = 3;
+  repeated string requested_scope = 4;
+  optional string pre_authorization_jti = 5;
+  optional string approval_jti = 6;
+  string trace_id = 7;
+}
+
+message GrantIssueResponse {
+  string api_version = 1;
+  string grant_id = 2;
+  Principal principal = 3;
+  repeated string scope = 4;
+  string audience = 5;
+  google.protobuf.Timestamp expires_at = 6;
+  google.protobuf.Timestamp issued_at = 7;
+  optional string task_binding = 8;
+  optional string pre_authorization_jti = 9;
+  optional string approval_jti = 10;
+  repeated string evidence_refs = 11;
+}
+
+message ExpectedBindings {
+  string audience = 1;
+  repeated string scope = 2;
+  optional string task_binding = 3;
+  optional string trace_id = 4;
+}
+
+message GrantVerifyRequest {
+  string api_version = 1;
+  string signed_grant = 2;
+  ExpectedBindings expected_bindings = 3;
+}
+
+message GrantVerifyResponse {
+  string api_version = 1;
+  string grant_id = 2;
+  bool valid = 3;
+  Principal principal = 4;
+  repeated string scope = 5;
+  string audience = 6;
+  google.protobuf.Timestamp expires_at = 7;
+  bool expired = 8;
+  bool revoked = 9;
+  optional int64 revocation_check_epoch = 10;
+}
