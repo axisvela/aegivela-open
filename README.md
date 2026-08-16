@@ -27,16 +27,26 @@ See [OSS/EE Boundary](https://github.com/axisrobo/aegivela-open/blob/main/docs/o
 
 ### Binary Download
 
-Download the latest `aegivela-api` binary from [GitHub Releases](https://github.com/axisrobo/aegivela-open/releases):
+Download the latest `aegivela-api` binary for your platform from [GitHub Releases](https://github.com/axisrobo/aegivela-open/releases):
 
 ```bash
-# Linux / macOS
-curl -L -o aegivela-api https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api
+# Linux amd64 / arm64
+curl -L -o aegivela-api https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api-linux-amd64
+chmod +x aegivela-api
+curl -L -o aegivela-api https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api-linux-arm64
 chmod +x aegivela-api
 
-# Windows (PowerShell)
-Invoke-WebRequest -Uri "https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api.exe" -OutFile aegivela-api.exe
+# macOS amd64 / arm64
+curl -L -o aegivela-api https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api-darwin-amd64
+chmod +x aegivela-api
+curl -L -o aegivela-api https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api-darwin-arm64
+chmod +x aegivela-api
+
+# Windows amd64 (PowerShell)
+Invoke-WebRequest -Uri "https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api-windows-amd64.exe" -OutFile aegivela-api.exe
 ```
+
+Verify integrity against the [`SHA256SUMS`](https://github.com/axisrobo/aegivela-open/releases/latest/download/SHA256SUMS) manifest.
 
 ### Docker Image
 
@@ -84,7 +94,7 @@ AEGIVELA is consumed through three integration profiles that share the same iden
 ## Go SDK
 
 ```go
-import "github.com/axisrobo/aegivela-open/pepsdk"
+import "github.com/axisrobo/aegivela-open/sdk/go/pepsdk"
 
 client := pepsdk.NewClient("https://aegivela.internal:1886", http.DefaultClient)
 result, err := client.Authorize(ctx, route, input)
