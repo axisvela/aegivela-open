@@ -71,6 +71,7 @@ The API requires PostgreSQL and the following environment variables:
 | `AEGIVELA_EXECUTION_GRANT_SIGNING_KEY_ID` | see below | Key ID (kid) |
 | `AEGIVELA_EXECUTION_GRANT_ISSUER` | see below | Issuer URL |
 | `AEGIVELA_GRANT_AUDIENCE_REGISTRY_FILE` | see below | Grant audience allowlist JSON |
+| `AEGIVELA_LISTEN_ADDR` | no | Listen address override (default `:1886`) |
 
 Signing keys are required when decision/grant signing is enabled. Generate keys with:
 
