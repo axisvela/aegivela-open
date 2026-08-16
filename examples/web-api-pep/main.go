@@ -6,7 +6,7 @@
 //   GET  /api/delegated -- delegated_api (system acting on behalf of user)
 //
 // Build: cd examples/web-api-pep && go build -o pep-demo .
-// Run:   AEGIVELA_URL=http://localhost:8080 ./pep-demo
+// Run:   AEGIVELA_URL=http://localhost:1886 ./pep-demo
 package main
 
 import (
@@ -21,7 +21,7 @@ import (
 func main() {
 	aegivelaURL := os.Getenv("AEGIVELA_URL")
 	if aegivelaURL == "" {
-		aegivelaURL = "http://localhost:8080"
+		aegivelaURL = "http://localhost:1886"
 	}
 
 	client := pepsdk.NewClient(aegivelaURL, http.DefaultClient)

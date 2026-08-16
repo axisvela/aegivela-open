@@ -86,7 +86,7 @@ AEGIVELA is consumed through three integration profiles that share the same iden
 ```go
 import "github.com/axisrobo/aegivela-open/pepsdk"
 
-client := pepsdk.NewClient("https://aegivela.internal:8080", http.DefaultClient)
+client := pepsdk.NewClient("https://aegivela.internal:1886", http.DefaultClient)
 result, err := client.Authorize(ctx, route, input)
 ```
 
