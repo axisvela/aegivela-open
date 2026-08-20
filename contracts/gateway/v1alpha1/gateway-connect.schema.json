@@ -15,7 +15,7 @@
     "compact_token": {"type": "string", "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$", "maxLength": 16384},
     "scope": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
     "action": {"type": "string", "enum": ["connection:open", "backend:request", "credential:inject", "tool:invoke"]},
-    "outcome": {"type": "string", "enum": ["allow", "deny", "approval_required"]},
+    "outcome": {"type": "string", "enum": ["allow", "deny", "approval_required", "revoked"]},
     "agent_class": {"type": "string", "enum": ["twin", "service"]},
     "connect_request": {
       "type": "object", "additionalProperties": false,
@@ -64,7 +64,12 @@
         "offline_eligible": {"type": "boolean"},
         "scope": {"$ref": "#/$defs/scope"},
         "obligations": {"type": "array", "items": {"type": "string", "minLength": 1}},
-        "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1}
+        "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+        "credential_ref": {"type": "string", "minLength": 1},
+        "credential_class": {"type": "string", "enum": ["aws_sigv4", "header", "query", "body"]},
+        "mitm_required": {"type": "boolean"},
+        "mitm_scope": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "allowed_target_paths": {"type": "array", "items": {"type": "string", "minLength": 1}}
       }
     }
   }

@@ -1,0 +1,11 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "operations": [
+    {"operation_id": "createWebResource", "method": "post", "path": "/v1/web-resources", "responses": ["201", "400", "401", "413", "503"]},
+    {"operation_id": "listWebResources", "method": "get", "path": "/v1/web-resources/{productID}", "responses": ["200", "401", "404", "503"]},
+    {"operation_id": "getWebResource", "method": "get", "path": "/v1/web-resources/{productID}/{resourceID}", "responses": ["200", "401", "404", "503"]},
+    {"operation_id": "deprecateWebResource", "method": "post", "path": "/v1/web-resources/{productID}/{resourceID}:deprecate", "responses": ["200", "401", "404", "503"]},
+    {"operation_id": "createWebResourcePolicy", "method": "post", "path": "/v1/web-resource-policies", "responses": ["201", "400", "401", "413", "404", "503"]},
+    {"operation_id": "resolveWebPermissions", "method": "post", "path": "/v1/web-permissions:resolve", "responses": ["200", "400", "401", "413", "404", "503"]}
+  ]
+}

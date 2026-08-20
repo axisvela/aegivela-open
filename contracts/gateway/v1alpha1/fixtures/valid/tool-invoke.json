@@ -1,0 +1,25 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "action": "tool:invoke",
+  "tenant_id": "tenant-a",
+  "agent_id": "twin-agent-1",
+  "agent_class": "twin",
+  "workload_assertion": "eyJhbGciOiJFZERTQSJ9.eyJ3b3JrbG9hZCI6Indvcmtsb2FkLXByb2QifQ.c2lnbmF0dXJlLXRvb2w",
+  "attribution": {
+    "human_ref": "master-1",
+    "agent_ref": "twin-agent-1",
+    "tool_id": "code-analysis",
+    "skill_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "implementation_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "signed_at": "2026-01-01T00:00:00Z",
+    "signature": "eyJhbGciOiJFZERTQSJ9.eyJzaWduYXR1cmUiOiJ0b29sLWF0dHJpYnV0ZS1zaWduYXR1cmUifQ.c2lnbmF0dXJlLXRvb2w"
+  },
+  "argument_digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "argument_classification": "source-code",
+  "target_host": "api.example.com",
+  "target_scheme": "https",
+  "target_path": "/v1/analyze",
+  "requested_scope": ["tool.execute"],
+  "audience": "server-gateway",
+  "trace_id": "trace-tool-invoke-001"
+}

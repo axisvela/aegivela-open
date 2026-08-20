@@ -1,0 +1,122 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Gateway Connect API
+  version: v1alpha1
+paths:
+  /v1/gateway/connect:
+    post:
+      operationId: evaluateGatewayConnect
+      parameters:
+        - name: X-Aegivela-Internal-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GatewayConnectRequest'
+      responses:
+        '200':
+          description: Gateway connect decision
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayConnectResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/AuthorizationUnconfigured'
+components:
+  responses:
+    InvalidRequest:
+      description: invalid_request
+    Unauthenticated:
+      description: unauthenticated
+    AuthorizationDenied:
+      description: authorization_denied
+    AuthorizationUnconfigured:
+      description: authorization_unconfigured
+  schemas:
+    GatewayAction:
+      enum: [connection:open, backend:request, credential:inject, tool:invoke]
+    GatewayAgentClass:
+      enum: [twin, service]
+    GatewayOutcome:
+      enum: [allow, deny, approval_required, revoked]
+    CredentialClass:
+      enum: [aws_sigv4, header, query, body]
+    ToolAttribution:
+      type: object
+      additionalProperties: false
+      required: [human_ref, agent_ref, tool_id, skill_hash, implementation_digest]
+      properties:
+        human_ref: { type: string, minLength: 1 }
+        agent_ref: { type: string, minLength: 1 }
+        tool_id: { type: string, minLength: 1 }
+        skill_hash: { type: string, minLength: 1, pattern: '^sha256:[a-f0-9]{64}$' }
+        implementation_digest: { type: string, minLength: 1, pattern: '^sha256:[a-f0-9]{64}$' }
+        signed_at: { type: string, format: date-time }
+        signature: { type: string, minLength: 1 }
+    GatewayConnectRequest:
+      type: object
+      additionalProperties: false
+      required: [api_version, action, tenant_id, agent_id, agent_class, workload_assertion, target_host, target_scheme, requested_scope, audience, trace_id]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        action: { $ref: '#/components/schemas/GatewayAction' }
+        tenant_id: { type: string, minLength: 1 }
+        agent_id: { type: string, minLength: 1 }
+        agent_class: { $ref: '#/components/schemas/GatewayAgentClass' }
+        workload_assertion: { type: string, minLength: 1 }
+        attribution: { $ref: '#/components/schemas/ToolAttribution' }
+        argument_digest: { type: string, minLength: 1 }
+        argument_classification: { type: string, minLength: 1 }
+        target_host: { type: string, minLength: 1 }
+        target_scheme: { enum: [http, https] }
+        target_path: { type: string, minLength: 1 }
+        requested_scope:
+          type: array
+          items: { type: string, minLength: 1 }
+          minItems: 1
+          uniqueItems: true
+        audience: { type: string, minLength: 1 }
+        trace_id: { type: string, minLength: 1 }
+    GatewayConnectResponse:
+      type: object
+      additionalProperties: false
+      required: [api_version, decision_id, outcome, policy_version, expires_at, ttl_seconds, offline_eligible, evidence_refs]
+      properties:
+        api_version: { const: aegivela.io/v1alpha1 }
+        decision_id: { type: string, minLength: 1 }
+        outcome: { $ref: '#/components/schemas/GatewayOutcome' }
+        policy_version: { type: string, minLength: 1 }
+        expires_at: { type: string, format: date-time }
+        ttl_seconds: { type: integer, minimum: 0, maximum: 3600 }
+        offline_eligible: { type: boolean }
+        scope:
+          type: array
+          items: { type: string, minLength: 1 }
+        obligations:
+          type: array
+          items: { type: string, minLength: 1 }
+        evidence_refs:
+          type: array
+          items: { type: string, minLength: 1 }
+          minItems: 1
+        credential_ref: { type: string, minLength: 1 }
+        credential_class: { $ref: '#/components/schemas/CredentialClass' }
+        mitm_required: { type: boolean }
+        mitm_scope:
+          type: array
+          items: { type: string, minLength: 1 }
+        allowed_target_paths:
+          type: array
+          items: { type: string, minLength: 1 }

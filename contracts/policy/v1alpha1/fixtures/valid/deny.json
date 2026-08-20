@@ -1,0 +1,23 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "authorization_mode": "human_web",
+    "principal": { "tenant_id": "tenant-acme", "subject_ref": "user-ada", "actor_ref": "user-ada" },
+    "action": "dataset.delete",
+    "resource": { "kind": "dataset", "reference": "dataset-deny-123" },
+    "requested_scope": ["datasets.delete"],
+    "audience": "research-api",
+    "requested_expires_at": "2099-01-05T01:00:00Z",
+    "task_binding": "task-deny-123",
+    "trace_id": "trace-deny-123"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "decision_id": "decision-deny",
+    "outcome": "deny",
+    "policy_version": "policy-v1",
+    "expires_at": "2099-01-05T00:30:00Z",
+    "obligations": [],
+    "evidence_refs": ["evidence://tenant-acme/decision-deny"]
+  }
+}

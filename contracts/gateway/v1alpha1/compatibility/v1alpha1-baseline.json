@@ -1,0 +1,13 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "modes": ["connection:open", "backend:request", "credential:inject", "tool:invoke"],
+  "required_fields": {
+    "connection:open": ["workload_assertion", "agent_id", "agent_class", "target_host", "target_scheme"],
+    "backend:request": ["workload_assertion", "agent_id", "agent_class", "target_host", "target_scheme"],
+    "credential:inject": ["workload_assertion", "agent_id", "agent_class", "target_host", "target_scheme"],
+    "tool:invoke": ["workload_assertion", "agent_id", "agent_class", "attribution", "argument_digest", "argument_classification", "target_host", "target_scheme"]
+  },
+  "decision_fields": ["decision_id", "outcome", "policy_version", "expires_at", "ttl_seconds", "offline_eligible", "evidence_refs", "credential_ref", "credential_class", "mitm_required", "mitm_scope", "allowed_target_paths"],
+  "error_codes": ["invalid_request", "unauthenticated", "authorization_denied", "authorization_unconfigured"],
+  "operation_id": "evaluateGatewayConnect"
+}

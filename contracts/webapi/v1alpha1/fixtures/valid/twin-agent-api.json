@@ -1,0 +1,15 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "mode": "twin_agent_api",
+  "workload_assertion": "eyJhbGciOiJFZERTQSJ9.eyJ3b3JrbG9hZCI6Indvcmtsb2FkLXByb2QifQ.c2lnbmF0dXJlLXR3aW4",
+  "requested_scope": ["datasets.read"],
+  "audience": "research-api",
+  "route": {
+    "api_version": "aegivela.io/v1alpha1",
+    "path": "/api/v1/datasets",
+    "method": "GET",
+    "audience": "research-api",
+    "trace_id": "trace-twin-agent-001"
+  },
+  "trace_id": "trace-twin-agent-001"
+}

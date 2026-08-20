@@ -1,0 +1,11 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "class": "pre_dispatch",
+    "selectors": [
+      {"kind": "grant_jti", "value": "123e4567-e89b-42d3-a456-426614174000"}
+    ],
+    "tenant_id": "tenant-evil",
+    "trace_id": "trace-check-4"
+  }
+}

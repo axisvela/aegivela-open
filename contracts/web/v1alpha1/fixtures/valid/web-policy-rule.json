@@ -1,0 +1,13 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "product_id": "moduregis",
+  "rule_id": "catalog-editor-access",
+  "resource_id": "moduregis.console.catalog",
+  "descendants": true,
+  "subject_selector": {
+    "selector_type": "verified_subject",
+    "verified_subject_ref": "subject-ada"
+  },
+  "actions": ["visible", "read", "edit"],
+  "effect": "allow"
+}

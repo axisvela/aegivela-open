@@ -1,0 +1,24 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "authorization_mode": "twin_agent_api",
+    "principal": { "tenant_id": "tenant-acme", "actor_ref": "agent-twin", "workload_ref": "workload-twin-prod", "agent_id": "agent-twin", "agent_class": "twin", "master_id": "master-ada", "lifecycle_epoch": 9, "attestation_ref": "attestation-twin-9" },
+    "action": "simulation.run",
+    "resource": { "kind": "simulation", "reference": "simulation-123" },
+    "requested_scope": ["simulations.run"],
+    "audience": "twin-api",
+    "requested_expires_at": "2099-01-05T01:00:00Z",
+    "task_binding": "task-twin-123",
+    "parent_authority": { "authority_ref": "authority-twin-123", "parent_scope": ["simulations.run"], "parent_audience": ["twin-api"], "parent_expires_at": "2099-01-05T02:00:00Z", "parent_task_binding": "task-twin-123" },
+    "trace_id": "trace-twin-123"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "decision_id": "decision-twin-allow",
+    "outcome": "allow",
+    "policy_version": "policy-v1",
+    "expires_at": "2099-01-05T00:30:00Z",
+    "obligations": ["record_evidence"],
+    "evidence_refs": ["evidence://tenant-acme/decision-twin-allow"]
+  }
+}

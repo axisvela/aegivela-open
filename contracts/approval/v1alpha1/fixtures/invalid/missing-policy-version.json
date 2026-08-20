@@ -1,0 +1,12 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.signature",
+    "action": "document.read",
+    "resource": { "kind": "document", "reference": "doc-123" },
+    "scope": ["documents.read"],
+    "expiry": "2099-01-01T01:00:00Z",
+    "reason": "Approved via manager review",
+    "trace_id": "trace-invalid-approval-123"
+  }
+}

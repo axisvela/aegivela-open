@@ -1,0 +1,13 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "authorization_mode": "delegated_api",
+    "principal": { "tenant_id": "tenant-acme", "subject_ref": "user-ada", "actor_ref": "user-ada", "client_id": "research-client", "workload_ref": "workload-research-prod" },
+    "action": "dataset.read",
+    "resource": { "kind": "dataset", "reference": "dataset-123" },
+    "requested_scope": ["datasets.read"],
+    "audience": "research-api",
+    "requested_expires_at": "2099-02-03T01:00:00Z",
+    "trace_id": "trace-invalid-delegated-parent"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha2",
+    "authorization_mode": "system_api",
+    "principal": { "tenant_id": "tenant-acme", "actor_ref": "service-billing", "organization_authority_root": "root-acme", "client_id": "billing-api", "workload_ref": "workload-billing-prod" },
+    "action": "invoice.read",
+    "resource": { "kind": "invoice", "reference": "invoice-123", "product_id": "moduregis", "resource_type": "invoice", "descriptor_id": "invoice-record", "descriptor_version": "v1", "attributes": { "region": "us-east-1", "status": "open" } },
+    "requested_scope": ["invoices.read"],
+    "audience": "billing-api",
+    "requested_expires_at": "2099-01-02T01:00:00Z",
+    "task_binding": "task-system-123",
+    "trace_id": "trace-system-123"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha2",
+    "structured_resource_digest": "aa6bfa91e57a0e8fdf1c3e1598bba29d72679e2737f6dffeb9b8a83146b68955",
+    "decision_id": "decision-structured-allow",
+    "outcome": "allow",
+    "policy_version": "policy-v1",
+    "expires_at": "2099-01-02T00:30:00Z",
+    "obligations": ["record_evidence"],
+    "evidence_refs": ["evidence://tenant-acme/decision-structured-allow"]
+  }
+}

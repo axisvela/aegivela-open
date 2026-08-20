@@ -1,0 +1,14 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.signature",
+    "action": "tool:invoke",
+    "resource": { "kind": "moduregis:capability", "reference": "cap-123" },
+    "scope": ["tool:invoke"],
+    "execution_id": "exec-tool-8",
+    "tool_id": "tool-unknown",
+    "skill_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "implementation_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "trace_id": "trace-tool-8"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "operations": [
+    {"operation_id":"createWorkloadBinding","method":"post","path":"/v1/workload-bindings","responses":["201","400","401","503"]},
+    {"operation_id":"issueWorkloadAssertion","method":"post","path":"/v1/workload-assertions/issue","responses":["200","400","401","503"]},
+    {"operation_id":"getWorkloadAssertionJWKS","method":"get","path":"/v1/workload-assertions/jwks","responses":["200","503"]}
+  ]
+}

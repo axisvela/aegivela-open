@@ -1,0 +1,1 @@
+{"api_version":"aegivela.io/v1alpha1","actor_ref":"system-a","organization_authority_root":"root-a","client_id":"client-a","workload_id":"workload-a","audience":"gateway","expires_at":"2026-07-24T12:05:00Z","trace_id":"trace-1"}

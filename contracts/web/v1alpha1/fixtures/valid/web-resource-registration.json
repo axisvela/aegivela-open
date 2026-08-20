@@ -1,0 +1,8 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "product_id": "moduregis",
+  "resource_id": "moduregis.console.catalog",
+  "kind": "page",
+  "display_name": "Catalog",
+  "projection_actions": ["visible", "read"]
+}

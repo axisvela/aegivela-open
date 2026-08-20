@@ -1,0 +1,13 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha2",
+    "authorization_mode": "human_web",
+    "principal": { "tenant_id": "tenant-acme", "actor_ref": "user-alice", "subject_ref": "user-alice", "agent_id": "agent-billing" },
+    "action": "invoice.read",
+    "resource": { "kind": "invoice", "reference": "invoice-123" },
+    "requested_scope": ["invoices.read"],
+    "audience": "billing-web",
+    "requested_expires_at": "2099-01-02T01:00:00Z",
+    "trace_id": "trace-human-123"
+  }
+}

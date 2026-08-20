@@ -1,0 +1,9 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "mode": "twin_agent_api",
+  "bearer_token": "eyJhbGciOiJFZERTQSJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.c2lnbmF0dXJlLWV4YW1wbGU",
+  "workload_assertion": "eyJhbGciOiJFZERTQSJ9.eyJ3b3JrbG9hZCI6Indvcmtsb2FkLXByb2QifQ.c2lnbmF0dXJlLXR3aW4",
+  "requested_scope": ["datasets.read"],
+  "audience": "research-api",
+  "trace_id": "trace-twin-agent-invalid-001"
+}

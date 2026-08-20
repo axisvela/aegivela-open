@@ -1,0 +1,45 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJhZ2VudC1ib3QifQ.signature",
+    "action": "document.read",
+    "resource": { "kind": "document", "reference": "doc-123" },
+    "scope": ["documents.read", "documents.write"],
+    "audience": "aegivela-console",
+    "expiry": "2099-01-01T01:00:00Z",
+    "policy_version": "policy-v3",
+    "task": "task-bot-123",
+    "session": "session-xyz-789",
+    "lifecycle": "active",
+    "max_grants": 10,
+    "trace_id": "trace-pre-auth-123"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "pre_authorization_id": "pre-auth-abc-123",
+    "principal": {
+      "tenant_id": "tenant-acme",
+      "actor_ref": "agent-bot",
+      "agent_id": "agent-bot",
+      "agent_class": "service",
+      "master_id": "master-abc",
+      "organization_authority_root": "root-acme",
+      "workload_ref": "workload-bot-prod",
+      "lifecycle_epoch": 1,
+      "attestation_ref": "attestation://tenant-acme/agent-bot"
+    },
+    "action": "document.read",
+    "resource": { "kind": "document", "reference": "doc-123" },
+    "scope": ["documents.read", "documents.write"],
+    "audience": "aegivela-console",
+    "expires_at": "2099-01-01T01:00:00Z",
+    "issued_at": "2025-07-01T00:00:00Z",
+    "policy_version": "policy-v3",
+    "max_grants": 10,
+    "remaining_grants": 10,
+    "task": "task-bot-123",
+    "session": "session-xyz-789",
+    "lifecycle": "active",
+    "evidence_refs": ["evidence://tenant-acme/pre-auth-abc-123"]
+  }
+}

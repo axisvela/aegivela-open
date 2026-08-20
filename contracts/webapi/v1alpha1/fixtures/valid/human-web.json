@@ -1,0 +1,15 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "mode": "human_web",
+  "bearer_token": "eyJhbGciOiJFZERTQSJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.c2lnbmF0dXJlLWV4YW1wbGU",
+  "requested_scope": ["datasets.read"],
+  "audience": "research-api",
+  "route": {
+    "api_version": "aegivela.io/v1alpha1",
+    "path": "/api/v1/datasets",
+    "method": "GET",
+    "audience": "research-api",
+    "trace_id": "trace-hw-001"
+  },
+  "trace_id": "trace-hw-001"
+}

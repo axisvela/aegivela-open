@@ -1,0 +1,9 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "subject_token_type": "urn:ietf:params:oauth:token-type:jwt",
+    "requested_audience": "aegivela-console",
+    "requested_scope": ["documents.read"],
+    "trace_id": "trace-invalid-exchange-123"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "authorization_mode": "delegated_api",
+    "principal": { "tenant_id": "tenant-acme", "subject_ref": "user-ada", "actor_ref": "user-ada", "client_id": "research-client", "workload_ref": "workload-research-prod" },
+    "action": "dataset.read",
+    "resource": { "kind": "dataset", "reference": "dataset-123" },
+    "requested_scope": ["datasets.read"],
+    "audience": "research-api",
+    "requested_expires_at": "2099-01-03T01:00:00Z",
+    "task_binding": "task-delegated-123",
+    "parent_authority": { "authority_ref": "authority-parent-123", "parent_scope": ["datasets.read", "datasets.list"], "parent_audience": ["research-api"], "parent_expires_at": "2099-01-03T02:00:00Z", "parent_task_binding": "task-delegated-123" },
+    "trace_id": "trace-delegated-123"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "decision_id": "decision-delegated-allow",
+    "outcome": "allow",
+    "policy_version": "policy-v1",
+    "expires_at": "2099-01-03T00:30:00Z",
+    "obligations": ["record_evidence"],
+    "evidence_refs": ["evidence://tenant-acme/decision-delegated-allow"]
+  }
+}

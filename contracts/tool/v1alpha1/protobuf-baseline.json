@@ -1,0 +1,6 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "schema_digest": "tool-invoke.schema.json@v1alpha1",
+  "protobuf_digest": "tool-invoke.proto@v1alpha1",
+  "compatible_versions": ["aegivela.io/v1alpha1"]
+}

@@ -1,0 +1,7 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "audience": "aegivela-console",
+    "trace_id": "trace-invalid-123"
+  }
+}

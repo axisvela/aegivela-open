@@ -1,0 +1,8 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJhZ2VudC1ib3QifQ.signature",
+    "requested_scope": ["documents.read"],
+    "trace_id": "trace-invalid-grant-123"
+  }
+}

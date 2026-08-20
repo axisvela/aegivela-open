@@ -1,0 +1,20 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEifQ.sig",
+    "action": "capability:publish",
+    "resource": { "kind": "moduregis:capability-version", "reference": "cap-123@2.0.0" },
+    "scope": ["capability:publish"],
+    "approval_artifact": "eyJhbGciOiJFZERTQSJ9.eyJhY3Rpb24iOiJjYXBhYmlsaXR5OnB1Ymxpc2gifQ.c2ln",
+    "trace_id": "trace-publish-1"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "decision_id": "dec-publish-1",
+    "outcome": "allow",
+    "policy_version": "moduregis-publish-v1",
+    "tenant_id": "tenant-acme",
+    "actor_id": "user-1",
+    "evidence_refs": ["aegivela://evidence/dec-publish-1"]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "modes": ["human_web", "system_api", "delegated_api", "service_agent_api", "twin_agent_api"],
+  "required_fields": {
+    "human_web": ["bearer_token"],
+    "system_api": ["workload_assertion"],
+    "delegated_api": ["bearer_token", "workload_assertion", "parent_execution_grant"],
+    "service_agent_api": ["workload_assertion"],
+    "twin_agent_api": ["workload_assertion"]
+  },
+  "error_codes": ["invalid_pep_request", "unauthenticated", "authorization_denied", "authorization_unavailable"],
+  "operation_id": "authorizeWebAPIPEP"
+}

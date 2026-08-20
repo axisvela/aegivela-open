@@ -1,0 +1,13 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJhZ2VudC1ib3QifQ.signature",
+    "action": "document.read",
+    "resource": { "kind": "document", "reference": "doc-123" },
+    "scope": ["documents.read"],
+    "audience": "aegivela-console",
+    "expiry": "2099-01-01T01:00:00Z",
+    "max_grants": 5,
+    "trace_id": "trace-invalid-pre-auth-123"
+  }
+}

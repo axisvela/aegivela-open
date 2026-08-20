@@ -1,0 +1,43 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJhZ2VudC1ib3QifQ.signature",
+    "artifact_digest": "sha256:abc123def456789",
+    "artifact_ref": "oci://registry.example.com/app:v1.2.3",
+    "signer_identity": "agent-bot@tenant-acme",
+    "signer_public_key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...\n-----END PUBLIC KEY-----",
+    "workload_id": "workload-bot-prod",
+    "workload_evidence": "eyJhbGciOiJFUzI1NiJ9.workload-evidence.signature",
+    "environment_claims": { "runtime": "container", "image": "app:v1.2.3" },
+    "audience": "aegivela-console",
+    "policy_version": "policy-v3",
+    "trace_id": "trace-attestation-123"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "attestation_id": "attestation-abc-123",
+    "principal": {
+      "tenant_id": "tenant-acme",
+      "actor_ref": "agent-bot",
+      "agent_id": "agent-bot",
+      "agent_class": "service",
+      "master_id": "master-abc",
+      "organization_authority_root": "root-acme",
+      "workload_ref": "workload-bot-prod",
+      "lifecycle_epoch": 1,
+      "attestation_ref": "attestation://tenant-acme/agent-bot"
+    },
+    "artifact_digest": "sha256:abc123def456789",
+    "artifact_ref": "oci://registry.example.com/app:v1.2.3",
+    "signer_identity": "agent-bot@tenant-acme",
+    "signer_public_key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...\n-----END PUBLIC KEY-----",
+    "workload_id": "workload-bot-prod",
+    "workload_evidence": "eyJhbGciOiJFUzI1NiJ9.workload-evidence.signature",
+    "environment_claims": { "runtime": "container", "image": "app:v1.2.3" },
+    "audience": "aegivela-console",
+    "policy_version": "policy-v3",
+    "issued_at": "2025-07-01T00:00:00Z",
+    "expires_at": "2099-01-01T01:00:00Z",
+    "evidence_refs": ["evidence://tenant-acme/attestation-abc-123"]
+  }
+}

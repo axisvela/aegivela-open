@@ -1,0 +1,15 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "authorization_mode": "service_agent_api",
+    "principal": { "tenant_id": "tenant-acme", "actor_ref": "agent-ops", "organization_authority_root": "root-acme", "workload_ref": "workload-ops-prod", "agent_id": "agent-ops", "agent_class": "service", "master_id": "master-ada", "lifecycle_epoch": 7, "attestation_ref": "attestation-ops-7" },
+    "action": "deployment.read",
+    "resource": { "kind": "deployment", "reference": "deployment-123" },
+    "requested_scope": ["deployments.read"],
+    "audience": "operations-api",
+    "requested_expires_at": "2099-02-04T01:00:00Z",
+    "task_binding": "task-service-123",
+    "parent_authority": { "authority_ref": "authority-service-123", "parent_scope": ["deployments.read"], "parent_audience": ["operations-api"], "parent_expires_at": "2099-02-04T02:00:00Z", "parent_task_binding": "task-service-123" },
+    "trace_id": "trace-invalid-service-master"
+  }
+}

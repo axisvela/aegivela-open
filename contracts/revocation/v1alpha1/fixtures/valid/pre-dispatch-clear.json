@@ -1,0 +1,18 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "class": "pre_dispatch",
+    "selectors": [
+      {"kind": "grant_jti", "value": "123e4567-e89b-42d3-a456-426614174000"},
+      {"kind": "subject_ref", "value": "user-1"}
+    ],
+    "trace_id": "trace-check-1"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "class": "pre_dispatch",
+    "outcome": "clear",
+    "checked_at": "2026-07-25T00:00:00Z",
+    "trace_id": "trace-check-1"
+  }
+}

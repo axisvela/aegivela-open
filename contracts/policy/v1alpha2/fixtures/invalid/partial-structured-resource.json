@@ -1,0 +1,13 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha2",
+    "authorization_mode": "system_api",
+    "principal": { "tenant_id": "tenant-acme", "actor_ref": "service-billing", "organization_authority_root": "root-acme", "client_id": "billing-api", "workload_ref": "workload-billing-prod" },
+    "action": "invoice.read",
+    "resource": { "kind": "invoice", "reference": "invoice-123", "product_id": "moduregis", "resource_type": "invoice" },
+    "requested_scope": ["invoices.read"],
+    "audience": "billing-api",
+    "requested_expires_at": "2099-01-02T01:00:00Z",
+    "trace_id": "trace-system-123"
+  }
+}

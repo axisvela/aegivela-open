@@ -1,0 +1,10 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "class": "continuation",
+    "selectors": [
+      {"kind": "grant_jti", "value": "00000000-0000-0000-0000-000000000000"}
+    ],
+    "trace_id": "trace-check-s3"
+  }
+}

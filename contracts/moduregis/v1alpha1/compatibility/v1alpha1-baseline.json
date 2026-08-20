@@ -1,0 +1,27 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "actions": ["capability:read", "capability:publish", "adapter:activate", "capability:invoke"],
+  "adapter_selection": {
+    "default": "DenyAll",
+    "configured": "AEGIVELA_MODUREGIS_ADAPTER",
+    "unconfigured_error": "503 authorization_unconfigured"
+  },
+  "outcome_mapping": {
+    "allow": "non-empty tenant_id, actor_id, and policy_version required per Moduregis port",
+    "deny": "ErrDenied",
+    "approval_required": "governed state; Moduregis presents approval workflow and resubmits with approval reference",
+    "revoked": "ErrDenied"
+  },
+  "port_requirements": [
+    "Moduregis port must carry decision_id and evidence_refs (additive fields)",
+    "Moduregis port must reject an allow result with an empty policy_version",
+    "ErrUnauthenticated must be distinct from ErrUnavailable",
+    "DenyAll remains mapped to 503 authorization_unconfigured"
+  ],
+  "action_resource_mappings": {
+    "capability:read": { "required_action": "capability:read", "resource_kind": "moduregis:capability", "returns": "principal" },
+    "capability:publish": { "required_action": "capability:publish", "resource_kind": "moduregis:capability-version", "requires": ["scope", "approval_artifact"], "returns": "principal" },
+    "adapter:activate": { "required_action": "adapter:activate", "resource_kind": "moduregis:adapter", "requires": ["adapter_id", "adapter_version"], "returns": "principal" },
+    "capability:invoke": { "required_action": "capability:invoke", "resource_kind": "moduregis:capability-version", "requires": ["scope", "execution_id"], "returns": "grant_token" }
+  }
+}

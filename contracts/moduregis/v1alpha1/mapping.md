@@ -50,3 +50,14 @@ This contract defines the four MODUREGIS Capability Governance profile actions a
 | `503 authorization_unconfigured` | `UNAVAILABLE` | Adapter is not configured (DenyAll) or AEGIVELA dependency is unavailable |
 
 All endpoints require the `X-AEGIVELA-PEP` internal header. This is the first public v1alpha1 protobuf baseline. Future releases must preserve this baseline's field numbers and field types.
+
+## Module Publication
+
+The schema and fixtures in this directory ship byte-identically inside the
+Go module as `backend/pepsdk/moduregiscontract` (embedded under `files/`),
+kept in parity by `sync_test.go`. Downstream repositories (MODUREGIS)
+consume the contract by requiring `github.com/axisrobo/aegivela/backend` at
+a `backend/v*` module tag and must not copy these files. Changes here
+require re-running the parity sync (copy into
+`backend/pepsdk/moduregiscontract/files/`) and a new module tag before
+downstream consumers pick them up.

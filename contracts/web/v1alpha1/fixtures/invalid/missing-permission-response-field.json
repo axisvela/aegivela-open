@@ -1,0 +1,10 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "permission_set_id": "permission-set-moduregis-console",
+  "resource_permissions": {
+    "moduregis.console.catalog:visible": true
+  },
+  "policy_version": "moduregis-web-policy-v7",
+  "resource_tree_version": "moduregis-console-tree-v3",
+  "expires_at": "2099-01-01T00:00:00Z"
+}

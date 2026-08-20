@@ -1,0 +1,32 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJhZ2VudC1ib3QifQ.signature",
+    "signed_allow_decision": "eyJhbGciOiJFUzI1NiJ9.decision-payload.signature",
+    "requested_scope": ["documents.read", "documents.write"],
+    "approval_jti": "approval-abc-123",
+    "trace_id": "trace-grant-issue-123"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "grant_id": "grant-xyz-456",
+    "principal": {
+      "tenant_id": "tenant-acme",
+      "actor_ref": "agent-bot",
+      "agent_id": "agent-bot",
+      "agent_class": "service",
+      "master_id": "master-abc",
+      "organization_authority_root": "root-acme",
+      "workload_ref": "workload-bot-prod",
+      "lifecycle_epoch": 1,
+      "attestation_ref": "attestation://tenant-acme/agent-bot"
+    },
+    "scope": ["documents.read", "documents.write"],
+    "audience": "aegivela-console",
+    "expires_at": "2099-01-01T01:00:00Z",
+    "issued_at": "2025-01-01T00:00:00Z",
+    "task_binding": "task-bot-123",
+    "approval_jti": "approval-abc-123",
+    "evidence_refs": ["evidence://tenant-acme/grant-xyz-456"]
+  }
+}

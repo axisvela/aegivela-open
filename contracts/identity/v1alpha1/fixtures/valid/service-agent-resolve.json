@@ -1,0 +1,22 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJhZ2VudC1ib3QifQ.signature",
+    "audience": "aegivela-console",
+    "trace_id": "trace-resolve-123"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "principal": {
+      "tenant_id": "tenant-acme",
+      "actor_ref": "agent-bot",
+      "agent_id": "agent-bot",
+      "agent_class": "service",
+      "master_id": "master-abc",
+      "organization_authority_root": "root-acme",
+      "workload_ref": "workload-bot-prod",
+      "lifecycle_epoch": 1,
+      "attestation_ref": "attestation://tenant-acme/agent-bot"
+    }
+  }
+}

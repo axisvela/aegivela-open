@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package gateway.v1alpha1;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/gatewaycontract/pb/v1alpha1;v1alpha1";
+
+import "google/protobuf/timestamp.proto";
+
+service GatewayService {
+  rpc Connect(GatewayConnectRequest) returns (GatewayConnectResponse);
+}
+
+enum GatewayAction {
+  GATEWAY_ACTION_UNSPECIFIED = 0;
+  GATEWAY_ACTION_CONNECTION_OPEN = 1;
+  GATEWAY_ACTION_BACKEND_REQUEST = 2;
+  GATEWAY_ACTION_CREDENTIAL_INJECT = 3;
+  GATEWAY_ACTION_TOOL_INVOKE = 4;
+}
+
+enum GatewayAgentClass {
+  GATEWAY_AGENT_CLASS_UNSPECIFIED = 0;
+  GATEWAY_AGENT_CLASS_TWIN = 1;
+  GATEWAY_AGENT_CLASS_SERVICE = 2;
+}
+
+enum GatewayOutcome {
+  GATEWAY_OUTCOME_UNSPECIFIED = 0;
+  GATEWAY_OUTCOME_ALLOW = 1;
+  GATEWAY_OUTCOME_DENY = 2;
+  GATEWAY_OUTCOME_APPROVAL_REQUIRED = 3;
+  GATEWAY_OUTCOME_REVOKED = 4;
+}
+
+enum CredentialClass {
+  CREDENTIAL_CLASS_UNSPECIFIED = 0;
+  CREDENTIAL_CLASS_AWS_SIGV4 = 1;
+  CREDENTIAL_CLASS_HEADER = 2;
+  CREDENTIAL_CLASS_QUERY = 3;
+  CREDENTIAL_CLASS_BODY = 4;
+}
+
+message ToolAttribution {
+  string human_ref = 1;
+  string agent_ref = 2;
+  string tool_id = 3;
+  string skill_hash = 4;
+  string implementation_digest = 5;
+  google.protobuf.Timestamp signed_at = 6;
+  string signature = 7;
+}
+
+message GatewayConnectRequest {
+  string api_version = 1;
+  GatewayAction action = 2;
+  string tenant_id = 3;
+  string agent_id = 4;
+  GatewayAgentClass agent_class = 5;
+  string workload_assertion = 6;
+  ToolAttribution attribution = 7;
+  string argument_digest = 8;
+  string argument_classification = 9;
+  string target_host = 10;
+  string target_scheme = 11;
+  string target_path = 12;
+  repeated string requested_scope = 13;
+  string audience = 14;
+  string trace_id = 15;
+}
+
+message GatewayConnectResponse {
+  string api_version = 1;
+  string decision_id = 2;
+  GatewayOutcome outcome = 3;
+  string policy_version = 4;
+  google.protobuf.Timestamp expires_at = 5;
+  int32 ttl_seconds = 6;
+  bool offline_eligible = 7;
+  repeated string scope = 8;
+  repeated string obligations = 9;
+  repeated string evidence_refs = 10;
+  string credential_ref = 11;
+  CredentialClass credential_class = 12;
+  bool mitm_required = 13;
+  repeated string mitm_scope = 14;
+  repeated string allowed_target_paths = 15;
+}

@@ -1,0 +1,13 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "expected_bindings": {
+      "principal": {
+        "tenant_id": "tenant-acme",
+        "actor_ref": "agent-bot"
+      },
+      "action": "document.read",
+      "resource": { "kind": "document", "reference": "doc-123" }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "artifact_digest": "sha256:abc123def456789",
+    "artifact_ref": "oci://registry.example.com/app:v1.2.3",
+    "signer_identity": "agent-bot@tenant-acme",
+    "signer_public_key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...\n-----END PUBLIC KEY-----",
+    "audience": "aegivela-console",
+    "policy_version": "policy-v3",
+    "trace_id": "trace-invalid-attestation-123"
+  }
+}

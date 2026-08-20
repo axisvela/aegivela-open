@@ -1,0 +1,13 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "product_id": "moduregis",
+  "rule_id": "catalog-editor-access",
+  "resource_id": "moduregis.console.catalog",
+  "descendants": false,
+  "subject_selector": {
+    "selector_type": "role",
+    "role_ref": "catalog-editor"
+  },
+  "actions": ["edit"],
+  "effect": "permit"
+}

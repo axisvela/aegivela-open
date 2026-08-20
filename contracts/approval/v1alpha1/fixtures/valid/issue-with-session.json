@@ -1,0 +1,36 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.signature",
+    "action": "document.read",
+    "resource": { "kind": "document", "reference": "doc-123" },
+    "scope": ["documents.read"],
+    "expiry": "2099-01-01T01:00:00Z",
+    "reason": "Approved via manager review",
+    "policy_version": "policy-v3",
+    "session": "session-xyz-789",
+    "lifecycle": "active",
+    "evidence_refs": ["evidence://tenant-acme/review-456"],
+    "trace_id": "trace-approval-123"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "approval_id": "approval-abc-123",
+    "principal": {
+      "tenant_id": "tenant-acme",
+      "subject_ref": "user-ada",
+      "actor_ref": "user-ada",
+      "client_id": "console-web"
+    },
+    "action": "document.read",
+    "resource": { "kind": "document", "reference": "doc-123" },
+    "scope": ["documents.read"],
+    "expires_at": "2099-01-01T01:00:00Z",
+    "issued_at": "2025-07-01T00:00:00Z",
+    "reason": "Approved via manager review",
+    "policy_version": "policy-v3",
+    "session": "session-xyz-789",
+    "lifecycle": "active",
+    "evidence_refs": ["evidence://tenant-acme/review-456", "evidence://tenant-acme/approval-abc-123"]
+  }
+}

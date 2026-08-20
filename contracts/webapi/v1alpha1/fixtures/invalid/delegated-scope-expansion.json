@@ -1,0 +1,16 @@
+{
+  "api_version": "aegivela.io/v1alpha3",
+  "mode": "delegated_api",
+  "bearer_token": "eyJhbGciOiJFZERTQSJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.c2lnbmF0dXJlLWRlbGVnYXRl",
+  "workload_assertion": "eyJhbGciOiJFZERTQSJ9.eyJ3b3JrbG9hZCI6Indvcmtsb2FkLXByb2QifQ.c2lnbmF0dXJlLXdvcmtsb2Fk",
+  "parent_authority": {
+    "authority_ref": "authority-parent-123",
+    "parent_scope": ["datasets.read", "datasets.list"],
+    "parent_audience": ["research-api"],
+    "parent_expires_at": "2099-01-03T02:00:00Z",
+    "parent_task_binding": "task-delegated-001"
+  },
+  "requested_scope": ["datasets.read"],
+  "audience": "research-api",
+  "trace_id": "trace-delegated-invalid-001"
+}

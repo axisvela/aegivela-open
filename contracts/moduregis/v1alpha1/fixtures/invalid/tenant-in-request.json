@@ -1,0 +1,10 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEifQ.sig",
+    "action": "capability:read",
+    "resource": { "kind": "moduregis:capability", "reference": "cap-123" },
+    "tenant_id": "tenant-evil",
+    "trace_id": "trace-read-2"
+  }
+}

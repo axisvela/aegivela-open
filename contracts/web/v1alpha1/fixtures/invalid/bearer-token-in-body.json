@@ -1,0 +1,5 @@
+{
+  "api_version": "aegivela.io/v1alpha1",
+  "product_id": "moduregis",
+  "bearer_token": "enterprise-jwt-must-be-a-header"
+}
