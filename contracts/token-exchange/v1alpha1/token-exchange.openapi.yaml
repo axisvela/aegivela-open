@@ -48,11 +48,11 @@ components:
     TokenExchangeRequest:
       type: object
       additionalProperties: false
-      required: [api_version, subject_token, subject_token_type, requested_audience, requested_scope, trace_id]
+      required: [api_version, subject_token, subject_token_type, signed_decision, requested_audience, requested_scope, trace_id]
       properties:
         api_version: { const: aegivela.io/v1alpha1 }
         subject_token: { type: string, minLength: 1 }
-        subject_token_type: { type: string, enum: [urn:ietf:params:oauth:token-type:jwt, urn:aegivela:token-type:execution-grant] }
+        subject_token_type: { type: string, enum: [urn:ietf:params:oauth:token-type:jwt, urn:aegivela:token-type:execution-grant] }`n        signed_decision: { type: string, minLength: 1, description: "Canonical signed allow decision authorizing the exchange; token exchange never synthesizes an allow." }
         requested_audience: { type: string, minLength: 1 }
         requested_scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
         requested_resource_ref:
