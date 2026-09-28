@@ -40,4 +40,4 @@ The envelope is a self-contained JSON object suitable for:
 - Persistence in a product audit index (MODUREGIS Audit Index) alongside its native events
 - Correlation across repositories using `trace_id`, `namespace`, `decision_id`, and `grant_jti`
 
-AEGIVELA emits evidence through a `Recorder` interface instantiated per domain. The recorder's output format matches this schema.
+AEGIVELA emits evidence through a `Recorder` interface instantiated per domain. The recorder's output format matches this schema. One `securityevidence/postgres` recorder persists the same envelope to the append-only `evidence_events` table, indexed by `tenant_id`, `namespace`, `trace_id`, `decision_id`, `grant_jti`, `approval_jti`, and `policy_version` so Decision, Grant, Approval, and PEP events correlate ([ADR-0014](../../../docs/adr/0014-persist-sanitized-security-evidence.md)); log and SIEM export continue alongside it.
