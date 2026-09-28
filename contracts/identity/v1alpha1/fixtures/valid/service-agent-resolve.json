@@ -12,11 +12,14 @@
       "actor_ref": "agent-bot",
       "agent_id": "agent-bot",
       "agent_class": "service",
-      "master_id": "master-abc",
       "organization_authority_root": "root-acme",
       "workload_ref": "workload-bot-prod",
-      "lifecycle_epoch": 1,
-      "attestation_ref": "attestation://tenant-acme/agent-bot"
+      "attestation_ref": "attestation://tenant-acme/agent-bot",
+      "namespace": "https://registry.example.test/ns/acme",
+      "authority_binding": "organization_root",
+      "agent_epoch": 4,
+      "identity_epoch": 7,
+      "instance_id": "22222222-2222-2222-2222-222222222222"
     }
   }
 }

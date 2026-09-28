@@ -80,3 +80,8 @@ components:
             organization_authority_root: { type: string, minLength: 1 }
             lifecycle_epoch: { type: integer, minimum: 0 }
             attestation_ref: { type: string, minLength: 1 }
+            namespace: { type: string, minLength: 1 }
+            authority_binding: { enum: [human_master, organization_root] }
+            agent_epoch: { type: integer, minimum: 1 }
+            identity_epoch: { type: integer, minimum: 1 }
+            instance_id: { type: string, minLength: 1 }

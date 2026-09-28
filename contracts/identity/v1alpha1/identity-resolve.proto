@@ -32,4 +32,9 @@ message Principal {
   optional string organization_authority_root = 9;
   optional int64 lifecycle_epoch = 10;
   optional string attestation_ref = 11;
+  optional string namespace = 12;
+  optional string authority_binding = 13;
+  optional int64 agent_epoch = 14;
+  optional int64 identity_epoch = 15;
+  optional string instance_id = 16;
 }

@@ -11,6 +11,9 @@ AEGIVELA evidence is a redacted, immutable record of a security-relevant event. 
 | `api_version` | yes | Contract version |
 | `evidence_id` | yes | Unique event identifier |
 | `tenant_id` | yes | Tenant isolation key |
+| `namespace` | no | Verified Agent authority namespace, for namespace-scoped correlation |
+| `agent_epoch` | no | NOMIVELA Agent business lifecycle epoch bound to the event |
+| `identity_epoch` | no | NOMIVELA Agent ID security lifecycle epoch bound to the event |
 | `domain` | yes | Which AEGIVELA subsystem emitted the event |
 | `outcome` | yes | `allow`, `deny`, `approval_required`, `revoked`, `unavailable`, `revoked_subject`, `logged` |
 | `reason_code` | yes | Machine-readable reason (`scope_denied`, `revoked`, `expired`, `risk_escalated`, etc.) |
@@ -35,6 +38,6 @@ AEGIVELA evidence is a redacted, immutable record of a security-relevant event. 
 The envelope is a self-contained JSON object suitable for:
 - Streaming to a SIEM via structured log agents (Fluentd, Vector, Logstash)
 - Persistence in a product audit index (MODUREGIS Audit Index) alongside its native events
-- Correlation across repositories using `trace_id`, `decision_id`, and `grant_jti`
+- Correlation across repositories using `trace_id`, `namespace`, `decision_id`, and `grant_jti`
 
 AEGIVELA emits evidence through a `Recorder` interface instantiated per domain. The recorder's output format matches this schema.

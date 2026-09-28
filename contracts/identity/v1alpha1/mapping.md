@@ -21,6 +21,13 @@
 | organization authority root | `principal.organization_authority_root` | `Principal.organization_authority_root` | `Principal.organization_authority_root` = 9 |
 | lifecycle epoch | `principal.lifecycle_epoch` | `Principal.lifecycle_epoch` | `Principal.lifecycle_epoch` = 10 |
 | attestation reference | `principal.attestation_ref` | `Principal.attestation_ref` | `Principal.attestation_ref` = 11 |
+| namespace | `principal.namespace` | `Principal.namespace` | `Principal.namespace` = 12 |
+| authority binding | `principal.authority_binding` | `Principal.authority_binding` | `Principal.authority_binding` = 13 |
+| agent epoch | `principal.agent_epoch` | `Principal.agent_epoch` | `Principal.agent_epoch` = 14 |
+| identity epoch | `principal.identity_epoch` | `Principal.identity_epoch` | `Principal.identity_epoch` = 15 |
+| instance ID | `principal.instance_id` | `Principal.instance_id` | `Principal.instance_id` = 16 |
+
+`namespace`, `authority_binding`, `agent_epoch`, `identity_epoch`, and `instance_id` are the NOMIVELA/EIDOVELA registry-consumer fields. They are optional on the wire and populated only when the credential was resolved through an identity source that carries the dual lifecycle (for example EIDOVELA). A context missing dual state, dual epoch, `attestation_ref`, or `credential_generation` is rejected upstream and never reaches this response.
 
 All endpoints require the `X-AEGIVELA-PEP` internal header. This is the first public v1alpha1 protobuf baseline. Future releases must preserve this baseline's field numbers and field types.
 
