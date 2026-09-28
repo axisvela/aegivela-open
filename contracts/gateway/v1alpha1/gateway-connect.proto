@@ -24,6 +24,13 @@ enum GatewayAgentClass {
   GATEWAY_AGENT_CLASS_SERVICE = 2;
 }
 
+enum GatewayAuthorizationMode {
+  GATEWAY_AUTHORIZATION_MODE_UNSPECIFIED = 0;
+  GATEWAY_AUTHORIZATION_MODE_SYSTEM_API = 1;
+  GATEWAY_AUTHORIZATION_MODE_SERVICE_AGENT_API = 2;
+  GATEWAY_AUTHORIZATION_MODE_TWIN_AGENT_API = 3;
+}
+
 enum GatewayOutcome {
   GATEWAY_OUTCOME_UNSPECIFIED = 0;
   GATEWAY_OUTCOME_ALLOW = 1;
@@ -66,6 +73,7 @@ message GatewayConnectRequest {
   repeated string requested_scope = 13;
   string audience = 14;
   string trace_id = 15;
+  GatewayAuthorizationMode authorization_mode = 16;
 }
 
 message GatewayConnectResponse {

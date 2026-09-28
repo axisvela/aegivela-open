@@ -49,6 +49,8 @@ components:
       enum: [connection:open, backend:request, credential:inject, tool:invoke]
     GatewayAgentClass:
       enum: [twin, service]
+    GatewayAuthorizationMode:
+      enum: [system_api, service_agent_api, twin_agent_api]
     GatewayOutcome:
       enum: [allow, deny, approval_required, revoked]
     CredentialClass:
@@ -68,10 +70,11 @@ components:
     GatewayConnectRequest:
       type: object
       additionalProperties: false
-      required: [api_version, action, tenant_id, agent_id, agent_class, workload_assertion, target_host, target_scheme, requested_scope, audience, trace_id]
+      required: [api_version, action, tenant_id, workload_assertion, target_host, target_scheme, requested_scope, audience, trace_id]
       properties:
         api_version: { const: aegivela.io/v1alpha1 }
         action: { $ref: '#/components/schemas/GatewayAction' }
+        authorization_mode: { $ref: '#/components/schemas/GatewayAuthorizationMode' }
         tenant_id: { type: string, minLength: 1 }
         agent_id: { type: string, minLength: 1 }
         agent_class: { $ref: '#/components/schemas/GatewayAgentClass' }
@@ -89,6 +92,24 @@ components:
           uniqueItems: true
         audience: { type: string, minLength: 1 }
         trace_id: { type: string, minLength: 1 }
+      allOf:
+        - if:
+            required: [authorization_mode]
+            properties: { authorization_mode: { const: system_api } }
+          then:
+            not:
+              anyOf:
+                - required: [agent_id]
+                - required: [agent_class]
+        - if:
+            required: [authorization_mode]
+            properties: { authorization_mode: { enum: [service_agent_api, twin_agent_api] } }
+          then:
+            required: [agent_id, agent_class]
+        - if:
+            required: [agent_class]
+          then:
+            required: [agent_id]
     GatewayConnectResponse:
       type: object
       additionalProperties: false

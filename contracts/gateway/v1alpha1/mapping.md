@@ -6,6 +6,7 @@
 | --- | --- | --- | --- |
 | request API version | `connect_request.api_version` | `GatewayConnectRequest.api_version` | `GatewayConnectRequest.api_version` = 1 |
 | action | `connect_request.action` | `GatewayConnectRequest.action` | `GatewayConnectRequest.action` = 2 |
+| authorization mode | `connect_request.authorization_mode` | `GatewayConnectRequest.authorization_mode` | `GatewayConnectRequest.authorization_mode` = 16 |
 | tenant ID | `connect_request.tenant_id` | `GatewayConnectRequest.tenant_id` | `GatewayConnectRequest.tenant_id` = 3 |
 | agent ID | `connect_request.agent_id` | `GatewayConnectRequest.agent_id` | `GatewayConnectRequest.agent_id` = 4 |
 | agent class | `connect_request.agent_class` | `GatewayConnectRequest.agent_class` | `GatewayConnectRequest.agent_class` = 5 |
@@ -35,7 +36,7 @@
 | MITM scope | `connect_response.mitm_scope` | `GatewayConnectResponse.mitm_scope` | `GatewayConnectResponse.mitm_scope` = 14 |
 | allowed target paths | `connect_response.allowed_target_paths` | `GatewayConnectResponse.allowed_target_paths` | `GatewayConnectResponse.allowed_target_paths` = 15 |
 
-Actions are `connection:open`, `backend:request`, `credential:inject`, and `tool:invoke`. Agent classes are `twin` and `service`. The endpoint resolves Twin and Service Agent authorities for agent-classed callers and non-agent (`system_api`) callers by workload assertion; caller-supplied tenant and agent identifiers are comparison-only. `tool:invoke` requires a verified agent authority whose attribution agent reference matches the verified agent identity.
+Actions are `connection:open`, `backend:request`, `credential:inject`, and `tool:invoke`. Agent classes are `twin` and `service`. `authorization_mode` is `system_api`, `service_agent_api`, or `twin_agent_api`; it binds the workload-assertion artifact to the caller's authority surface and must agree with the agent fields (`system_api` carries no agent authority; the agent modes require the matching `agent_class` and `agent_id`). A contradiction is a cross-mode substitution and is rejected with `400 invalid_request` before principal resolution and policy evaluation. The endpoint resolves Twin and Service Agent authorities for agent-classed callers and non-agent (`system_api`) callers by workload assertion; caller-supplied tenant and agent identifiers are comparison-only. `tool:invoke` requires a verified agent authority whose attribution agent reference matches the verified agent identity.
 
 The endpoint requires the `X-Aegivela-Internal-Token` header.
 
