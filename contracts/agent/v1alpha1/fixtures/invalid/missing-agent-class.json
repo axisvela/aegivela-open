@@ -1,10 +1,8 @@
 {
   "request": {
-    "api_version": "aegivela.io/v1alpha1",
-    "tenant_id": "tenant-acme",
-    "actor_ref": "agent-bot",
     "agent_id": "agent-bot",
-    "workload_ref": "workload-bot-prod",
-    "trace_id": "trace-invalid-agent-123"
+    "organization_authority_root": "root-acme",
+    "maximum_scopes": ["documents.read"],
+    "workload_selector": "workload-bot-prod"
   }
 }

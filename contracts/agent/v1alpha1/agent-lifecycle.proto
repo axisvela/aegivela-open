@@ -5,12 +5,14 @@ package agent.v1alpha1;
 option go_package = "github.com/axisrobo/aegivela/backend/internal/agentcontract/pb;pb";
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/struct.proto";
 
 service AgentLifecycleService {
   rpc Register(AgentRegisterRequest) returns (AgentRecord);
   rpc Get(AgentGetRequest) returns (AgentRecord);
-  rpc Lifecycle(AgentLifecycleRequest) returns (AgentRecord);
+  rpc Enroll(AgentEnrollRequest) returns (AgentEnrollResponse);
+  rpc Activate(AgentTransitionRequest) returns (AgentRecord);
+  rpc Suspend(AgentTransitionRequest) returns (AgentRecord);
+  rpc Revoke(AgentTransitionRequest) returns (AgentRecord);
 }
 
 enum AgentClass {
@@ -21,54 +23,61 @@ enum AgentClass {
 
 enum LifecycleState {
   LIFECYCLE_STATE_UNSPECIFIED = 0;
-  ACTIVE = 1;
-  SUSPENDED = 2;
+  CREATED = 1;
+  ACTIVE = 2;
+  SUSPENDED = 3;
+  REVOKED = 4;
 }
 
-enum LifecycleAction {
-  LIFECYCLE_ACTION_UNSPECIFIED = 0;
-  SUSPEND = 1;
-  RESTORE = 2;
+enum EnrollmentStrategy {
+  ENROLLMENT_STRATEGY_UNSPECIFIED = 0;
+  DEVICE_BACKED = 1;
+  HUMAN_AUTHORIZED = 2;
+  API_ONLY = 3;
 }
 
 message AgentRegisterRequest {
-  string api_version = 1;
+  string agent_id = 1;
   AgentClass agent_class = 2;
-  string tenant_id = 3;
-  string actor_ref = 4;
-  string agent_id = 5;
-  optional string workload_ref = 6;
-  optional string attestation_ref = 7;
-  google.protobuf.Struct metadata = 8;
-  string trace_id = 9;
+  optional string master_id = 3;
+  optional string organization_authority_root = 4;
+  repeated string maximum_scopes = 5;
+  string workload_selector = 6;
 }
 
 message AgentGetRequest {
-  string api_version = 1;
-  string agent_id = 2;
-  optional string trace_id = 3;
+  string agent_id = 1;
 }
 
-message AgentLifecycleRequest {
+message AgentTransitionRequest {
+  string agent_id = 1;
+}
+
+message AgentEnrollRequest {
+  repeated EnrollmentStrategy strategies = 1;
+  optional string workload_assertion = 2;
+  optional string bearer_token = 3;
+  optional string audience = 4;
+}
+
+message AgentEnrollResponse {
   string api_version = 1;
   string agent_id = 2;
-  LifecycleAction action = 3;
-  string reason = 4;
-  string trace_id = 5;
+  LifecycleState lifecycle_state = 3;
+  int64 lifecycle_epoch = 4;
+  string evidence_ref = 5;
+  repeated EnrollmentStrategy strategies = 6;
 }
 
 message AgentRecord {
   string api_version = 1;
   string agent_id = 2;
   AgentClass agent_class = 3;
-  string tenant_id = 4;
-  string actor_ref = 5;
-  LifecycleState lifecycle_state = 6;
-  int64 lifecycle_epoch = 7;
-  optional string workload_ref = 8;
-  optional string attestation_ref = 9;
-  google.protobuf.Struct metadata = 10;
-  google.protobuf.Timestamp registered_at = 11;
-  optional google.protobuf.Timestamp suspended_at = 12;
-  optional google.protobuf.Timestamp restored_at = 13;
+  string authority_root = 4;
+  LifecycleState lifecycle_state = 5;
+  int64 lifecycle_epoch = 6;
+  repeated string maximum_scopes = 7;
+  string workload_selector = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
 }

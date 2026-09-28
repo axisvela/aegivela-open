@@ -1,0 +1,15 @@
+{
+  "request": {
+    "strategies": ["device_backed"],
+    "workload_assertion": "eyJhbGciOiJFZERTQSJ9.eyJ3b3JrbG9hZCI6Indvcmtsb2FkLWJvdC1wcm9kIn0.c2lnbmF0dXJl",
+    "audience": "aegivela"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "agent_id": "agent-bot",
+    "lifecycle_state": "active",
+    "lifecycle_epoch": 1,
+    "evidence_ref": "evidence://enrollment/tenant-acme/agent-bot",
+    "strategies": ["device_backed"]
+  }
+}

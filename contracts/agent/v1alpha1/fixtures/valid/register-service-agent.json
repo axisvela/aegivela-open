@@ -1,26 +1,21 @@
 {
   "request": {
-    "api_version": "aegivela.io/v1alpha1",
-    "agent_class": "service",
-    "tenant_id": "tenant-acme",
-    "actor_ref": "agent-bot",
     "agent_id": "agent-bot",
-    "workload_ref": "workload-bot-prod",
-    "attestation_ref": "attestation://tenant-acme/agent-bot",
-    "metadata": { "version": "1.0.0", "environment": "production" },
-    "trace_id": "trace-agent-register-123"
+    "agent_class": "service",
+    "organization_authority_root": "root-acme",
+    "maximum_scopes": ["documents.read"],
+    "workload_selector": "workload-bot-prod"
   },
   "response": {
     "api_version": "aegivela.io/v1alpha1",
     "agent_id": "agent-bot",
     "agent_class": "service",
-    "tenant_id": "tenant-acme",
-    "actor_ref": "agent-bot",
-    "lifecycle_state": "active",
-    "lifecycle_epoch": 1,
-    "workload_ref": "workload-bot-prod",
-    "attestation_ref": "attestation://tenant-acme/agent-bot",
-    "metadata": { "version": "1.0.0", "environment": "production" },
-    "registered_at": "2025-07-01T00:00:00Z"
+    "authority_root": "root-acme",
+    "lifecycle_state": "created",
+    "lifecycle_epoch": 0,
+    "maximum_scopes": ["documents.read"],
+    "workload_selector": "workload-bot-prod",
+    "created_at": "2025-07-01T00:00:00Z",
+    "updated_at": "2025-07-01T00:00:00Z"
   }
 }
