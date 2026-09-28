@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 )
 
 // SLOClass is the ADR-0008 revocation freshness class for a recheck.
@@ -30,7 +31,7 @@ func (c *Client) CheckRevocation(ctx context.Context, internalToken string, clas
 	if class != ClassPreDispatch && class != ClassContinuation && class != ClassConnection {
 		return ErrInvalidInput
 	}
-	if len(selectors) == 0 || len(selectors) > 16 || internalToken == "" {
+	if len(selectors) == 0 || len(selectors) > 16 || internalToken == "" || strings.TrimSpace(c.tenantID) == "" {
 		return ErrInvalidInput
 	}
 	bodyMap := map[string]any{
@@ -52,6 +53,7 @@ func (c *Client) CheckRevocation(ctx context.Context, internalToken string, clas
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("X-AEGIVELA-PEP", internalToken)
+	httpReq.Header.Set("X-Aegivela-Tenant-ID", c.tenantID)
 	resp, err := c.httpClient.Do(httpReq)
 	if err != nil {
 		return fmt.Errorf("%w: %v", ErrUnavailable, err)

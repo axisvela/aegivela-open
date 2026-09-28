@@ -17,10 +17,19 @@ const maxResponseBytes = 1 << 20
 type Client struct {
 	baseURL    string
 	httpClient *http.Client
+	tenantID   string
 }
 
 func NewClient(baseURL string, httpClient *http.Client) *Client {
 	return &Client{baseURL: baseURL, httpClient: httpClient}
+}
+
+// WithTenant sets the tenant whose revocation scope the PEP rechecks. The
+// revocation-check contract requires it, and a PEP must not be able to widen
+// its scope through request fields.
+func (c *Client) WithTenant(tenantID string) *Client {
+	c.tenantID = tenantID
+	return c
 }
 
 type evaluateRequest struct {

@@ -13,6 +13,14 @@ paths:
           schema:
             type: string
             minLength: 1
+          description: PEP credential authenticating the caller.
+        - name: X-Aegivela-Tenant-ID
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: Tenant whose revocation scope is checked; a PEP cannot widen it through the request body.
       requestBody:
         required: true
         content:
