@@ -33,8 +33,11 @@ message AttestationIssueRequest {
   string artifact_ref = 4;
   string signer_identity = 5;
   string signer_public_key = 6;
-  optional string workload_id = 7;
-  optional string workload_evidence = 8;
+  // The workload group is satisfied only by a verified workload assertion;
+  // self-reported workload attributes are not accepted.
+  optional string workload_assertion = 7;
+  reserved 8;
+  reserved "workload_evidence";
   google.protobuf.Struct environment_claims = 9;
   string audience = 10;
   string policy_version = 11;

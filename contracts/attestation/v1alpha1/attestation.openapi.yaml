@@ -98,8 +98,7 @@ components:
         artifact_ref: { type: string, minLength: 1 }
         signer_identity: { type: string, minLength: 1 }
         signer_public_key: { type: string, minLength: 1 }
-        workload_id: { type: string, minLength: 1 }
-        workload_evidence: { type: string, minLength: 1 }
+        workload_assertion: { type: string, minLength: 1 }
         environment_claims: { type: object, additionalProperties: true }
         audience: { type: string, minLength: 1 }
         policy_version: { type: string, minLength: 1 }
