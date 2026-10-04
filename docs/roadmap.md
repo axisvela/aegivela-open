@@ -315,6 +315,7 @@ The Agent IAM Series authorization conformance stage (F5) ships as Open Core
 | Repository | Tag |
 |---|---|
 | `aegivela` (core) | `v1.1.0` |
+| `aegivela` backend module | `backend/v1.1.0` |
 | `aegivela-open` | `v1.1.0` |
 | `aegivela-ee` | `v1.2.0` |
 
@@ -338,6 +339,7 @@ completes the identity-source positioning:
 | Repository | Tag |
 |---|---|
 | `aegivela` (core) | `v1.1.1` |
+| `aegivela` backend module | `backend/v1.1.1` |
 | `aegivela-open` | `v1.1.1` |
 | `aegivela-ee` | `v1.2.0` |
 
@@ -377,10 +379,38 @@ alongside the frozen v1alphaN transports, which are not modified.
 | Repository | Tag |
 |---|---|
 | `aegivela` (core) | `v1.2.0` |
+| `aegivela` backend module | `backend/v1.2.0` |
 | `aegivela-open` | `v1.2.0` |
 
 Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.0`. The
-Enterprise Edition counts independently.
+Enterprise Edition counts independently: it releases `v1.2.1`, which pins the
+Open Core backend module at `github.com/axisrobo/aegivela/backend v1.2.0` and
+builds standalone (no shared Go workspace required).
+
+## Patch Release — `1.2.1`
+
+A patch on the v1.2.0 line fixes a protobuf contract defect and makes proto
+lint enforceable in CI:
+
+- `contracts/tool/v2.0/tool-invoke.proto` incorrectly reused the v1alpha1 proto
+  package (`aegivela.tool.v1alpha1`) and `go_package`, producing duplicate
+  symbol collisions against `tool/v1alpha1`. It now declares
+  `aegivela.tool.v2_0` and its own `go_package`.
+- `buf lint` now passes. The STANDARD rules that the v2.0 camelCase wire
+  contract intentionally violates (field casing, enum value casing, and the
+  package version suffix) are explicitly excepted in `buf.yaml`, matching the
+  existing exception list.
+- Backend CI installs the pinned `buf` (v1.50.0) and runs `buf lint`, so future
+  proto drift fails the build.
+
+| Repository | Tag |
+|---|---|
+| `aegivela` (core) | `v1.2.1` |
+| `aegivela` backend module | `backend/v1.2.1` |
+| `aegivela-open` | `v1.2.1` |
+
+Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.1`. The
+Enterprise Edition counts independently (`v1.2.1`, pinning `backend v1.2.0`).
 
 ## Required Test Matrix
 
