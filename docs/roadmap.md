@@ -476,7 +476,27 @@ A patch extending v2.0 contract enforcement and repairing two invalid artifacts:
 | `aegivela-open` | `v1.2.4` |
 
 Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.4`. The
-Enterprise Edition counts independently (`v1.2.1`, pinning `backend v1.2.0`).
+Enterprise Edition counts independently (`v1.2.2`, pinning `backend v1.2.4`).
+
+## Patch Release — `1.2.5`
+
+A patch closing the schema↔proto side of v2.0 contract enforcement:
+
+- Extended the `contractdrift` test with schema↔proto field-name parity, so
+  every schema definition with inline properties and a same-named protobuf
+  message must expose the identical field set.
+- Added the missing `signedDecision` field to the `token-exchange/v2.0`
+  `TokenExchangeRequest`; the schema and OpenAPI already required it, so the
+  proto was incomplete. Regenerated its bindings and baseline.
+
+| Repository | Tag |
+|---|---|
+| `aegivela` (core) | `v1.2.5` |
+| `aegivela` backend module | `backend/v1.2.5` |
+| `aegivela-open` | `v1.2.5` |
+
+Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.5`. The
+Enterprise Edition counts independently (`v1.2.2`, pinning `backend v1.2.4`).
 
 ## Required Test Matrix
 

@@ -89,6 +89,10 @@
           "number": 7,
           "type": "optional string"
         },
+        "signedDecision": {
+          "number": 9,
+          "type": "string"
+        },
         "subjectToken": {
           "number": 2,
           "type": "string"

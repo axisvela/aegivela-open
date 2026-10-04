@@ -39,6 +39,7 @@ message TokenExchangeRequest {
   string apiVersion = 1;
   string subjectToken = 2;
   SubjectTokenType subjectTokenType = 3;
+  string signedDecision = 9;
   string requestedAudience = 4;
   repeated string requestedScope = 5;
   optional ResourceRef requestedResourceRef = 6;
