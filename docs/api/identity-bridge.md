@@ -61,6 +61,8 @@ On success, the response is the normalized principal:
 
 `identity_assurance` and `session_ref` are omitted when their configured claims are absent. The response never contains the bearer JWT, raw claims, credentials, or evidence.
 
+When the credential is resolved through a registry-backed identity source (for example EIDOVELA), the principal additionally carries the verified context: `namespace`, `authority_binding` (`human_master` or `organization_root`), the NOMIVELA dual lifecycle epochs `agent_epoch` and `identity_epoch`, and `instance_id`. These fields are optional on the wire and are populated only by a source that carries the dual lifecycle; they are bound to decisions, grants and evidence so a change in either epoch invalidates the affected artifacts.
+
 The endpoint requires exactly one non-blank `X-Aegivela-Internal-Token` header whose value exactly matches `AEGIVELA_INTERNAL_AUTH_TOKEN`. It does not require `X-Aegivela-Tenant-ID`, `X-Aegivela-Actor-ID`, or `X-Aegivela-Authority-Root`; those headers do not influence the resolved principal. The authenticated adapter or PEP must keep this token private and must not log it.
 
 Error responses are JSON objects with only a `code` field:

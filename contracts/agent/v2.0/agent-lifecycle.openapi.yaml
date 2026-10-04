@@ -1,0 +1,246 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Agent Lifecycle API
+  version: v1alpha1
+paths:
+  /v1/agents:
+    post:
+      operationId: registerAgent
+      parameters:
+        - $ref: '#/components/parameters/PEPHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentRegisterRequest'
+      responses:
+        '201':
+          description: Registered agent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRecord'
+        '400':
+          $ref: '#/components/responses/InvalidAgentRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '409':
+          $ref: '#/components/responses/AgentExists'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+  /v1/agents/{agentId}:
+    get:
+      operationId: getAgent
+      parameters:
+        - $ref: '#/components/parameters/PEPHeader'
+        - $ref: '#/components/parameters/AgentID'
+      responses:
+        '200':
+          description: Agent record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRecord'
+        '400':
+          $ref: '#/components/responses/InvalidAgentRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/AgentNotFound'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+  /v1/agents/{agentId}/enroll:
+    post:
+      operationId: enrollAgent
+      description: Verifies the enrollment/attestation evidence prescribed by the active profile and activates the agent. It is the only path from created to active.
+      parameters:
+        - $ref: '#/components/parameters/PEPHeader'
+        - $ref: '#/components/parameters/AgentID'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentEnrollRequest'
+      responses:
+        '200':
+          description: Enrolled agent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentEnrollResponse'
+        '400':
+          $ref: '#/components/responses/InvalidEnrollmentRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/EnrollmentDenied'
+        '404':
+          $ref: '#/components/responses/AgentNotFound'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+  /v1/agents/{agentId}/activate:
+    post:
+      operationId: activateAgent
+      description: Restores a suspended, already-enrolled agent. A created agent must enroll first and returns 409 enrollment_required.
+      parameters:
+        - $ref: '#/components/parameters/PEPHeader'
+        - $ref: '#/components/parameters/AgentID'
+      responses:
+        '200':
+          description: Updated agent record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRecord'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/AgentNotFound'
+        '409':
+          $ref: '#/components/responses/InvalidLifecycleTransition'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+  /v1/agents/{agentId}/suspend:
+    post:
+      operationId: suspendAgent
+      parameters:
+        - $ref: '#/components/parameters/PEPHeader'
+        - $ref: '#/components/parameters/AgentID'
+      responses:
+        '200':
+          description: Updated agent record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRecord'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/AgentNotFound'
+        '409':
+          $ref: '#/components/responses/InvalidLifecycleTransition'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+  /v1/agents/{agentId}/revoke:
+    post:
+      operationId: revokeAgent
+      parameters:
+        - $ref: '#/components/parameters/PEPHeader'
+        - $ref: '#/components/parameters/AgentID'
+      responses:
+        '200':
+          description: Updated agent record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRecord'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/AgentNotFound'
+        '409':
+          $ref: '#/components/responses/InvalidLifecycleTransition'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+components:
+  parameters:
+    PEPHeader:
+      name: X-AEGIVELA-PEP
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 1
+    AgentID:
+      name: agentId
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+  responses:
+    InvalidAgentRequest:
+      description: invalid_agent_request
+    InvalidEnrollmentRequest:
+      description: invalid_enrollment_request
+    Unauthenticated:
+      description: unauthenticated
+    AuthorizationDenied:
+      description: authorization_denied
+    EnrollmentDenied:
+      description: enrollment_denied
+    AgentExists:
+      description: agent_exists
+    AgentNotFound:
+      description: agent_not_found
+    InvalidLifecycleTransition:
+      description: invalid_lifecycle_transition or enrollment_required
+    IdentityUnavailable:
+      description: identity_unavailable
+  schemas:
+    AgentClass:
+      enum: [twin, service]
+    LifecycleState:
+      enum: [created, active, suspended, revoked]
+    EnrollmentStrategy:
+      enum: [deviceBacked, humanAuthorized, apiOnly]
+    ScopeList:
+      type: array
+      items: { type: string, minLength: 1 }
+      minItems: 1
+      uniqueItems: true
+    AgentRegisterRequest:
+      type: object
+      additionalProperties: false
+      required: [agentId, agentClass, maximumScopes, workloadSelector]
+      properties:
+        agentId: { type: string, minLength: 1 }
+        agentClass: { $ref: '#/components/schemas/AgentClass' }
+        masterId: { type: string, minLength: 1 }
+        organizationAuthorityRoot: { type: string, minLength: 1 }
+        maximumScopes: { $ref: '#/components/schemas/ScopeList' }
+        workloadSelector: { type: string, minLength: 1 }
+    AgentEnrollRequest:
+      type: object
+      additionalProperties: false
+      required: [strategies]
+      properties:
+        strategies:
+          type: array
+          items: { $ref: '#/components/schemas/EnrollmentStrategy' }
+          minItems: 1
+          uniqueItems: true
+        workloadAssertion: { type: string, minLength: 1 }
+        bearerToken: { type: string, minLength: 1 }
+        audience: { type: string, minLength: 1 }
+    AgentEnrollResponse:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, agentId, lifecycleState, evidenceRef, strategies]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        agentId: { type: string, minLength: 1 }
+        lifecycleState: { $ref: '#/components/schemas/LifecycleState' }
+        evidenceRef: { type: string, minLength: 1 }
+        strategies:
+          type: array
+          items: { $ref: '#/components/schemas/EnrollmentStrategy' }
+          minItems: 1
+    AgentRecord:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, agentId, agentClass, authorityRoot, lifecycleState, maximumScopes, workloadSelector, createdAt, updatedAt]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        agentId: { type: string, minLength: 1 }
+        agentClass: { $ref: '#/components/schemas/AgentClass' }
+        authorityRoot: { type: string, minLength: 1 }
+        lifecycleState: { $ref: '#/components/schemas/LifecycleState' }
+        maximumScopes: { $ref: '#/components/schemas/ScopeList' }
+        workloadSelector: { type: string, minLength: 1 }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }

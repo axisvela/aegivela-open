@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package moduregis.v2_0;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/moduregiscontract/pb/v2_0;v2_0";
+
+import "google/protobuf/timestamp.proto";
+
+service ModuregisAdapter {
+  rpc Authorize(AdapterAuthorizationRequest) returns (AdapterAuthorizationResponse);
+}
+
+enum AdapterAction {
+  ADAPTERACTIONUNSPECIFIED = 0;
+  ADAPTERACTIONCAPABILITYREAD = 1;
+  ADAPTERACTIONCAPABILITYPUBLISH = 2;
+  ADAPTERACTIONADAPTERACTIVATE = 3;
+  ADAPTERACTIONCAPABILITYINVOKE = 4;
+}
+
+message ResourceRef {
+  string kind = 1;
+  string reference = 2;
+}
+
+message AdapterAuthorizationRequest {
+  string apiVersion = 1;
+  string bearerToken = 2;
+  AdapterAction action = 3;
+  ResourceRef resource = 4;
+  repeated string scope = 5;
+  optional string approvalArtifact = 6;
+  optional string adapterId = 7;
+  optional string adapterVersion = 8;
+  optional string executionId = 9;
+  string traceId = 10;
+}
+
+message AdapterAuthorizationResponse {
+  string apiVersion = 1;
+  string decisionId = 2;
+  string outcome = 3;
+  string policyVersion = 4;
+  string actorId = 6;
+  optional string agentId = 7;
+  optional string masterId = 8;
+  optional string workloadId = 9;
+  optional string subjectRef = 10;
+  google.protobuf.Timestamp expiresAt = 11;
+  repeated string evidenceRefs = 12;
+  optional string grantToken = 13;
+}

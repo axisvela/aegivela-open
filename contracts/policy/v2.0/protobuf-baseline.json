@@ -1,0 +1,241 @@
+{
+  "enums": {
+    "AuthorizationMode": {
+      "AUTHORIZATIONMODEUNSPECIFIED": 0,
+      "HUMANWEB": 1,
+      "SYSTEMAPI": 2,
+      "DELEGATEDAPI": 3,
+      "SERVICEAGENTAPI": 4,
+      "TWINAGENTAPI": 5
+    },
+    "DecisionOutcome": {
+      "DECISIONOUTCOMEUNSPECIFIED": 0,
+      "ALLOW": 1,
+      "DENY": 2,
+      "APPROVALREQUIRED": 3,
+      "REVOKED": 4
+    }
+  },
+  "messages": {
+    "Principal": {
+      "fields": {
+        "namespace": {
+          "number": 12,
+          "type": "optional string"
+        },
+        "subjectRef": {
+          "number": 2,
+          "type": "optional string"
+        },
+        "actorRef": {
+          "number": 3,
+          "type": "string"
+        },
+        "clientId": {
+          "number": 4,
+          "type": "optional string"
+        },
+        "workloadRef": {
+          "number": 5,
+          "type": "optional string"
+        },
+        "agentId": {
+          "number": 6,
+          "type": "optional string"
+        },
+        "agentClass": {
+          "number": 7,
+          "type": "optional string"
+        },
+        "masterId": {
+          "number": 8,
+          "type": "optional string"
+        },
+        "organizationAuthorityRoot": {
+          "number": 9,
+          "type": "optional string"
+        },
+        "attestationRef": {
+          "number": 11,
+          "type": "optional string"
+        },
+        "authorityBinding": {
+          "number": 13,
+          "type": "optional string"
+        },
+        "agentEpoch": {
+          "number": 14,
+          "type": "optional int64"
+        },
+        "identityEpoch": {
+          "number": 15,
+          "type": "optional int64"
+        },
+        "instanceId": {
+          "number": 16,
+          "type": "optional string"
+        }
+      }
+    },
+    "ParentAuthority": {
+      "fields": {
+        "authorityRef": {
+          "number": 1,
+          "type": "string"
+        },
+        "parentScope": {
+          "number": 2,
+          "type": "repeated string"
+        },
+        "parentAudience": {
+          "number": 3,
+          "type": "repeated string"
+        },
+        "parentExpiresAt": {
+          "number": 4,
+          "type": "google.protobuf.Timestamp"
+        },
+        "parentTaskBinding": {
+          "number": 5,
+          "type": "string"
+        }
+      }
+    },
+    "Resource": {
+      "fields": {
+        "kind": {
+          "number": 1,
+          "type": "string"
+        },
+        "reference": {
+          "number": 2,
+          "type": "string"
+        },
+        "attributes": {
+          "number": 7,
+          "type": "google.protobuf.Struct"
+        },
+        "productId": {
+          "number": 3,
+          "type": "optional string"
+        },
+        "resourceType": {
+          "number": 4,
+          "type": "optional string"
+        },
+        "descriptorId": {
+          "number": 5,
+          "type": "optional string"
+        },
+        "descriptorVersion": {
+          "number": 6,
+          "type": "optional string"
+        }
+      }
+    },
+    "RiskContext": {
+      "fields": {
+        "riskLevel": {
+          "number": 1,
+          "type": "string"
+        },
+        "riskRef": {
+          "number": 2,
+          "type": "string"
+        }
+      }
+    },
+    "PolicyDecisionRequest": {
+      "fields": {
+        "principal": {
+          "number": 3,
+          "type": "Principal"
+        },
+        "action": {
+          "number": 4,
+          "type": "string"
+        },
+        "resource": {
+          "number": 5,
+          "type": "Resource"
+        },
+        "audience": {
+          "number": 7,
+          "type": "string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "authorizationMode": {
+          "number": 2,
+          "type": "AuthorizationMode"
+        },
+        "requestedScope": {
+          "number": 6,
+          "type": "repeated string"
+        },
+        "requestedExpiresAt": {
+          "number": 8,
+          "type": "google.protobuf.Timestamp"
+        },
+        "taskBinding": {
+          "number": 9,
+          "type": "optional string"
+        },
+        "parentAuthority": {
+          "number": 10,
+          "type": "ParentAuthority"
+        },
+        "riskContext": {
+          "number": 11,
+          "type": "RiskContext"
+        },
+        "traceId": {
+          "number": 12,
+          "type": "string"
+        },
+        "parentExecutionGrant": {
+          "number": 13,
+          "type": "optional string"
+        }
+      }
+    },
+    "PolicyDecisionResponse": {
+      "fields": {
+        "outcome": {
+          "number": 3,
+          "type": "DecisionOutcome"
+        },
+        "obligations": {
+          "number": 6,
+          "type": "repeated string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "decisionId": {
+          "number": 2,
+          "type": "string"
+        },
+        "policyVersion": {
+          "number": 4,
+          "type": "string"
+        },
+        "expiresAt": {
+          "number": 5,
+          "type": "google.protobuf.Timestamp"
+        },
+        "evidenceRefs": {
+          "number": 7,
+          "type": "repeated string"
+        },
+        "structuredResourceDigest": {
+          "number": 8,
+          "type": "optional string"
+        }
+      }
+    }
+  }
+}

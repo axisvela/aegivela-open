@@ -5,6 +5,9 @@ import "errors"
 type Mode string
 
 const (
+	APIVersionV1Alpha1 = "aegivela.io/v1alpha1"
+	APIVersionV2       = "aegivela.io/v2.0"
+
 	ModeHumanWeb        Mode = "human_web"
 	ModeSystemAPI       Mode = "system_api"
 	ModeDelegatedAPI    Mode = "delegated_api"
@@ -118,17 +121,17 @@ func (in AuthorizationInput) Validate() error {
 }
 
 type Principal struct {
-	TenantID                   string
-	SubjectRef                 string
-	ActorRef                   string
-	ClientID                   string
-	WorkloadRef                string
-	AgentID                    string
-	AgentClass                 string
-	MasterID                   string
-	OrganizationAuthorityRoot  string
-	LifecycleEpoch             int64
-	AttestationRef             string
+	TenantID                  string
+	SubjectRef                string
+	ActorRef                  string
+	ClientID                  string
+	WorkloadRef               string
+	AgentID                   string
+	AgentClass                string
+	MasterID                  string
+	OrganizationAuthorityRoot string
+	LifecycleEpoch            int64
+	AttestationRef            string
 }
 
 type Result struct {

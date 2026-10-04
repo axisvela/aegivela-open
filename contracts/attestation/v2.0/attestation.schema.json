@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/attestation/v2.0/attestation.schema.json",
+  "title": "AEGIVELA Attestation",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/attestation_issue_request"
+    },
+    {
+      "$ref": "#/$defs/attestation_issue_response"
+    },
+    {
+      "$ref": "#/$defs/attestation_verify_request"
+    },
+    {
+      "$ref": "#/$defs/attestation_verify_response"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/unauthenticated_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/authorization_denied_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/identity_unavailable_error"
+    }
+  ],
+  "$defs": {
+    "attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "attestationId",
+        "principal",
+        "artifactDigest",
+        "artifactRef",
+        "signerIdentity",
+        "audience",
+        "issuedAt",
+        "expiresAt",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "attestationId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal": {
+          "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/principal"
+        },
+        "artifactDigest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifactRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "signerIdentity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "signerPublicKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workloadEvidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "environmentClaims": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "workloadId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policyVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issuedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "attestation_issue_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "bearerToken",
+        "artifactDigest",
+        "artifactRef",
+        "signerIdentity",
+        "signerPublicKey",
+        "audience",
+        "policyVersion",
+        "traceId"
+      ],
+      "properties": {
+        "bearerToken": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifactDigest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifactRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "signerIdentity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "signerPublicKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workloadAssertion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "environmentClaims": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "policyVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "traceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "attestation_issue_response": {
+      "$ref": "#/$defs/attestation"
+    },
+    "attestation_verify_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "signedAttestation",
+        "expectedBindings"
+      ],
+      "properties": {
+        "signedAttestation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedBindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "artifactDigest",
+            "signerIdentity",
+            "audience"
+          ],
+          "properties": {
+            "artifactDigest": {
+              "type": "string",
+              "minLength": 1
+            },
+            "signerIdentity": {
+              "type": "string",
+              "minLength": 1
+            },
+            "audience": {
+              "type": "string",
+              "minLength": 1
+            },
+            "traceId": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        }
+      }
+    },
+    "attestation_verify_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "attestationId",
+        "valid",
+        "principal",
+        "artifactDigest",
+        "signerIdentity",
+        "audience",
+        "issuedAt"
+      ],
+      "properties": {
+        "attestationId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "principal": {
+          "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/principal"
+        },
+        "artifactDigest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifactRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "signerIdentity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expired": {
+          "type": "boolean"
+        },
+        "revoked": {
+          "type": "boolean"
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "issuedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

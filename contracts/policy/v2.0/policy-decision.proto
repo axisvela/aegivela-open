@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package policy.v2_0;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/policycontract/pb/v2_0;v2_0";
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+service PolicyDecisionService {
+  rpc Evaluate(PolicyDecisionRequest) returns (PolicyDecisionResponse);
+}
+
+enum AuthorizationMode {
+  authorizationModeUnspecified = 0;
+  humanWeb = 1;
+  systemApi = 2;
+  delegatedApi = 3;
+  serviceAgentApi = 4;
+  twinAgentApi = 5;
+}
+
+enum DecisionOutcome {
+  decisionOutcomeUnspecified = 0;
+  allow = 1;
+  deny = 2;
+  approvalRequired = 3;
+  revoked = 4;
+}
+
+message Principal {
+  optional string subjectRef = 2;
+  string actorRef = 3;
+  optional string clientId = 4;
+  optional string workloadRef = 5;
+  optional string agentId = 6;
+  optional string agentClass = 7;
+  optional string masterId = 8;
+  optional string organizationAuthorityRoot = 9;
+  optional string attestationRef = 11;
+  optional string namespace = 12;
+  optional string authorityBinding = 13;
+  optional int64 agentEpoch = 14;
+  optional int64 identityEpoch = 15;
+  optional string instanceId = 16;
+}
+
+message ParentAuthority {
+  string authorityRef = 1;
+  repeated string parentScope = 2;
+  repeated string parentAudience = 3;
+  google.protobuf.Timestamp parentExpiresAt = 4;
+  string parentTaskBinding = 5;
+}
+
+message Resource {
+  string kind = 1;
+  string reference = 2;
+  optional string productId = 3;
+  optional string resourceType = 4;
+  optional string descriptorId = 5;
+  optional string descriptorVersion = 6;
+  google.protobuf.Struct attributes = 7;
+}
+
+message RiskContext {
+  string riskLevel = 1;
+  string riskRef = 2;
+}
+
+message PolicyDecisionRequest {
+  string apiVersion = 1;
+  AuthorizationMode authorizationMode = 2;
+  Principal principal = 3;
+  string action = 4;
+  Resource resource = 5;
+  repeated string requestedScope = 6;
+  string audience = 7;
+  google.protobuf.Timestamp requestedExpiresAt = 8;
+  optional string taskBinding = 9;
+  ParentAuthority parentAuthority = 10;
+  RiskContext riskContext = 11;
+  string traceId = 12;
+  optional string parentExecutionGrant = 13;
+}
+
+message PolicyDecisionResponse {
+  string apiVersion = 1;
+  string decisionId = 2;
+  DecisionOutcome outcome = 3;
+  string policyVersion = 4;
+  google.protobuf.Timestamp expiresAt = 5;
+  repeated string obligations = 6;
+  repeated string evidenceRefs = 7;
+  optional string structuredResourceDigest = 8;
+}

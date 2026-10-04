@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/pre-authorization/v2.0/pre-authorization-issue.schema.json",
+  "title": "AEGIVELA Pre-Authorization Issue",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/pre_authorization_issue_request"
+    },
+    {
+      "$ref": "#/$defs/pre_authorization_issue_response"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/unauthenticated_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/authorization_denied_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/revocation_unavailable_error"
+    }
+  ],
+  "$defs": {
+    "pre_authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "preAuthorizationId",
+        "principal",
+        "action",
+        "resource",
+        "scope",
+        "audience",
+        "expiresAt",
+        "issuedAt",
+        "policyVersion",
+        "maxGrants",
+        "remainingGrants",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "preAuthorizationId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal": {
+          "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/principal"
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resource": {
+          "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/resourceRef"
+        },
+        "scope": {
+          "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/scope"
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1
+        },
+        "maxGrants": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "remainingGrants": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "task": {
+          "type": "string",
+          "minLength": 1
+        },
+        "session": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lifecycle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "issuedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "policyVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "pre_authorization_issue_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "bearerToken",
+        "action",
+        "resource",
+        "scope",
+        "audience",
+        "expiry",
+        "policyVersion",
+        "maxGrants",
+        "traceId"
+      ],
+      "properties": {
+        "bearerToken": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resource": {
+          "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/resourceRef"
+        },
+        "scope": {
+          "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/scope"
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expiry": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "task": {
+          "type": "string",
+          "minLength": 1
+        },
+        "session": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lifecycle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "maxGrants": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "policyVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "traceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "pre_authorization_issue_response": {
+      "$ref": "#/$defs/pre_authorization"
+    }
+  }
+}

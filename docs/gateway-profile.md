@@ -20,6 +20,8 @@ The existing `AXIS-gateway` repository owns the Go proxy, `CONNECT` tunneling, c
 | Client Gateway | Desktop, developer machine, or Agent Host; default `:10255` | HTTP forwarding, CONNECT, local MITM foundation, short-TTL policy cache, policy-driven intercept, approval wait | Device/workload identity, short-lived decisions, cache invalidation, local tool PEP |
 | Server Gateway | Datacenter, container, or cloud; default `:10256` | PostgreSQL resolver, centralized policy route, header/query injection, AWS SigV4 finalizer, audit/telemetry and approval foundations | PDP adapter, credential-injection authorization, approval coordination, central evidence export |
 
+The Server Gateway obtains decisions from `POST /v1/gateway/connect` (typed client `pepsdk.GatewayConnect`). The request declares its authority surface with `authorization_mode` (`system_api`, `service_agent_api`, or `twin_agent_api`); it must agree with the agent fields, and a contradiction is rejected with `400 invalid_request` before principal resolution and policy evaluation. The endpoint resolves Twin and Service Agent authorities for agent-classed callers (workload assertion plus Agent Identity Authority binding and lifecycle checks) and non-agent (`system_api`) callers by workload assertion alone. Caller-supplied tenant and agent identifiers are comparison-only and any mismatch is rejected. `tool:invoke` is granted only to a verified agent authority whose tool attribution's agent reference matches the verified agent identity; non-agent callers are denied it.
+
 The present gateway route `POST /v1/policy/connect` is a connection-level foundation: it receives `agent_token`, target host, scheme, and path. That is insufficient for semantic control of an agent action.
 
 ## Required Semantic Authorization Context
@@ -42,7 +44,7 @@ path, declared argument schema/classification, requested credential scope,
 risk signals, policy version, and trace_id
 ```
 
-When the caller is a Twin Agent, this context is resolved through the EASEF-IAM profile: `a` has one immutable `master_id`, and the local device or runtime proves `w` through enrollment and workload attestation. For a Service Agent, `a` instead has an organization authority root and no `master_id`. The PEP rejects a missing required authority binding, a workload outside the agent's permitted selectors, a stale lifecycle epoch, or a child grant broader than its parent authority.
+When the caller is a Twin Agent, this context is resolved through the EASEF-DELEGATION profile: `a` has one immutable `master_id`, and the local device or runtime proves `w` through enrollment and workload attestation. For a Service Agent, `a` instead has an organization authority root and no `master_id`. The PEP rejects a missing required authority binding, a workload outside the agent's permitted selectors, a stale lifecycle epoch, or a child grant broader than its parent authority.
 
 Raw arguments, credentials, and tokens are not required in the decision or audit record. The PEP sends only the minimum value needed for enforcement, such as an argument digest, type, sensitivity label, or policy-relevant field projection.
 
@@ -71,11 +73,15 @@ This closes the current connection-level gap: host/path allowlisting alone canno
 
 Local degraded mode is not a bypass. Only a non-expired, locally cached decision marked offline-eligible may be used, and it cannot permit credential injection, high-risk operations, new targets, or a broader scope than the original decision. Revocation and policy invalidation clear matching cache entries through a client-initiated HTTPS channel, optionally upgraded to WebSocket or SSE.
 
+The gateway connect outcome enum includes `revoked`; a revoked decision is denied at the PEP.
+
 For high-autonomy actions, a pre-authorization token may replace a per-call approval only when it is bound to the same agent, master, target scope, audience, task/resource reference, and validity window. It grants no scope not already delegated to the agent.
 
 ## Credential and Inspection Controls
 
 Credential injection is an effect, not proof of authorization. The PEP may inject a header, query value, request-body value, or AWS SigV4 signature only when the AEGIVELA decision explicitly names the target, credential class, scope, and expiry. Secrets remain in the approved vault or server-side secret provider and are never included in grants, policy telemetry, or audit evidence.
+
+The gateway connect decision carries these as structured fields: `credential_ref`, `credential_class`, `mitm_required`, `mitm_scope`, and `allowed_target_paths`. PEPs enforce exact-match obligations; a decision lacking `credential_ref` never authorizes injection, and MITM requires an explicit `mitm_required` field.
 
 MITM is enabled only by policy for target scopes that require inspection or injection. The PEP records the intercept reason, but audit records retain only redacted request metadata and policy-relevant digests.
 

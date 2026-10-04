@@ -1,0 +1,85 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Identity Bridge API
+  version: v1alpha1
+paths:
+  /v1/identity/resolve:
+    post:
+      operationId: resolveIdentity
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentityResolveRequest'
+      responses:
+        '200':
+          description: Resolved principal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityResolveResponse'
+        '400':
+          $ref: '#/components/responses/InvalidIdentityRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+components:
+  parameters:
+    PEPHeader:
+      name: X-AEGIVELA-PEP
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 1
+  responses:
+    InvalidIdentityRequest:
+      description: invalid_identity_request
+    Unauthenticated:
+      description: unauthenticated
+    IdentityUnavailable:
+      description: identity_unavailable
+  schemas:
+    IdentityResolveRequest:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, bearerToken, audience]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        bearerToken: { type: string, minLength: 1 }
+        audience: { type: string, minLength: 1 }
+        traceId: { type: string, minLength: 1 }
+    IdentityResolveResponse:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, principal]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        principal:
+          type: object
+          additionalProperties: false
+          required: [actorRef]
+          properties:
+            subjectRef: { type: string, minLength: 1 }
+            actorRef: { type: string, minLength: 1 }
+            clientId: { type: string, minLength: 1 }
+            workloadRef: { type: string, minLength: 1 }
+            agentId: { type: string, minLength: 1 }
+            agentClass: { type: string }
+            masterId: { type: string, minLength: 1 }
+            organizationAuthorityRoot: { type: string, minLength: 1 }
+            attestationRef: { type: string, minLength: 1 }
+            namespace: { type: string, minLength: 1 }
+            authorityBinding: { enum: [humanMaster, organizationRoot] }
+            agentEpoch: { type: integer, minimum: 1 }
+            identityEpoch: { type: integer, minimum: 1 }
+            instanceId: { type: string, minLength: 1 }

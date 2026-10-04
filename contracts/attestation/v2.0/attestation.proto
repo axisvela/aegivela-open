@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package attestation.v2_0;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/attestationcontract/pb;pb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+service AttestationService {
+  rpc Issue(AttestationIssueRequest) returns (AttestationIssueResponse);
+  rpc Verify(AttestationVerifyRequest) returns (AttestationVerifyResponse);
+}
+
+message Principal {
+  string tenantId = 1;
+  optional string subjectRef = 2;
+  string actorRef = 3;
+  optional string clientId = 4;
+  optional string workloadRef = 5;
+  optional string agentId = 6;
+  optional string agentClass = 7;
+  optional string masterId = 8;
+  optional string organizationAuthorityRoot = 9;
+  optional int64 lifecycleEpoch = 10;
+  optional string attestationRef = 11;
+}
+
+message AttestationIssueRequest {
+  string apiVersion = 1;
+  string bearerToken = 2;
+  string artifactDigest = 3;
+  string artifactRef = 4;
+  string signerIdentity = 5;
+  string signerPublicKey = 6;
+  // The workload group is satisfied only by a verified workload assertion;
+  // self-reported workload attributes are not accepted.
+  optional string workloadAssertion = 7;
+  reserved 8;
+  reserved "workload_evidence";
+  google.protobuf.Struct environmentClaims = 9;
+  string audience = 10;
+  string policyVersion = 11;
+  string traceId = 12;
+}
+
+message AttestationIssueResponse {
+  string apiVersion = 1;
+  string attestationId = 2;
+  Principal principal = 3;
+  string artifactDigest = 4;
+  string artifactRef = 5;
+  string signerIdentity = 6;
+  string signerPublicKey = 7;
+  optional string workloadId = 8;
+  optional string workloadEvidence = 9;
+  google.protobuf.Struct environmentClaims = 10;
+  string audience = 11;
+  string policyVersion = 12;
+  google.protobuf.Timestamp issuedAt = 13;
+  google.protobuf.Timestamp expiresAt = 14;
+  repeated string evidenceRefs = 15;
+}
+
+message ExpectedAttestationBindings {
+  string artifactDigest = 1;
+  string signerIdentity = 2;
+  string audience = 3;
+  optional string traceId = 4;
+}
+
+message AttestationVerifyRequest {
+  string apiVersion = 1;
+  string signedAttestation = 2;
+  ExpectedAttestationBindings expectedBindings = 3;
+}
+
+message AttestationVerifyResponse {
+  string apiVersion = 1;
+  string attestationId = 2;
+  bool valid = 3;
+  Principal principal = 4;
+  string artifactDigest = 5;
+  optional string artifactRef = 6;
+  string signerIdentity = 7;
+  string audience = 8;
+  google.protobuf.Timestamp issuedAt = 9;
+  bool expired = 10;
+  bool revoked = 11;
+}

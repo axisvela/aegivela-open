@@ -1,0 +1,111 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Pre-Authorization API
+  version: v1alpha1
+paths:
+  /v1/pre-authorizations/issue:
+    post:
+      operationId: issuePreAuthorization
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreAuthorizationIssueRequest'
+      responses:
+        '200':
+          description: Issued pre-authorization
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreAuthorizationIssueResponse'
+        '400':
+          $ref: '#/components/responses/InvalidPreAuthorizationRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/RevocationUnavailable'
+components:
+  responses:
+    InvalidPreAuthorizationRequest:
+      description: invalid_pre_authorization_request
+    Unauthenticated:
+      description: unauthenticated
+    AuthorizationDenied:
+      description: authorization_denied
+    RevocationUnavailable:
+      description: revocation_unavailable
+  schemas:
+    PreAuthorizationIssueRequest:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, bearerToken, action, resource, scope, audience, expiry, policyVersion, maxGrants, traceId]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        bearerToken: { type: string, minLength: 1 }
+        action: { type: string, minLength: 1 }
+        resource:
+          type: object
+          additionalProperties: false
+          required: [kind, reference]
+          properties:
+            kind: { type: string, minLength: 1 }
+            reference: { type: string, minLength: 1 }
+        scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        audience: { type: string, minLength: 1 }
+        expiry: { type: string, format: date-time }
+        policyVersion: { type: string, minLength: 1 }
+        task: { type: string, minLength: 1 }
+        session: { type: string, minLength: 1 }
+        lifecycle: { type: string, minLength: 1 }
+        maxGrants: { type: integer, minimum: 1, maximum: 100 }
+        traceId: { type: string, minLength: 1 }
+    PreAuthorizationIssueResponse:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, preAuthorizationId, principal, action, resource, scope, audience, expiresAt, issuedAt, policyVersion, maxGrants, remainingGrants, evidenceRefs]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        preAuthorizationId: { type: string, minLength: 1 }
+        principal:
+          type: object
+          additionalProperties: false
+          required: [actorRef]
+          properties:
+            subjectRef: { type: string, minLength: 1 }
+            actorRef: { type: string, minLength: 1 }
+            clientId: { type: string, minLength: 1 }
+            workloadRef: { type: string, minLength: 1 }
+            agentId: { type: string, minLength: 1 }
+            agentClass: { type: string }
+            masterId: { type: string, minLength: 1 }
+            organizationAuthorityRoot: { type: string, minLength: 1 }
+            attestationRef: { type: string, minLength: 1 }
+        action: { type: string, minLength: 1 }
+        resource:
+          type: object
+          additionalProperties: false
+          required: [kind, reference]
+          properties:
+            kind: { type: string, minLength: 1 }
+            reference: { type: string, minLength: 1 }
+        scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        audience: { type: string, minLength: 1 }
+        expiresAt: { type: string, format: date-time }
+        issuedAt: { type: string, format: date-time }
+        policyVersion: { type: string, minLength: 1 }
+        maxGrants: { type: integer, minimum: 1, maximum: 100 }
+        remainingGrants: { type: integer, minimum: 0 }
+        task: { type: string, minLength: 1 }
+        session: { type: string, minLength: 1 }
+        lifecycle: { type: string, minLength: 1 }
+        evidenceRefs: { type: array, items: { type: string, minLength: 1 }, minItems: 1 }

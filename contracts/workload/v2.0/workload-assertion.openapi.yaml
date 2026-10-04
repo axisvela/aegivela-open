@@ -1,0 +1,38 @@
+openapi: 3.1.0
+info: {title: AEGIVELA Workload Assertion API, version: v1alpha1}
+paths:
+  /v1/workload-bindings:
+    post:
+      operationId: createWorkloadBinding
+      security: [{InternalToken: []}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/BindingRegistration'}}}}
+      responses: {'201': {$ref: '#/components/responses/Binding'}, '400': {$ref: '#/components/responses/InvalidBindingRequest'}, '401': {$ref: '#/components/responses/Unauthenticated'}, '503': {$ref: '#/components/responses/BindingUnavailable'}}
+  /v1/workload-assertions/issue:
+    post:
+      operationId: issueWorkloadAssertion
+      security: [{InternalToken: []}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/AssertionIssueRequest'}}}}
+      responses: {'200': {$ref: '#/components/responses/AssertionIssued'}, '400': {$ref: '#/components/responses/InvalidAssertionRequest'}, '401': {$ref: '#/components/responses/Unauthenticated'}, '503': {$ref: '#/components/responses/AssertionUnavailable'}}
+  /v1/workload-assertions/jwks:
+    get:
+      operationId: getWorkloadAssertionJWKS
+      responses: {'200': {$ref: '#/components/responses/JWKS'}, '503': {$ref: '#/components/responses/AssertionUnavailable'}}
+components:
+  securitySchemes:
+    InternalToken: {type: apiKey, in: header, name: X-Aegivela-Internal-Token}
+  schemas:
+    BindingRegistration: {$ref: './workload-assertion.schema.json#/$defs/binding_registration'}
+    AssertionIssueRequest: {$ref: './workload-assertion.schema.json#/$defs/assertion_issue_request'}
+    Binding: {$ref: './workload-assertion.schema.json#/$defs/binding'}
+    AssertionIssueResponse: {$ref: './workload-assertion.schema.json#/$defs/assertion_issue_response'}
+    JWKS: {$ref: './workload-assertion.schema.json#/$defs/jwks'}
+    Error: {$ref: './workload-assertion.schema.json#/$defs/error'}
+  responses:
+    Binding: {description: Created binding, content: {application/json: {schema: {$ref: '#/components/schemas/Binding'}}}}
+    AssertionIssued: {description: Issued workload assertion, content: {application/json: {schema: {$ref: '#/components/schemas/AssertionIssueResponse'}}}}
+    JWKS: {description: Public workload assertion keys, content: {application/json: {schema: {$ref: '#/components/schemas/JWKS'}}}}
+    InvalidBindingRequest: {description: Invalid workload binding request, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    InvalidAssertionRequest: {description: Invalid workload assertion request, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    Unauthenticated: {description: unauthenticated, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    BindingUnavailable: {description: workload binding unavailable, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    AssertionUnavailable: {description: workload assertion unavailable, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}

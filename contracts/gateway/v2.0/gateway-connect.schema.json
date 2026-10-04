@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/gateway/v2.0/gateway-connect.schema.json",
+  "title": "AEGIVELA Gateway Connect Contract",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/connect_request"
+    },
+    {
+      "$ref": "#/$defs/connect_response"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/unauthenticated_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/authorization_denied_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/identity_unavailable_error"
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "compact_token": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$",
+      "maxLength": 16384
+    },
+    "scope": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "connection:open",
+        "backend:request",
+        "credential:inject",
+        "tool:invoke"
+      ]
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny",
+        "approvalRequired",
+        "revoked"
+      ]
+    },
+    "connect_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "action",
+        "workloadAssertion",
+        "targetHost",
+        "targetScheme",
+        "requestedScope",
+        "audience",
+        "traceId"
+      ],
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/action"
+        },
+        "workloadAssertion": {
+          "$ref": "#/$defs/compact_token"
+        },
+        "attribution": {
+          "$ref": "#/$defs/tool_attribution"
+        },
+        "targetScheme": {
+          "type": "string",
+          "enum": [
+            "http",
+            "https"
+          ]
+        },
+        "audience": {
+          "$ref": "#/$defs/identifier"
+        },
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "authorizationMode": {
+          "$ref": "#/$defs/authorizationMode"
+        },
+        "agentId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "agentClass": {
+          "$ref": "#/$defs/agentClass"
+        },
+        "argumentDigest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "argumentClassification": {
+          "type": "string",
+          "minLength": 1
+        },
+        "targetHost": {
+          "type": "string",
+          "minLength": 1
+        },
+        "targetPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requestedScope": {
+          "$ref": "#/$defs/scope"
+        },
+        "traceId": {
+          "$ref": "#/$defs/identifier"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "authorizationMode"
+            ],
+            "properties": {
+              "authorizationMode": {
+                "const": "systemApi"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "agentId"
+                  ]
+                },
+                {
+                  "required": [
+                    "agentClass"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "authorizationMode"
+            ],
+            "properties": {
+              "authorizationMode": {
+                "enum": [
+                  "serviceAgentApi",
+                  "twinAgentApi"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "agentId",
+              "agentClass"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "agentClass"
+            ]
+          },
+          "then": {
+            "required": [
+              "agentId"
+            ]
+          }
+        }
+      ]
+    },
+    "tool_attribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "humanRef",
+        "agentRef",
+        "toolId",
+        "skillHash",
+        "implementationDigest"
+      ],
+      "properties": {
+        "humanRef": {
+          "$ref": "#/$defs/identifier"
+        },
+        "signedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "signature": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentRef": {
+          "$ref": "#/$defs/identifier"
+        },
+        "toolId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "skillHash": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "implementationDigest": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      }
+    },
+    "connect_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "decisionId",
+        "outcome",
+        "policyVersion",
+        "expiresAt",
+        "ttlSeconds",
+        "offlineEligible",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "outcome": {
+          "$ref": "#/$defs/outcome"
+        },
+        "offlineEligible": {
+          "type": "boolean"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "obligations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "decisionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policyVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ttlSeconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "credentialRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "credentialClass": {
+          "type": "string",
+          "enum": [
+            "awsSigv4",
+            "header",
+            "query",
+            "body"
+          ]
+        },
+        "mitmRequired": {
+          "type": "boolean"
+        },
+        "mitmScope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "allowedTargetPaths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "apiVersion": {
+      "const": "aegivela.io/v2.0"
+    },
+    "agentClass": {
+      "type": "string",
+      "enum": [
+        "twin",
+        "service"
+      ]
+    },
+    "authorizationMode": {
+      "type": "string",
+      "enum": [
+        "systemApi",
+        "serviceAgentApi",
+        "twinAgentApi"
+      ]
+    }
+  }
+}

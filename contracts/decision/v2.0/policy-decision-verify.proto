@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package decision.v2_0;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/decisioncontract/pb;pb";
+
+import "google/protobuf/timestamp.proto";
+
+service PolicyDecisionVerificationService {
+  rpc Verify(PolicyDecisionVerifyRequest) returns (PolicyDecisionVerifyResponse);
+}
+
+enum DecisionOutcome {
+  DECISIONOUTCOMEUNSPECIFIED = 0;
+  ALLOW = 1;
+  DENY = 2;
+  APPROVALREQUIRED = 3;
+  REVOKED = 4;
+}
+
+message Principal {
+  string tenantId = 1;
+  optional string subjectRef = 2;
+  string actorRef = 3;
+  optional string clientId = 4;
+  optional string workloadRef = 5;
+  optional string agentId = 6;
+  optional string agentClass = 7;
+  optional string masterId = 8;
+  optional string organizationAuthorityRoot = 9;
+  optional int64 lifecycleEpoch = 10;
+  optional string attestationRef = 11;
+}
+
+message ResourceRef {
+  string kind = 1;
+  string reference = 2;
+}
+
+message ExpectedDecisionBindings {
+  Principal principal = 1;
+  string action = 2;
+  ResourceRef resource = 3;
+  repeated string scope = 4;
+  optional string audience = 5;
+  optional string traceId = 6;
+}
+
+message PolicyDecisionVerifyRequest {
+  string apiVersion = 1;
+  string signedDecision = 2;
+  ExpectedDecisionBindings expectedBindings = 3;
+}
+
+message PolicyDecisionVerifyResponse {
+  string apiVersion = 1;
+  string decisionId = 2;
+  bool valid = 3;
+  DecisionOutcome outcome = 4;
+  string policyVersion = 5;
+  google.protobuf.Timestamp expiresAt = 6;
+  repeated string obligations = 7;
+  repeated string evidenceRefs = 8;
+  bool revoked = 9;
+}

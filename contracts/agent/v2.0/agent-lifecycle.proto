@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package agent.v2_0;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/agentcontract/pb;pb";
+
+import "google/protobuf/timestamp.proto";
+
+service AgentLifecycleService {
+  rpc Register(AgentRegisterRequest) returns (AgentRecord);
+  rpc Get(AgentGetRequest) returns (AgentRecord);
+  rpc Enroll(AgentEnrollRequest) returns (AgentEnrollResponse);
+  rpc Activate(AgentTransitionRequest) returns (AgentRecord);
+  rpc Suspend(AgentTransitionRequest) returns (AgentRecord);
+  rpc Revoke(AgentTransitionRequest) returns (AgentRecord);
+}
+
+enum AgentClass {
+  AGENTCLASSUNSPECIFIED = 0;
+  TWIN = 1;
+  SERVICE = 2;
+}
+
+enum LifecycleState {
+  LIFECYCLESTATEUNSPECIFIED = 0;
+  CREATED = 1;
+  ACTIVE = 2;
+  SUSPENDED = 3;
+  REVOKED = 4;
+}
+
+enum EnrollmentStrategy {
+  ENROLLMENTSTRATEGYUNSPECIFIED = 0;
+  DEVICEBACKED = 1;
+  HUMANAUTHORIZED = 2;
+  APIONLY = 3;
+}
+
+message AgentRegisterRequest {
+  string agentId = 1;
+  AgentClass agentClass = 2;
+  optional string masterId = 3;
+  optional string organizationAuthorityRoot = 4;
+  repeated string maximumScopes = 5;
+  string workloadSelector = 6;
+}
+
+message AgentGetRequest {
+  string agentId = 1;
+}
+
+message AgentTransitionRequest {
+  string agentId = 1;
+}
+
+message AgentEnrollRequest {
+  repeated EnrollmentStrategy strategies = 1;
+  optional string workloadAssertion = 2;
+  optional string bearerToken = 3;
+  optional string audience = 4;
+}
+
+message AgentEnrollResponse {
+  string apiVersion = 1;
+  string agentId = 2;
+  LifecycleState lifecycleState = 3;
+  string evidenceRef = 5;
+  repeated EnrollmentStrategy strategies = 6;
+}
+
+message AgentRecord {
+  string apiVersion = 1;
+  string agentId = 2;
+  AgentClass agentClass = 3;
+  string authorityRoot = 4;
+  LifecycleState lifecycleState = 5;
+  repeated string maximumScopes = 7;
+  string workloadSelector = 8;
+  google.protobuf.Timestamp createdAt = 9;
+  google.protobuf.Timestamp updatedAt = 10;
+}

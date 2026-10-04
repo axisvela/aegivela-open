@@ -17,6 +17,8 @@ Moduregis sends the bearer artifact unchanged to AEGIVELA with a required author
 
 The bearer artifact is an enterprise IdP access token or an AEGIVELA-issued delegated grant. AEGIVELA validates its signature or introspects it against an allowlisted issuer, verifies issuer, audience, expiry, and tenant mapping, then derives the principal. Moduregis must not accept caller-provided `tenant_id`, `actor_id`, or `policy_version` as trusted input.
 
+The `POST /v1/moduregis/authorize` endpoint (typed client `pepsdk.ModuregisAuthorize`) evaluates `capability:read`, `capability:publish`, `adapter:activate`, and `capability:invoke` against the PDP, verifies the signed approval artifact for publish, and issues an execution grant for invoke. The `POST /v1/tool/invoke` endpoint evaluates `tool:invoke`, binding the grant to an exact tool implementation via the `tool_invariant` claim and applying SLO-aware revocation recheck. Both require the `X-Aegivela-Internal-Token` header and fail closed.
+
 ## Decision Response
 
 The HTTP and gRPC APIs use one semantic response model. Transport-specific status codes cannot change authorization meaning.

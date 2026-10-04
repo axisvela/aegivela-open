@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/grant/v2.0/execution-grant.schema.json",
+  "title": "AEGIVELA Execution Grant",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/grant_issue_request"
+    },
+    {
+      "$ref": "#/$defs/grant_issue_response"
+    },
+    {
+      "$ref": "#/$defs/grant_verify_request"
+    },
+    {
+      "$ref": "#/$defs/grant_verify_response"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/unauthenticated_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/authorization_denied_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/revocation_unavailable_error"
+    }
+  ],
+  "$defs": {
+    "execution_grant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "grantId",
+        "principal",
+        "scope",
+        "audience",
+        "expiresAt",
+        "issuedAt",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "principal": {
+          "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/principal"
+        },
+        "scope": {
+          "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/scope"
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1
+        },
+        "preAuthorizationJti": {
+          "type": "string",
+          "minLength": 1
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "grantId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "issuedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "taskBinding": {
+          "type": "string",
+          "minLength": 1
+        },
+        "approvalJti": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "grant_issue_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "bearerToken",
+        "signedAllowDecision",
+        "requestedScope",
+        "traceId"
+      ],
+      "properties": {
+        "bearerToken": {
+          "type": "string",
+          "minLength": 1
+        },
+        "signedAllowDecision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "preAuthorizationJti": {
+          "type": "string",
+          "minLength": 1
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "requestedScope": {
+          "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/scope"
+        },
+        "approvalJti": {
+          "type": "string",
+          "minLength": 1
+        },
+        "traceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "grant_issue_response": {
+      "$ref": "#/$defs/execution_grant"
+    },
+    "grant_verify_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "signedGrant",
+        "expectedBindings"
+      ],
+      "properties": {
+        "signedGrant": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedBindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "audience",
+            "scope"
+          ],
+          "properties": {
+            "audience": {
+              "type": "string",
+              "minLength": 1
+            },
+            "scope": {
+              "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/scope"
+            },
+            "taskBinding": {
+              "type": "string",
+              "minLength": 1
+            },
+            "traceId": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        }
+      }
+    },
+    "grant_verify_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "grantId",
+        "valid",
+        "principal",
+        "scope",
+        "audience",
+        "expiresAt"
+      ],
+      "properties": {
+        "valid": {
+          "type": "boolean"
+        },
+        "principal": {
+          "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/principal"
+        },
+        "scope": {
+          "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/scope"
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expired": {
+          "type": "boolean"
+        },
+        "revoked": {
+          "type": "boolean"
+        },
+        "revocationCheckEpoch": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "grantId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

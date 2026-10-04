@@ -1,0 +1,503 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/web/v2.0/web-resources.schema.json",
+  "title": "AEGIVELA Web Resource Authorization",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/web_resource_registration"
+    },
+    {
+      "$ref": "#/$defs/web_resource_policy_rule"
+    },
+    {
+      "$ref": "#/$defs/permission_resolution_request"
+    },
+    {
+      "$ref": "#/$defs/web_resource"
+    },
+    {
+      "$ref": "#/$defs/web_resource_list"
+    },
+    {
+      "$ref": "#/$defs/accepted"
+    },
+    {
+      "$ref": "#/$defs/permission_resolution_response"
+    },
+    {
+      "$ref": "#/$defs/invalid_web_resource_request_error"
+    },
+    {
+      "$ref": "#/$defs/unauthenticated_error"
+    },
+    {
+      "$ref": "#/$defs/web_resource_not_found_error"
+    },
+    {
+      "$ref": "#/$defs/web_resource_unavailable_error"
+    },
+    {
+      "$ref": "#/$defs/request_too_large_error"
+    }
+  ],
+  "$defs": {
+    "resource_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "reference": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "visible",
+        "enabled",
+        "read",
+        "edit",
+        "submit"
+      ]
+    },
+    "effect": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny"
+      ]
+    },
+    "subject_selector": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/verified_subject_selector"
+        },
+        {
+          "$ref": "#/$defs/role_selector"
+        },
+        {
+          "$ref": "#/$defs/organization_context_selector"
+        }
+      ]
+    },
+    "verified_subject_selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selectorType",
+        "verifiedSubjectRef"
+      ],
+      "properties": {
+        "verifiedSubjectRef": {
+          "$ref": "#/$defs/reference"
+        },
+        "selectorType": {
+          "const": "verifiedSubject"
+        }
+      }
+    },
+    "role_selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selectorType",
+        "roleRef"
+      ],
+      "properties": {
+        "roleRef": {
+          "$ref": "#/$defs/reference"
+        },
+        "selectorType": {
+          "const": "role"
+        }
+      }
+    },
+    "organization_context_selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selectorType",
+        "organizationContextRef"
+      ],
+      "properties": {
+        "organizationContextRef": {
+          "$ref": "#/$defs/reference"
+        },
+        "selectorType": {
+          "const": "organizationContext"
+        }
+      }
+    },
+    "web_resource_registration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "productId",
+        "resourceId",
+        "kind",
+        "displayName",
+        "projectionActions"
+      ],
+      "properties": {
+        "resourceId": {
+          "$ref": "#/$defs/resource_id"
+        },
+        "parentResourceId": {
+          "$ref": "#/$defs/resource_id"
+        },
+        "kind": {
+          "$ref": "#/$defs/resourceKind"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "projectionActions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          },
+          "minItems": 1,
+          "maxItems": 5,
+          "uniqueItems": true
+        },
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "productId": {
+          "$ref": "#/$defs/productId"
+        }
+      }
+    },
+    "web_resource_policy_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "productId",
+        "ruleId",
+        "resourceId",
+        "descendants",
+        "subjectSelector",
+        "actions",
+        "effect"
+      ],
+      "properties": {
+        "ruleId": {
+          "$ref": "#/$defs/resource_id"
+        },
+        "resourceId": {
+          "$ref": "#/$defs/resource_id"
+        },
+        "descendants": {
+          "type": "boolean"
+        },
+        "subjectSelector": {
+          "$ref": "#/$defs/subject_selector"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          },
+          "minItems": 1,
+          "maxItems": 5,
+          "uniqueItems": true
+        },
+        "effect": {
+          "$ref": "#/$defs/effect"
+        },
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "productId": {
+          "$ref": "#/$defs/productId"
+        }
+      }
+    },
+    "permission_resolution_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "productId"
+      ],
+      "properties": {
+        "rootResourceId": {
+          "$ref": "#/$defs/resource_id"
+        },
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "productId": {
+          "$ref": "#/$defs/productId"
+        }
+      }
+    },
+    "web_resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "productId",
+        "resourceId",
+        "kind",
+        "projectionActions",
+        "state",
+        "version",
+        "createdAt",
+        "updatedAt"
+      ],
+      "properties": {
+        "resourceId": {
+          "$ref": "#/$defs/resource_id"
+        },
+        "parentResourceId": {
+          "$ref": "#/$defs/resource_id"
+        },
+        "kind": {
+          "$ref": "#/$defs/resourceKind"
+        },
+        "projectionActions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          },
+          "minItems": 1,
+          "maxItems": 5,
+          "uniqueItems": true
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "active",
+            "deprecated"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "maxLength": 64
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "maxLength": 64
+        },
+        "deprecatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "maxLength": 64
+        },
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "productId": {
+          "$ref": "#/$defs/productId"
+        }
+      }
+    },
+    "web_resource_list": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "resources"
+      ],
+      "properties": {
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/web_resource"
+          },
+          "maxItems": 10000
+        },
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        }
+      }
+    },
+    "accepted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion"
+      ],
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        }
+      }
+    },
+    "permission_resolution_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "permissionSetId",
+        "resourcePermissions",
+        "policyVersion",
+        "resourceTreeVersion",
+        "expiresAt",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "permissionSetId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "resourcePermissions": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}:(visible|enabled|read|edit|submit)$"
+          },
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "minProperties": 1,
+          "maxProperties": 10000
+        },
+        "resourceTreeVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "policyVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "maxLength": 64
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        }
+      }
+    },
+    "invalid_web_resource_request_error": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/error"
+        },
+        {
+          "properties": {
+            "code": {
+              "const": "invalidWebResourceRequest"
+            }
+          }
+        }
+      ]
+    },
+    "unauthenticated_error": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/error"
+        },
+        {
+          "properties": {
+            "code": {
+              "const": "unauthenticated"
+            }
+          }
+        }
+      ]
+    },
+    "web_resource_not_found_error": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/error"
+        },
+        {
+          "properties": {
+            "code": {
+              "const": "webResourceNotFound"
+            }
+          }
+        }
+      ]
+    },
+    "web_resource_unavailable_error": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/error"
+        },
+        {
+          "properties": {
+            "code": {
+              "const": "webResourceUnavailable"
+            }
+          }
+        }
+      ]
+    },
+    "request_too_large_error": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/error"
+        },
+        {
+          "properties": {
+            "code": {
+              "const": "requestTooLarge"
+            }
+          }
+        }
+      ]
+    },
+    "apiVersion": {
+      "const": "aegivela.io/v2.0"
+    },
+    "productId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "resourceKind": {
+      "type": "string",
+      "enum": [
+        "page",
+        "menu",
+        "section",
+        "button",
+        "form",
+        "field"
+      ]
+    }
+  }
+}

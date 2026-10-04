@@ -44,7 +44,7 @@ Protected invariants: tenant isolation, non-amplification of delegated authority
 | --- | --- |
 | Wider-than-allowed scope in grants | A requested scope must be a duplicate-free subset of the signed decision's `effective_scope`; the grant carries the attenuated subset and PEPs must enforce it. Grant expiry is the earliest of 15 minutes, principal expiry, and decision expiry. |
 | Approval window widening | A grant bound to an `approval_jti` must be equal to or narrower than the approval on scope, audience, expiry, action, resource, and task; with both `parent_jti` and `approval_jti` present it must be narrower than both. Approvals are append-only with a 24-hour maximum TTL. |
-| Pre-authorization abuse | Windows are quota-bounded (`max_grants` 1-100), expire within 24 hours, and fix the scope/audience envelope; grants under a window must be equal or narrower. EASEF-IAM P2/P3 hold structurally: `master_id` is injected from the authoritative record (never caller-supplied), and token exchange only attenuates (subset scope, exact audience/action/resource match, non-increasing expiry). Widening attempts are `403`, not errors of degree. |
+| Pre-authorization abuse | Windows are quota-bounded (`max_grants` 1-100), expire within 24 hours, and fix the scope/audience envelope; grants under a window must be equal or narrower. EASEF-DELEGATION P2/P3 hold structurally: `master_id` is injected from the authoritative record (never caller-supplied), and token exchange only attenuates (subset scope, exact audience/action/resource match, non-increasing expiry). Widening attempts are `403`, not errors of degree. |
 
 ## 4. Revocation Bypass
 

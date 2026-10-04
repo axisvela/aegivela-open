@@ -1,0 +1,100 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Token Exchange API
+  version: v1alpha1
+paths:
+  /v1/token-exchange:
+    post:
+      operationId: exchangeToken
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenExchangeRequest'
+      responses:
+        '200':
+          description: Exchanged token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenExchangeResponse'
+        '400':
+          $ref: '#/components/responses/InvalidTokenExchangeRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+components:
+  responses:
+    InvalidTokenExchangeRequest:
+      description: invalid_token_exchange_request
+    Unauthenticated:
+      description: unauthenticated
+    AuthorizationDenied:
+      description: authorization_denied
+    IdentityUnavailable:
+      description: identity_unavailable
+  schemas:
+    TokenExchangeRequest:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, subjectToken, subjectTokenType, signedDecision, requestedAudience, requestedScope, traceId]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        subjectToken: { type: string, minLength: 1 }
+        subjectTokenType: { type: string, enum: [urn:ietf:params:oauth:token-type:jwt, urn:aegivela:token-type:execution-grant] }`n        signedDecision: { type: string, minLength: 1, description: "Canonical signed allow decision authorizing the exchange; token exchange never synthesizes an allow." }
+        requestedAudience: { type: string, minLength: 1 }
+        requestedScope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        requested_resourceRef:
+          type: object
+          additionalProperties: false
+          required: [kind, reference]
+          properties:
+            kind: { type: string, minLength: 1 }
+            reference: { type: string, minLength: 1 }
+        requestedTaskRef: { type: string, minLength: 1 }
+        traceId: { type: string, minLength: 1 }
+    TokenExchangeResponse:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, tokenId, principal, scope, audience, expiresAt, issuedAt, evidenceRefs]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        tokenId: { type: string, minLength: 1 }
+        principal:
+          type: object
+          additionalProperties: false
+          required: [actorRef]
+          properties:
+            subjectRef: { type: string, minLength: 1 }
+            actorRef: { type: string, minLength: 1 }
+            clientId: { type: string, minLength: 1 }
+            workloadRef: { type: string, minLength: 1 }
+            agentId: { type: string, minLength: 1 }
+            agentClass: { type: string }
+            masterId: { type: string, minLength: 1 }
+            organizationAuthorityRoot: { type: string, minLength: 1 }
+            attestationRef: { type: string, minLength: 1 }
+        scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        audience: { type: string, minLength: 1 }
+        expiresAt: { type: string, format: date-time }
+        issuedAt: { type: string, format: date-time }
+        taskBinding: { type: string, minLength: 1 }
+        resourceBinding:
+          type: object
+          additionalProperties: false
+          required: [kind, reference]
+          properties:
+            kind: { type: string, minLength: 1 }
+            reference: { type: string, minLength: 1 }
+        evidenceRefs: { type: array, items: { type: string, minLength: 1 }, minItems: 1 }

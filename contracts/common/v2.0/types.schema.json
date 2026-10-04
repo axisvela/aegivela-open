@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/common/v2.0/types.schema.json",
+  "title": "AEGIVELA Common Types",
+  "$defs": {
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actorRef"
+      ],
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subjectRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actorRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "clientId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workloadRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentClass": {
+          "type": "string"
+        },
+        "masterId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "organizationAuthorityRoot": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attestationRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorityBinding": {
+          "type": "string",
+          "enum": [
+            "humanMaster",
+            "organizationRoot"
+          ]
+        },
+        "agentEpoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "identityEpoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "instanceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "scope": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "pep_header_name": {
+      "const": "X-AEGIVELA-PEP"
+    },
+    "error_detail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "errorCode",
+        "message"
+      ],
+      "properties": {
+        "errorCode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/error_detail"
+          }
+        },
+        "traceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "unauthenticated_error": {
+      "$ref": "#/$defs/error_detail",
+      "properties": {
+        "errorCode": {
+          "const": "unauthenticated"
+        }
+      }
+    },
+    "identity_unavailable_error": {
+      "$ref": "#/$defs/error_detail",
+      "properties": {
+        "errorCode": {
+          "const": "identityUnavailable"
+        }
+      }
+    },
+    "authorization_denied_error": {
+      "$ref": "#/$defs/error_detail",
+      "properties": {
+        "errorCode": {
+          "const": "authorizationDenied"
+        }
+      }
+    },
+    "revocation_unavailable_error": {
+      "$ref": "#/$defs/error_detail",
+      "properties": {
+        "errorCode": {
+          "const": "revocationUnavailable"
+        }
+      }
+    },
+    "decision_unavailable_error": {
+      "$ref": "#/$defs/error_detail",
+      "properties": {
+        "errorCode": {
+          "const": "decisionUnavailable"
+        }
+      }
+    },
+    "resourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "reference"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

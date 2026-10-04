@@ -1,0 +1,183 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Attestation API
+  version: v1alpha1
+paths:
+  /v1/attestations/issue:
+    post:
+      operationId: issueAttestation
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttestationIssueRequest'
+      responses:
+        '200':
+          description: Issued attestation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttestationIssueResponse'
+        '400':
+          $ref: '#/components/responses/InvalidAttestationRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+  /v1/attestations/verify:
+    post:
+      operationId: verifyAttestation
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttestationVerifyRequest'
+      responses:
+        '200':
+          description: Attestation verification result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttestationVerifyResponse'
+        '400':
+          $ref: '#/components/responses/InvalidAttestationRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/IdentityUnavailable'
+  /v1/attestations/jwks:
+    get:
+      operationId: getAttestationJWKS
+      responses:
+        '200':
+          description: Public JWKS
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+components:
+  responses:
+    InvalidAttestationRequest:
+      description: invalid_attestation_request
+    Unauthenticated:
+      description: unauthenticated
+    AuthorizationDenied:
+      description: authorization_denied
+    IdentityUnavailable:
+      description: identity_unavailable
+  schemas:
+    AttestationIssueRequest:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, bearerToken, artifactDigest, artifactRef, signerIdentity, signerPublicKey, audience, policyVersion, traceId]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        bearerToken: { type: string, minLength: 1 }
+        artifactDigest: { type: string, minLength: 1 }
+        artifactRef: { type: string, minLength: 1 }
+        signerIdentity: { type: string, minLength: 1 }
+        signerPublicKey: { type: string, minLength: 1 }
+        workloadAssertion: { type: string, minLength: 1 }
+        environmentClaims: { type: object, additionalProperties: true }
+        audience: { type: string, minLength: 1 }
+        policyVersion: { type: string, minLength: 1 }
+        traceId: { type: string, minLength: 1 }
+    AttestationIssueResponse:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, attestationId, principal, artifactDigest, artifactRef, signerIdentity, audience, issuedAt, expiresAt, evidenceRefs]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        attestationId: { type: string, minLength: 1 }
+        principal:
+          type: object
+          additionalProperties: false
+          required: [actorRef]
+          properties:
+            subjectRef: { type: string, minLength: 1 }
+            actorRef: { type: string, minLength: 1 }
+            clientId: { type: string, minLength: 1 }
+            workloadRef: { type: string, minLength: 1 }
+            agentId: { type: string, minLength: 1 }
+            agentClass: { type: string }
+            masterId: { type: string, minLength: 1 }
+            organizationAuthorityRoot: { type: string, minLength: 1 }
+            attestationRef: { type: string, minLength: 1 }
+        artifactDigest: { type: string, minLength: 1 }
+        artifactRef: { type: string, minLength: 1 }
+        signerIdentity: { type: string, minLength: 1 }
+        signerPublicKey: { type: string, minLength: 1 }
+        workloadId: { type: string, minLength: 1 }
+        workloadEvidence: { type: string, minLength: 1 }
+        environmentClaims: { type: object, additionalProperties: true }
+        audience: { type: string, minLength: 1 }
+        policyVersion: { type: string, minLength: 1 }
+        issuedAt: { type: string, format: date-time }
+        expiresAt: { type: string, format: date-time }
+        evidenceRefs: { type: array, items: { type: string, minLength: 1 }, minItems: 1 }
+    AttestationVerifyRequest:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, signedAttestation, expectedBindings]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        signedAttestation: { type: string, minLength: 1 }
+        expectedBindings:
+          type: object
+          additionalProperties: false
+          required: [artifactDigest, signerIdentity, audience]
+          properties:
+            artifactDigest: { type: string, minLength: 1 }
+            signerIdentity: { type: string, minLength: 1 }
+            audience: { type: string, minLength: 1 }
+            traceId: { type: string, minLength: 1 }
+    AttestationVerifyResponse:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, attestationId, valid, principal, artifactDigest, signerIdentity, audience, issuedAt]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        attestationId: { type: string, minLength: 1 }
+        valid: { type: boolean }
+        principal:
+          type: object
+          additionalProperties: false
+          required: [actorRef]
+          properties:
+            subjectRef: { type: string, minLength: 1 }
+            actorRef: { type: string, minLength: 1 }
+            clientId: { type: string, minLength: 1 }
+            workloadRef: { type: string, minLength: 1 }
+            agentId: { type: string, minLength: 1 }
+            agentClass: { type: string }
+            masterId: { type: string, minLength: 1 }
+            organizationAuthorityRoot: { type: string, minLength: 1 }
+            attestationRef: { type: string, minLength: 1 }
+        artifactDigest: { type: string, minLength: 1 }
+        artifactRef: { type: string, minLength: 1 }
+        signerIdentity: { type: string, minLength: 1 }
+        audience: { type: string, minLength: 1 }
+        issuedAt: { type: string, format: date-time }
+        expired: { type: boolean }
+        revoked: { type: boolean }

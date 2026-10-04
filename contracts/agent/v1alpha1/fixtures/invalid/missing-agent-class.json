@@ -1,8 +1,0 @@
-{
-  "request": {
-    "agent_id": "agent-bot",
-    "organization_authority_root": "root-acme",
-    "maximum_scopes": ["documents.read"],
-    "workload_selector": "workload-bot-prod"
-  }
-}

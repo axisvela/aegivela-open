@@ -1,0 +1,138 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Policy Decision API
+  version: v1alpha3
+paths:
+  /v1/policy/decisions/evaluate:
+    post:
+      operationId: evaluatePolicyDecisionV1Alpha3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PolicyDecisionRequest' }
+      responses:
+        '200':
+          description: Policy decision
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PolicyDecisionResponse' }
+        '400': { description: invalid_policy_request }
+        '401': { description: unauthenticated }
+        '403': { description: policy_request_denied }
+        '503': { description: parentExecutionGrant_verification_unavailable }
+  /v1/policy/decisions/sign:
+    post:
+      operationId: signPolicyDecisionV1Alpha3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PolicyDecisionRequest' }
+      responses:
+        '200':
+          description: Signed policy decision
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PolicyDecisionResponse' }
+        '400': { description: invalid_policy_request }
+        '401': { description: unauthenticated }
+        '403': { description: policy_request_denied }
+        '503': { description: parentExecutionGrant_verification_unavailable }
+components:
+  schemas:
+    PolicyDecisionRequest:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, authorizationMode, principal, action, resource, requestedScope, audience, requestedExpiresAt, traceId]
+      properties:
+        apiVersion: { const: aegivela.io/v1alpha3 }
+        authorizationMode: { type: string, enum: [humanWeb, systemApi, delegatedApi, serviceAgentApi, twinAgentApi] }
+        principal: { $ref: '#/components/schemas/Principal' }
+        action: { type: string, minLength: 1 }
+        resource: { $ref: '#/components/schemas/Resource' }
+        requestedScope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        audience: { type: string, minLength: 1 }
+        requestedExpiresAt: { type: string, format: date-time }
+        taskBinding: { type: string, minLength: 1 }
+        parentAuthority: { $ref: '#/components/schemas/ParentAuthority' }
+        parentExecutionGrant: { type: string, minLength: 1 }
+        riskContext: { $ref: '#/components/schemas/RiskContext' }
+        traceId: { type: string, minLength: 1 }
+      allOf:
+        - if: { properties: { authorizationMode: { const: delegatedApi } } }
+          then:
+            required: [parentExecutionGrant]
+            not: { required: [parentAuthority] }
+            properties:
+              principal:
+                allOf:
+                  - required: [subjectRef, clientId, workloadRef]
+                  - not: { anyOf: [{ required: [agentId] }, { required: [masterId] }] }
+        - if: { properties: { authorizationMode: { const: serviceAgentApi } } }
+          then: { required: [parentAuthority] }
+        - if: { properties: { authorizationMode: { const: twinAgentApi } } }
+          then: { required: [parentAuthority] }
+    PolicyDecisionResponse:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, structuredResourceDigest, decisionId, outcome, policyVersion, expiresAt, obligations, evidenceRefs]
+      properties:
+        apiVersion: { const: aegivela.io/v1alpha3 }
+        structuredResourceDigest: { type: string, pattern: '^[0-9a-f]{64}$' }
+        decisionId: { type: string, minLength: 1 }
+        outcome: { type: string, enum: [allow, deny, approvalRequired, revoked] }
+        policyVersion: { type: string, minLength: 1 }
+        expiresAt: { type: string, format: date-time }
+        obligations: { type: array, items: { type: string, minLength: 1 } }
+        evidenceRefs: { type: array, items: { type: string, minLength: 1 }, minItems: 1 }
+    Principal:
+      type: object
+      additionalProperties: false
+      required: [namespace, actorRef]
+      properties:
+        subjectRef: { type: string, minLength: 1 }
+        actorRef: { type: string, minLength: 1 }
+        clientId: { type: string, minLength: 1 }
+        workloadRef: { type: string, minLength: 1 }
+        agentId: { type: string, minLength: 1 }
+        agentClass: { type: string }
+        masterId: { type: string, minLength: 1 }
+        organizationAuthorityRoot: { type: string, minLength: 1 }
+        attestationRef: { type: string, minLength: 1 }
+        namespace: { type: string, minLength: 1 }
+        authorityBinding: { type: string, enum: [humanMaster, organizationRoot] }
+        agentEpoch: { type: integer, minimum: 1 }
+        identityEpoch: { type: integer, minimum: 1 }
+        instanceId: { type: string, minLength: 1 }
+    ParentAuthority:
+      type: object
+      additionalProperties: false
+      required: [authorityRef, parentScope, parentAudience, parentExpiresAt, parentTaskBinding]
+      properties:
+        authorityRef: { type: string, minLength: 1 }
+        parentScope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        parentAudience: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        parentExpiresAt: { type: string, format: date-time }
+        parentTaskBinding: { type: string, minLength: 1 }
+    Resource:
+      type: object
+      additionalProperties: false
+      required: [kind, reference]
+      properties:
+        kind: { type: string, minLength: 1 }
+        reference: { type: string, minLength: 1 }
+        productId: { type: string, minLength: 1 }
+        resourceType: { type: string, minLength: 1 }
+        descriptorId: { type: string, minLength: 1 }
+        descriptorVersion: { type: string, minLength: 1 }
+        attributes: { type: object }
+      allOf:
+        - if: { anyOf: [{ required: [productId] }, { required: [resourceType] }, { required: [descriptorId] }, { required: [descriptorVersion] }, { required: [attributes] }] }
+          then: { required: [productId, resourceType, descriptorId, descriptorVersion, attributes] }
+    RiskContext:
+      type: object
+      additionalProperties: false
+      properties:
+        riskLevel: { type: string }
+        riskRef: { type: string }

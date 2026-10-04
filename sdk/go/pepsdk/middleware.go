@@ -17,22 +17,22 @@ type EvidenceRecorder interface {
 }
 
 type Evidence struct {
-	Mode        Mode
-	Action      string
-	Resource    Resource
-	DecisionID  string
+	Mode          Mode
+	Action        string
+	Resource      Resource
+	DecisionID    string
 	PolicyVersion string
-	EvidenceRefs []string
-	TraceID     string
-	Outcome     string
-	ReasonCode  string
+	EvidenceRefs  []string
+	TraceID       string
+	Outcome       string
+	ReasonCode    string
 }
 
 type contextKey struct{ name string }
 
 var (
-	resultCtxKey  = contextKey{name: "pepsdk-result"}
-	inputCtxKey   = contextKey{name: "pepsdk-input"}
+	resultCtxKey   = contextKey{name: "pepsdk-result"}
+	inputCtxKey    = contextKey{name: "pepsdk-input"}
 	evidenceCtxKey = contextKey{name: "pepsdk-evidence"}
 )
 

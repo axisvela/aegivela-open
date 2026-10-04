@@ -1,0 +1,174 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Execution Grant API
+  version: v2.0
+paths:
+  /v1/grants/issue:
+    post:
+      operationId: issueGrant
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantIssueRequest'
+      responses:
+        '200':
+          description: Issued grant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrantIssueResponse'
+        '400':
+          $ref: '#/components/responses/InvalidGrantRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/RevocationUnavailable'
+  /v1/grants/verify:
+    post:
+      operationId: verifyGrant
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantVerifyRequest'
+      responses:
+        '200':
+          description: Grant verification result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrantVerifyResponse'
+        '400':
+          $ref: '#/components/responses/InvalidGrantRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/RevocationUnavailable'
+  /v1/grants/jwks:
+    get:
+      operationId: getGrantJWKS
+      responses:
+        '200':
+          description: Public JWKS
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+components:
+  responses:
+    InvalidGrantRequest:
+      description: invalid_grant_request
+    Unauthenticated:
+      description: unauthenticated
+    AuthorizationDenied:
+      description: authorization_denied
+    RevocationUnavailable:
+      description: revocation_unavailable
+  schemas:
+    GrantIssueRequest:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, bearerToken, signedAllowDecision, requestedScope, traceId]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        bearerToken: { type: string, minLength: 1 }
+        signedAllowDecision: { type: string, minLength: 1 }
+        requestedScope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        preAuthorizationJti: { type: string, minLength: 1 }
+        approvalJti: { type: string, minLength: 1 }
+        traceId: { type: string, minLength: 1 }
+    GrantIssueResponse:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, grantId, principal, scope, audience, expiresAt, issuedAt, evidenceRefs]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        grantId: { type: string, minLength: 1 }
+        principal:
+          type: object
+          additionalProperties: false
+          required: [actorRef]
+          properties:
+            subjectRef: { type: string, minLength: 1 }
+            actorRef: { type: string, minLength: 1 }
+            clientId: { type: string, minLength: 1 }
+            workloadRef: { type: string, minLength: 1 }
+            agentId: { type: string, minLength: 1 }
+            agentClass: { type: string }
+            masterId: { type: string, minLength: 1 }
+            organizationAuthorityRoot: { type: string, minLength: 1 }
+            attestationRef: { type: string, minLength: 1 }
+        scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        audience: { type: string, minLength: 1 }
+        expiresAt: { type: string, format: date-time }
+        issuedAt: { type: string, format: date-time }
+        taskBinding: { type: string, minLength: 1 }
+        preAuthorizationJti: { type: string, minLength: 1 }
+        approvalJti: { type: string, minLength: 1 }
+        evidenceRefs: { type: array, items: { type: string, minLength: 1 }, minItems: 1 }
+    GrantVerifyRequest:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, signedGrant, expectedBindings]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        signedGrant: { type: string, minLength: 1 }
+        expectedBindings:
+          type: object
+          additionalProperties: false
+          required: [audience, scope]
+          properties:
+            audience: { type: string, minLength: 1 }
+            scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+            taskBinding: { type: string, minLength: 1 }
+            traceId: { type: string, minLength: 1 }
+    GrantVerifyResponse:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, grantId, valid, principal, scope, audience, expiresAt]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        grantId: { type: string, minLength: 1 }
+        valid: { type: boolean }
+        principal:
+          type: object
+          additionalProperties: false
+          required: [actorRef]
+          properties:
+            subjectRef: { type: string, minLength: 1 }
+            actorRef: { type: string, minLength: 1 }
+            clientId: { type: string, minLength: 1 }
+            workloadRef: { type: string, minLength: 1 }
+            agentId: { type: string, minLength: 1 }
+            agentClass: { type: string }
+            masterId: { type: string, minLength: 1 }
+            organizationAuthorityRoot: { type: string, minLength: 1 }
+            attestationRef: { type: string, minLength: 1 }
+        scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        audience: { type: string, minLength: 1 }
+        expiresAt: { type: string, format: date-time }
+        expired: { type: boolean }
+        revoked: { type: boolean }
+        revocationCheckEpoch: { type: integer, minimum: 0 }

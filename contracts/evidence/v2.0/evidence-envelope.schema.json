@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/evidence/v2.0/evidence-envelope.schema.json",
+  "title": "AEGIVELA Security Evidence Envelope v2.0",
+  "description": "Redacted security evidence envelope for SIEM export, product audit indexing, and cross-repository correlation. Never carries raw bearer tokens, credentials, payloads, or unrestricted resource attributes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "evidenceId",
+    "tenantId",
+    "domain",
+    "outcome",
+    "reasonCode",
+    "timestamp",
+    "traceId"
+  ],
+  "properties": {
+    "evidenceId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tenantId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "namespace": {
+      "type": "string",
+      "minLength": 1
+    },
+    "domain": {
+      "enum": [
+        "decision",
+        "grant",
+        "approval",
+        "attestation",
+        "revocation",
+        "risk",
+        "gateway",
+        "exchange",
+        "identity"
+      ]
+    },
+    "outcome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reasonCode": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subjectDigest": {
+      "type": "string",
+      "minLength": 1
+    },
+    "actorId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "audience": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "apiVersion": {
+      "const": "aegivela.io/v2.0"
+    },
+    "agentEpoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "identityEpoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "traceId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decisionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "grantJti": {
+      "type": "string",
+      "minLength": 1
+    },
+    "approvalJti": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policyVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "resourceDigest": {
+      "type": "string",
+      "minLength": 1
+    },
+    "resourceKind": {
+      "type": "string",
+      "minLength": 1
+    },
+    "riskLevel": {
+      "type": "string",
+      "minLength": 1
+    },
+    "riskRef": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

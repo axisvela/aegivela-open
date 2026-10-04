@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/agent/v2.0/agent-lifecycle.schema.json",
+  "title": "AEGIVELA Agent Lifecycle",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/agent_register_request"
+    },
+    {
+      "$ref": "#/$defs/agent_record"
+    },
+    {
+      "$ref": "#/$defs/agent_enroll_request"
+    },
+    {
+      "$ref": "#/$defs/agent_enroll_response"
+    },
+    {
+      "$ref": "#/$defs/agent_get_request"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/unauthenticated_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/authorization_denied_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/identity_unavailable_error"
+    }
+  ],
+  "$defs": {
+    "lifecycle_state": {
+      "type": "string",
+      "enum": [
+        "created",
+        "active",
+        "suspended",
+        "revoked"
+      ]
+    },
+    "enrollment_strategy": {
+      "type": "string",
+      "enum": [
+        "deviceBacked",
+        "humanAuthorized",
+        "apiOnly"
+      ]
+    },
+    "agent_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "agentId",
+        "agentClass",
+        "authorityRoot",
+        "lifecycleState",
+        "maximumScopes",
+        "workloadSelector",
+        "createdAt",
+        "updatedAt"
+      ],
+      "properties": {
+        "lifecycleState": {
+          "$ref": "#/$defs/lifecycle_state"
+        },
+        "maximumScopes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "workloadSelector": {
+          "type": "string",
+          "minLength": 1
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "agentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentClass": {
+          "$ref": "#/$defs/agentClass"
+        },
+        "authorityRoot": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "agent_register_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agentId",
+        "agentClass",
+        "maximumScopes",
+        "workloadSelector"
+      ],
+      "properties": {
+        "maximumScopes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "workloadSelector": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentClass": {
+          "$ref": "#/$defs/agentClass"
+        },
+        "masterId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "organizationAuthorityRoot": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "agent_enroll_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strategies"
+      ],
+      "properties": {
+        "strategies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/enrollment_strategy"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "workloadAssertion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bearerToken": {
+          "type": "string",
+          "minLength": 1
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "agent_enroll_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "agentId",
+        "lifecycleState",
+        "evidenceRef",
+        "strategies"
+      ],
+      "properties": {
+        "lifecycleState": {
+          "$ref": "#/$defs/lifecycle_state"
+        },
+        "strategies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/enrollment_strategy"
+          },
+          "minItems": 1
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "agentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceRef": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "agent_get_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agentId"
+      ],
+      "properties": {
+        "agentId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "agentClass": {
+      "type": "string",
+      "enum": [
+        "twin",
+        "service"
+      ]
+    }
+  }
+}

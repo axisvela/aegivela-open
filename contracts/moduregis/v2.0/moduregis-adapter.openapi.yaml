@@ -1,0 +1,83 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA-MODUREGIS Adapter API
+  version: v1alpha1
+paths:
+  /v1/moduregis/authorize:
+    post:
+      operationId: authorizeModuregis
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdapterAuthorizationRequest'
+      responses:
+        '200':
+          description: Authorization decision
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdapterAuthorizationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/AuthorizationUnconfigured'
+components:
+  responses:
+    Unauthenticated:
+      description: unauthenticated
+    AuthorizationDenied:
+      description: authorization_denied
+    AuthorizationUnconfigured:
+      description: authorization_unconfigured
+  schemas:
+    AdapterAction:
+      enum: [capability:read, capability:publish, adapter:activate, capability:invoke]
+    AdapterAuthorizationRequest:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, bearerToken, action, resource, traceId]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        bearerToken: { type: string, minLength: 1 }
+        action: { $ref: '#/components/schemas/AdapterAction' }
+        resource:
+          type: object
+          additionalProperties: false
+          required: [kind, reference]
+          properties:
+            kind: { type: string, minLength: 1 }
+            reference: { type: string, minLength: 1 }
+        scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
+        approvalArtifact: { type: string, minLength: 1, maxLength: 8192 }
+        adapterId: { type: string, minLength: 1 }
+        adapterVersion: { type: string, minLength: 1 }
+        executionId: { type: string, minLength: 1 }
+        traceId: { type: string, minLength: 1 }
+    AdapterAuthorizationResponse:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, decisionId, outcome, policyVersion, actorId, evidenceRefs]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        decisionId: { type: string, minLength: 1 }
+        outcome: { enum: [allow, deny, approvalRequired, revoked] }
+        policyVersion: { type: string, minLength: 1 }
+        actorId: { type: string, minLength: 1 }
+        agentId: { type: string, minLength: 1 }
+        masterId: { type: string, minLength: 1 }
+        workloadId: { type: string, minLength: 1 }
+        subjectRef: { type: string, minLength: 1 }
+        expiresAt: { type: string, format: date-time }
+        evidenceRefs: { type: array, items: { type: string, minLength: 1 }, minItems: 1 }
+        grantToken: { type: string, minLength: 1, maxLength: 8192 }

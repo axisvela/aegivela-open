@@ -21,7 +21,8 @@
       "properties": {
         "api_version": { "const": "aegivela.io/v1alpha1" },
         "subject_token": { "type": "string", "minLength": 1 },
-        "subject_token_type": { "$ref": "#/$defs/subject_token_type" },`n        "signed_decision": { "type": "string", "minLength": 1 },
+        "subject_token_type": { "$ref": "#/$defs/subject_token_type" },
+        "signed_decision": { "type": "string", "minLength": 1 },
         "requested_audience": { "type": "string", "minLength": 1 },
         "requested_scope": { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/scope" },
         "requested_resource_ref": { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/resource_ref" },

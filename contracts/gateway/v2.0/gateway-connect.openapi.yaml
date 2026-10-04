@@ -1,0 +1,142 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Gateway Connect API
+  version: v1alpha1
+paths:
+  /v1/gateway/connect:
+    post:
+      operationId: evaluateGatewayConnect
+      parameters:
+        - name: X-Aegivela-Internal-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GatewayConnectRequest'
+      responses:
+        '200':
+          description: Gateway connect decision
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayConnectResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/AuthorizationDenied'
+        '503':
+          $ref: '#/components/responses/AuthorizationUnconfigured'
+components:
+  responses:
+    InvalidRequest:
+      description: invalid_request
+    Unauthenticated:
+      description: unauthenticated
+    AuthorizationDenied:
+      description: authorization_denied
+    AuthorizationUnconfigured:
+      description: authorization_unconfigured
+  schemas:
+    GatewayAction:
+      enum: [connection:open, backend:request, credential:inject, tool:invoke]
+    GatewayAgentClass:
+      enum: [twin, service]
+    GatewayAuthorizationMode:
+      enum: [systemApi, serviceAgentApi, twinAgentApi]
+    GatewayOutcome:
+      enum: [allow, deny, approvalRequired, revoked]
+    CredentialClass:
+      enum: [awsSigv4, header, query, body]
+    ToolAttribution:
+      type: object
+      additionalProperties: false
+      required: [humanRef, agentRef, toolId, skillHash, implementationDigest]
+      properties:
+        humanRef: { type: string, minLength: 1 }
+        agentRef: { type: string, minLength: 1 }
+        toolId: { type: string, minLength: 1 }
+        skillHash: { type: string, minLength: 1, pattern: '^sha256:[a-f0-9]{64}$' }
+        implementationDigest: { type: string, minLength: 1, pattern: '^sha256:[a-f0-9]{64}$' }
+        signedAt: { type: string, format: date-time }
+        signature: { type: string, minLength: 1 }
+    GatewayConnectRequest:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, action, workloadAssertion, targetHost, targetScheme, requestedScope, audience, traceId]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        action: { $ref: '#/components/schemas/GatewayAction' }
+        authorizationMode: { $ref: '#/components/schemas/GatewayAuthorizationMode' }
+        agentId: { type: string, minLength: 1 }
+        agentClass: { $ref: '#/components/schemas/GatewayAgentClass' }
+        workloadAssertion: { type: string, minLength: 1 }
+        attribution: { $ref: '#/components/schemas/ToolAttribution' }
+        argumentDigest: { type: string, minLength: 1 }
+        argumentClassification: { type: string, minLength: 1 }
+        targetHost: { type: string, minLength: 1 }
+        targetScheme: { enum: [http, https] }
+        targetPath: { type: string, minLength: 1 }
+        requestedScope:
+          type: array
+          items: { type: string, minLength: 1 }
+          minItems: 1
+          uniqueItems: true
+        audience: { type: string, minLength: 1 }
+        traceId: { type: string, minLength: 1 }
+      allOf:
+        - if:
+            required: [authorizationMode]
+            properties: { authorizationMode: { const: systemApi } }
+          then:
+            not:
+              anyOf:
+                - required: [agentId]
+                - required: [agentClass]
+        - if:
+            required: [authorizationMode]
+            properties: { authorizationMode: { enum: [serviceAgentApi, twinAgentApi] } }
+          then:
+            required: [agentId, agentClass]
+        - if:
+            required: [agentClass]
+          then:
+            required: [agentId]
+    GatewayConnectResponse:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, decisionId, outcome, policyVersion, expiresAt, ttlSeconds, offlineEligible, evidenceRefs]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        decisionId: { type: string, minLength: 1 }
+        outcome: { $ref: '#/components/schemas/GatewayOutcome' }
+        policyVersion: { type: string, minLength: 1 }
+        expiresAt: { type: string, format: date-time }
+        ttlSeconds: { type: integer, minimum: 0, maximum: 3600 }
+        offlineEligible: { type: boolean }
+        scope:
+          type: array
+          items: { type: string, minLength: 1 }
+        obligations:
+          type: array
+          items: { type: string, minLength: 1 }
+        evidenceRefs:
+          type: array
+          items: { type: string, minLength: 1 }
+          minItems: 1
+        credentialRef: { type: string, minLength: 1 }
+        credentialClass: { $ref: '#/components/schemas/CredentialClass' }
+        mitmRequired: { type: boolean }
+        mitmScope:
+          type: array
+          items: { type: string, minLength: 1 }
+        allowedTargetPaths:
+          type: array
+          items: { type: string, minLength: 1 }

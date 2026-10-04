@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package grant.v2_0;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/grantcontract/pb;pb";
+
+import "google/protobuf/timestamp.proto";
+
+service ExecutionGrantService {
+  rpc Issue(GrantIssueRequest) returns (GrantIssueResponse);
+  rpc Verify(GrantVerifyRequest) returns (GrantVerifyResponse);
+}
+
+message Principal {
+  string tenantId = 1;
+  optional string subjectRef = 2;
+  string actorRef = 3;
+  optional string clientId = 4;
+  optional string workloadRef = 5;
+  optional string agentId = 6;
+  optional string agentClass = 7;
+  optional string masterId = 8;
+  optional string organizationAuthorityRoot = 9;
+  optional int64 lifecycleEpoch = 10;
+  optional string attestationRef = 11;
+}
+
+message GrantIssueRequest {
+  string apiVersion = 1;
+  string bearerToken = 2;
+  string signedAllowDecision = 3;
+  repeated string requestedScope = 4;
+  optional string preAuthorizationJti = 5;
+  optional string approvalJti = 6;
+  string traceId = 7;
+}
+
+message GrantIssueResponse {
+  string apiVersion = 1;
+  string grantId = 2;
+  Principal principal = 3;
+  repeated string scope = 4;
+  string audience = 5;
+  google.protobuf.Timestamp expiresAt = 6;
+  google.protobuf.Timestamp issuedAt = 7;
+  optional string taskBinding = 8;
+  optional string preAuthorizationJti = 9;
+  optional string approvalJti = 10;
+  repeated string evidenceRefs = 11;
+}
+
+message ExpectedBindings {
+  string audience = 1;
+  repeated string scope = 2;
+  optional string taskBinding = 3;
+  optional string traceId = 4;
+}
+
+message GrantVerifyRequest {
+  string apiVersion = 1;
+  string signedGrant = 2;
+  ExpectedBindings expectedBindings = 3;
+}
+
+message GrantVerifyResponse {
+  string apiVersion = 1;
+  string grantId = 2;
+  bool valid = 3;
+  Principal principal = 4;
+  repeated string scope = 5;
+  string audience = 6;
+  google.protobuf.Timestamp expiresAt = 7;
+  bool expired = 8;
+  bool revoked = 9;
+  optional int64 revocationCheckEpoch = 10;
+}

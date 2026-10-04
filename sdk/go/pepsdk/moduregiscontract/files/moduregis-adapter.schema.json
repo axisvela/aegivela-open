@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/moduregis/v1alpha1/moduregis-adapter.schema.json",
+  "title": "AEGIVELA-MODUREGIS Adapter Contract v1alpha1",
+  "description": "Adapter selection, action/resource mappings, and decision semantics for the MODUREGIS Capability Governance profile. MODUREGIS owns Console, OIDC/PKCE, browser sessions, Catalog/Registry, workflow, approval UX, publication workflow, activation UX, Governor execution, PRAXOVELA/RHEOVELA dispatch, Harmovela correlation, and Audit Index persistence. AEGIVELA supplies the versioned adapter contract, cross-repository conformance fixtures, and fail-closed semantics.",
+  "oneOf": [
+    { "$ref": "#/$defs/adapter_authorization_request" },
+    { "$ref": "#/$defs/adapter_authorization_response" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/unauthenticated_error" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/authorization_denied_error" },
+    { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/identity_unavailable_error" }
+  ],
+  "$defs": {
+    "adapter_action": {
+      "enum": [
+        "capability:read",
+        "capability:publish",
+        "adapter:activate",
+        "capability:invoke"
+      ]
+    },
+    "adapter_authorization_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "bearer_token", "action", "resource", "trace_id"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "bearer_token": { "type": "string", "minLength": 1 },
+        "action": { "$ref": "#/$defs/adapter_action" },
+        "resource": { "$ref": "https://aegivela.io/contracts/common/v1alpha1/types.schema.json#/$defs/resource_ref" },
+        "scope": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1, "uniqueItems": true },
+        "approval_artifact": { "type": "string", "minLength": 1, "maxLength": 8192 },
+        "adapter_id": { "type": "string", "minLength": 1 },
+        "adapter_version": { "type": "string", "minLength": 1 },
+        "execution_id": { "type": "string", "minLength": 1 },
+        "trace_id": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "action": { "const": "capability:publish" } } },
+          "then": { "required": ["scope", "approval_artifact"] }
+        },
+        {
+          "if": { "properties": { "action": { "const": "adapter:activate" } } },
+          "then": { "required": ["adapter_id", "adapter_version"] }
+        },
+        {
+          "if": { "properties": { "action": { "const": "capability:invoke" } } },
+          "then": { "required": ["scope", "execution_id"] }
+        }
+      ]
+    },
+    "adapter_authorization_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_version", "decision_id", "outcome", "policy_version", "tenant_id", "actor_id", "evidence_refs"],
+      "properties": {
+        "api_version": { "const": "aegivela.io/v1alpha1" },
+        "decision_id": { "type": "string", "minLength": 1 },
+        "outcome": { "enum": ["allow", "deny", "approval_required", "revoked"] },
+        "policy_version": { "type": "string", "minLength": 1 },
+        "tenant_id": { "type": "string", "minLength": 1 },
+        "actor_id": { "type": "string", "minLength": 1 },
+        "agent_id": { "type": "string", "minLength": 1 },
+        "master_id": { "type": "string", "minLength": 1 },
+        "workload_id": { "type": "string", "minLength": 1 },
+        "subject_ref": { "type": "string", "minLength": 1 },
+        "expires_at": { "type": "string", "format": "date-time" },
+        "evidence_refs": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+        "grant_token": { "type": "string", "minLength": 1, "maxLength": 8192 }
+      }
+    }
+  }
+}

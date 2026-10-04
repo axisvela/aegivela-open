@@ -1,0 +1,435 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/policy/v1alpha3/policy-decision.schema.json",
+  "title": "AEGIVELA Policy Decision v1alpha3",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/policyDecisionRequest"
+    },
+    {
+      "$ref": "#/$defs/policyDecisionResponse"
+    }
+  ],
+  "$defs": {
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "namespace",
+        "actorRef"
+      ],
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subjectRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actorRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "clientId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workloadRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentClass": {
+          "type": "string"
+        },
+        "masterId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "organizationAuthorityRoot": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attestationRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorityBinding": {
+          "type": "string",
+          "enum": [
+            "humanMaster",
+            "organizationRoot"
+          ]
+        },
+        "agentEpoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "identityEpoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "instanceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "reference"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attributes": {
+          "type": "object"
+        },
+        "productId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resourceType": {
+          "type": "string",
+          "minLength": 1
+        },
+        "descriptorId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "descriptorVersion": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "anyOf": [
+              {
+                "required": [
+                  "productId"
+                ]
+              },
+              {
+                "required": [
+                  "resourceType"
+                ]
+              },
+              {
+                "required": [
+                  "descriptorId"
+                ]
+              },
+              {
+                "required": [
+                  "descriptorVersion"
+                ]
+              },
+              {
+                "required": [
+                  "attributes"
+                ]
+              }
+            ]
+          },
+          "then": {
+            "required": [
+              "productId",
+              "resourceType",
+              "descriptorId",
+              "descriptorVersion",
+              "attributes"
+            ]
+          }
+        }
+      ]
+    },
+    "authorizationMode": {
+      "type": "string",
+      "enum": [
+        "humanWeb",
+        "systemApi",
+        "delegatedApi",
+        "serviceAgentApi",
+        "twinAgentApi"
+      ]
+    },
+    "decisionOutcome": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny",
+        "approvalRequired",
+        "revoked"
+      ]
+    },
+    "parentAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityRef",
+        "parentScope",
+        "parentAudience",
+        "parentExpiresAt",
+        "parentTaskBinding"
+      ],
+      "properties": {
+        "authorityRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parentScope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "parentAudience": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "parentExpiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "parentTaskBinding": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "riskContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "riskLevel": {
+          "type": "string"
+        },
+        "riskRef": {
+          "type": "string"
+        }
+      }
+    },
+    "policyDecisionRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "authorizationMode",
+        "principal",
+        "action",
+        "resource",
+        "requestedScope",
+        "audience",
+        "requestedExpiresAt",
+        "traceId"
+      ],
+      "properties": {
+        "principal": {
+          "$ref": "#/$defs/principal"
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resource": {
+          "$ref": "#/$defs/resource"
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v1alpha3"
+        },
+        "authorizationMode": {
+          "$ref": "#/$defs/authorizationMode"
+        },
+        "requestedScope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "requestedExpiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "taskBinding": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parentAuthority": {
+          "$ref": "#/$defs/parentAuthority"
+        },
+        "parentExecutionGrant": {
+          "type": "string",
+          "minLength": 1
+        },
+        "riskContext": {
+          "$ref": "#/$defs/riskContext"
+        },
+        "traceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "authorizationMode": {
+                "const": "delegatedApi"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "parentExecutionGrant"
+            ],
+            "not": {
+              "required": [
+                "parentAuthority"
+              ]
+            },
+            "properties": {
+              "principal": {
+                "allOf": [
+                  {
+                    "required": [
+                      "subjectRef",
+                      "clientId",
+                      "workloadRef"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "anyOf": [
+                        {
+                          "required": [
+                            "agentId"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "masterId"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "authorizationMode": {
+                "const": "serviceAgentApi"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "parentAuthority"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "authorizationMode": {
+                "const": "twinAgentApi"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "parentAuthority"
+            ]
+          }
+        }
+      ]
+    },
+    "policyDecisionResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "structuredResourceDigest",
+        "decisionId",
+        "outcome",
+        "policyVersion",
+        "expiresAt",
+        "obligations",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "outcome": {
+          "$ref": "#/$defs/decisionOutcome"
+        },
+        "obligations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v1alpha3"
+        },
+        "structuredResourceDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "decisionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policyVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      }
+    }
+  }
+}

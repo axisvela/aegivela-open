@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/axisrobo/aegivela-open/contracts/identity-source/v2.0/verified-principal.schema.json",
+  "title": "VerifiedPrincipal",
+  "description": "AEGIVELA's normalized verified agent identity context. It carries references and normalized fields only; raw credentials and unrestricted claims never appear here. Only an identity-source Provider may produce this value.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "namespace",
+    "agentId",
+    "agentRef",
+    "agentClass",
+    "authorityBinding",
+    "authorityRoot",
+    "agentState",
+    "agentEpoch",
+    "identityState",
+    "identityEpoch",
+    "attestationRef",
+    "credentialGeneration"
+  ],
+  "properties": {
+    "namespace": {
+      "type": "string",
+      "minLength": 1
+    },
+    "actorId": {
+      "type": "string"
+    },
+    "identityAssurance": {
+      "type": "string"
+    },
+    "issuer": {
+      "type": "string"
+    },
+    "subjectRef": {
+      "type": "string"
+    },
+    "clientId": {
+      "type": "string"
+    },
+    "agentId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agentRef": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agentClass": {
+      "enum": [
+        "twin",
+        "service",
+        "ephemeral",
+        "simulation"
+      ]
+    },
+    "authorityBinding": {
+      "enum": [
+        "humanMaster",
+        "organizationRoot"
+      ]
+    },
+    "authorityRoot": {
+      "type": "string",
+      "minLength": 1
+    },
+    "masterId": {
+      "type": "string"
+    },
+    "agentState": {
+      "const": "active"
+    },
+    "agentEpoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "identityState": {
+      "enum": [
+        "active",
+        "bound"
+      ]
+    },
+    "identityEpoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "instanceId": {
+      "type": "string"
+    },
+    "attestationRef": {
+      "type": "string",
+      "minLength": 1
+    },
+    "credentialGeneration": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sessionRef": {
+      "type": "string"
+    },
+    "issuedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

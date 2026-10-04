@@ -8,7 +8,7 @@ The Enterprise IdP remains authoritative for human authentication, passwords, MF
 
 ## F0 Current Behavior And Limits
 
-F0 implements tenant-isolated Twin and Service Agent registration, immutable authority binding, lifecycle state transitions, PostgreSQL persistence, migration-level audit fields, and an internal-token-protected HTTP API. Activation in F0 is a lifecycle API operation behind the internal PEP; it does not verify workload enrollment or attestation.
+F0 implements tenant-isolated Twin and Service Agent registration, immutable authority binding, lifecycle state transitions, PostgreSQL persistence, migration-level audit fields, and an internal-token-protected HTTP API. Activation consumes a verified enrollment result: `POST /v1/agents/{agent_id}/enroll` verifies the evidence prescribed by the active enrollment profile (`device_backed`, `human_authorized`, or `api_only`) and is the only path from `created` to `active`. The `POST /v1/agents/{agent_id}/activate` route only restores an already-enrolled suspended agent and returns `409 enrollment_required` for a not-yet-enrolled agent, so activation is never inferred from caller-supplied identity fields.
 
 F0 does not implement PDP authorization, verified workload enrollment or attestation, short-lived artifact issuance, external evidence or audit export, human authentication, or grant validation. Those capabilities remain future work.
 
@@ -64,7 +64,7 @@ For Twin Agents, every issued artifact contains the server-injected immutable `m
 
 ## Lifecycle and Product Coordination
 
-F0 exposes registration and lifecycle requests through its internal PEP. Products cannot activate an agent by updating their own product record alone. F0 activation does not verify runtime attestation. Future contracts may accept attestation reports; a product configuration may remain present after suspension, but future grant and PEP enforcement remain out of F0 scope.
+F0 exposes registration, enrollment and lifecycle requests through its internal PEP. Products cannot activate an agent by updating their own product record alone. Enrollment verifies the configured profile's evidence: `device_backed` requires a workload assertion whose tenant and workload reference match the agent, `human_authorized` requires a verified human whose subject matches the Twin's master, and `api_only` requires a registered workload selector. A failed or mismatched verification denies with `403 enrollment_denied`. A product configuration may remain present after suspension, but future grant and PEP enforcement remain out of F0 scope.
 
 Future lifecycle policy may cascade a human's security suspension to every Twin bound to that human. It does not cascade a human suspension to Service Agents because they are not human-delegated; organization policy controls their lifecycle.
 

@@ -10,91 +10,181 @@ import (
 	"time"
 )
 
-// ModuregisAuthorizeRequest carries the control-plane context required for MODUREGIS
-// to issue a short-lived authorization for a capability invocation.
+// ModuregisAuthorizeRequest mirrors the MODUREGIS adapter request contract.
+// The v1alpha1 wire contract carries no namespace field; namespace isolation
+// is enforced by the MODUREGIS registry against the decision's tenant.
 type ModuregisAuthorizeRequest struct {
-	Action              string   `json:"action"`
-	ResourceKind        string   `json:"resource_kind"`
-	ResourceReference   string   `json:"resource_reference"`
-	BearerToken         string   `json:"bearer_token"`
-	Scope               []string `json:"scope"`
-	ApprovalArtifact    string   `json:"approval_artifact"`
-	AdapterID           string   `json:"adapter_id"`
-	AdapterVersion      string   `json:"adapter_version"`
-	ExecutionID         string   `json:"execution_id"`
-	TraceID             string   `json:"trace_id"`
-	ToolID              string   `json:"tool_id"`
-	SkillHash           string   `json:"skill_hash"`
-	ImplementationDigest string  `json:"implementation_digest"`
+	Action               string
+	ResourceKind         string
+	ResourceReference    string
+	BearerToken          string
+	Scope                []string
+	ApprovalArtifact     string
+	AdapterID            string
+	AdapterVersion       string
+	ExecutionID          string
+	TraceID              string
+	ToolID               string
+	SkillHash            string
+	ImplementationDigest string
 }
 
-// ModuregisAuthorizeDecision is the signed authorization returned by MODUREGIS.
+func (r ModuregisAuthorizeRequest) valid() bool {
+	if r.BearerToken == "" || r.Action == "" || r.ResourceKind == "" || r.ResourceReference == "" {
+		return false
+	}
+	switch r.Action {
+	case "capability:read":
+	case "capability:publish":
+		if len(r.Scope) == 0 || r.ApprovalArtifact == "" {
+			return false
+		}
+	case "adapter:activate":
+		if r.AdapterID == "" || r.AdapterVersion == "" {
+			return false
+		}
+	case "capability:invoke":
+		if len(r.Scope) == 0 || r.ExecutionID == "" {
+			return false
+		}
+	case "tool:invoke":
+		if len(r.Scope) == 0 || r.ExecutionID == "" || r.ToolID == "" || r.SkillHash == "" || r.ImplementationDigest == "" {
+			return false
+		}
+	default:
+		return false
+	}
+	return true
+}
+
+// ModuregisAuthorizeDecision is the typed adapter decision result. The
+// principal envelope follows the published v1alpha1 response schema.
 type ModuregisAuthorizeDecision struct {
-	DecisionID        string    `json:"decision_id"`
-	Outcome           string    `json:"outcome"`
-	PolicyVersion     string    `json:"policy_version"`
-	TenantID          string    `json:"tenant_id"`
-	ActorID           string    `json:"actor_id"`
-	AgentID           string    `json:"agent_id"`
-	MasterID          string    `json:"master_id"`
-	WorkloadID        string    `json:"workload_id"`
-	SubjectRef        string    `json:"subject_ref"`
-	EvidenceRefs      []string  `json:"evidence_refs"`
-	ExpiresAt         time.Time `json:"expires_at"`
-	GrantToken        string    `json:"grant_token"`
+	DecisionID    string
+	Outcome       string
+	PolicyVersion string
+	TenantID      string
+	ActorID       string
+	AgentID       string
+	MasterID      string
+	WorkloadID    string
+	SubjectRef    string
+	EvidenceRefs  []string
+	ExpiresAt     time.Time
+	GrantToken    string
 }
 
-// ModuregisAuthorize requests a short-lived authorization from MODUREGIS for a single
-// capability invocation. internalToken is the PEP's own internal bootstrap token, sent as
-// the X-AEGIVELA-PEP header; it is distinct from the caller BearerToken in the request body.
+// ModuregisAuthorize obtains an adapter authorization decision from the MODUREGIS endpoint.
 func (c *Client) ModuregisAuthorize(ctx context.Context, internalToken string, request ModuregisAuthorizeRequest) (*ModuregisAuthorizeDecision, error) {
-	if internalToken == "" {
+	if internalToken == "" || !request.valid() {
 		return nil, ErrInvalidInput
 	}
-	if request.TraceID == "" {
-		request.TraceID = generateTraceID()
+	traceID := request.TraceID
+	if traceID == "" {
+		traceID = generateTraceID()
 	}
-	if request.Action == "" || request.ResourceKind == "" || request.ResourceReference == "" {
-		return nil, ErrInvalidInput
+	body := map[string]any{
+		"api_version":  "aegivela.io/v1alpha1",
+		"bearer_token": request.BearerToken,
+		"action":       request.Action,
+		"resource": map[string]string{
+			"kind":      request.ResourceKind,
+			"reference": request.ResourceReference,
+		},
+		"trace_id": traceID,
 	}
-
-	body, err := json.Marshal(request)
+	if len(request.Scope) > 0 {
+		body["scope"] = request.Scope
+	}
+	if request.ApprovalArtifact != "" {
+		body["approval_artifact"] = request.ApprovalArtifact
+	}
+	if request.AdapterID != "" {
+		body["adapter_id"] = request.AdapterID
+	}
+	if request.AdapterVersion != "" {
+		body["adapter_version"] = request.AdapterVersion
+	}
+	if request.ExecutionID != "" {
+		body["execution_id"] = request.ExecutionID
+	}
+	if request.ToolID != "" {
+		body["tool_id"] = request.ToolID
+	}
+	if request.SkillHash != "" {
+		body["skill_hash"] = request.SkillHash
+	}
+	if request.ImplementationDigest != "" {
+		body["implementation_digest"] = request.ImplementationDigest
+	}
+	payload, err := json.Marshal(body)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
-
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/v1/moduregis/authorize", bytes.NewReader(body))
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/v1/moduregis/authorize", bytes.NewReader(payload))
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
-	httpReq.Header.Set("X-AEGIVELA-PEP", internalToken)
-
+	httpReq.Header.Set("X-Aegivela-Internal-Token", internalToken)
 	resp, err := c.httpClient.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	defer resp.Body.Close()
-
 	switch resp.StatusCode {
 	case http.StatusOK:
 	case http.StatusUnauthorized:
 		return nil, ErrUnauthenticated
 	case http.StatusForbidden:
 		return nil, ErrDenied
+	case http.StatusBadRequest:
+		return nil, ErrInvalidInput
 	default:
 		return nil, ErrUnavailable
 	}
-
-	var decision ModuregisAuthorizeDecision
-	decoder := json.NewDecoder(io.LimitReader(resp.Body, maxResponseBytes))
+	limited := io.LimitReader(resp.Body, maxResponseBytes)
+	var decision struct {
+		APIVersion    string    `json:"api_version"`
+		DecisionID    string    `json:"decision_id"`
+		Outcome       string    `json:"outcome"`
+		PolicyVersion string    `json:"policy_version"`
+		TenantID      string    `json:"tenant_id"`
+		ActorID       string    `json:"actor_id"`
+		AgentID       string    `json:"agent_id"`
+		MasterID      string    `json:"master_id"`
+		WorkloadID    string    `json:"workload_id"`
+		SubjectRef    string    `json:"subject_ref"`
+		EvidenceRefs  []string  `json:"evidence_refs"`
+		ExpiresAt     time.Time `json:"expires_at"`
+		GrantToken    string    `json:"grant_token"`
+	}
+	decoder := json.NewDecoder(limited)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&decision); err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
-
-	if decision.Outcome != "allow" {
+	if err := decoder.Decode(&struct{}{}); err != io.EOF {
+		return nil, ErrUnavailable
+	}
+	if decision.DecisionID == "" || decision.PolicyVersion == "" {
+		return nil, ErrUnavailable
+	}
+	if decision.Outcome != "allow" && decision.Outcome != "approval_required" {
 		return nil, ErrDenied
 	}
-	return &decision, nil
+	return &ModuregisAuthorizeDecision{
+		DecisionID:    decision.DecisionID,
+		Outcome:       decision.Outcome,
+		PolicyVersion: decision.PolicyVersion,
+		TenantID:      decision.TenantID,
+		ActorID:       decision.ActorID,
+		AgentID:       decision.AgentID,
+		MasterID:      decision.MasterID,
+		WorkloadID:    decision.WorkloadID,
+		SubjectRef:    decision.SubjectRef,
+		EvidenceRefs:  decision.EvidenceRefs,
+		ExpiresAt:     decision.ExpiresAt,
+		GrantToken:    decision.GrantToken,
+	}, nil
 }

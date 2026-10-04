@@ -1,0 +1,80 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Revocation Check API
+  version: v1alpha1
+paths:
+  /v1/revocations/check:
+    post:
+      operationId: checkRevocation
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: PEP credential authenticating the caller.
+        - name: X-Aegivela-Tenant-ID
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: Tenant whose revocation scope is checked; a PEP cannot widen it through the request body.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevocationCheckRequest'
+      responses:
+        '200':
+          description: Revocation check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevocationCheckResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRevocationCheckRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '503':
+          $ref: '#/components/responses/RevocationUnavailable'
+components:
+  responses:
+    InvalidRevocationCheckRequest:
+      description: invalid_revocation_check_request
+    Unauthenticated:
+      description: unauthenticated
+    RevocationUnavailable:
+      description: revocation_unavailable
+  schemas:
+    RevocationCheckRequest:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, class, selectors, traceId]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        class: { enum: [preDispatch, continuation, connection] }
+        selectors:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [kind, value]
+            properties:
+              kind: { enum: [grantJti, decisionJti, approvalJti, exchangeJti, preAuthorizationJti, subjectRef, sessionRef, policyVersion, resourceRef] }
+              value: { type: string, minLength: 1, maxLength: 256 }
+          minItems: 1
+          maxItems: 16
+        traceId: { type: string, minLength: 1 }
+    RevocationCheckResponse:
+      type: object
+      additionalProperties: false
+      required: [apiVersion, class, outcome, checkedAt, traceId]
+      properties:
+        apiVersion: { const: aegivela.io/v2.0 }
+        class: { enum: [preDispatch, continuation, connection] }
+        outcome: { enum: [clear, revoked] }
+        checkedAt: { type: string, format: date-time }
+        traceId: { type: string, minLength: 1 }

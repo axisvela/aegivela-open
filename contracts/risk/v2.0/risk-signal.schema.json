@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/risk/v2.0/risk-signal.schema.json",
+  "title": "AEGIVELA Risk Signal v1alpha1",
+  "description": "CAEP-style continuous evaluation risk signal intake. Signals map risk levels to PDP re-evaluation and revocation triggers.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/risk_signal_request"
+    },
+    {
+      "$ref": "#/$defs/risk_signal_response"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/unauthenticated_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/authorization_denied_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/revocation_unavailable_error"
+    }
+  ],
+  "$defs": {
+    "risk_signal_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "subjectRef",
+        "riskLevel",
+        "riskRef",
+        "traceId"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "subjectRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "riskLevel": {
+          "$ref": "#/$defs/riskLevel"
+        },
+        "riskRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "traceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "risk_signal_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "signalId",
+        "riskLevel",
+        "action",
+        "traceId"
+      ],
+      "properties": {
+        "signalId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "enum": [
+            "logged",
+            "revokedSubject",
+            "revokedSubjectAndGrants"
+          ]
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "riskLevel": {
+          "$ref": "#/$defs/riskLevel"
+        },
+        "traceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "riskLevel": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    }
+  }
+}

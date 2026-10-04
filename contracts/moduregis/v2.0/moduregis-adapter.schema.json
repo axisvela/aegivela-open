@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/moduregis/v2.0/moduregis-adapter.schema.json",
+  "title": "AEGIVELA-MODUREGIS Adapter Contract v1alpha1",
+  "description": "Adapter selection, action/resource mappings, and decision semantics for the MODUREGIS Capability Governance profile. MODUREGIS owns Console, OIDC/PKCE, browser sessions, Catalog/Registry, workflow, approval UX, publication workflow, activation UX, Governor execution, PRAXOVELA/RHEOVELA dispatch, Harmovela correlation, and Audit Index persistence. AEGIVELA supplies the versioned adapter contract, cross-repository conformance fixtures, and fail-closed semantics.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/adapter_authorization_request"
+    },
+    {
+      "$ref": "#/$defs/adapter_authorization_response"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/unauthenticated_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/authorization_denied_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/identity_unavailable_error"
+    }
+  ],
+  "$defs": {
+    "adapter_action": {
+      "enum": [
+        "capability:read",
+        "capability:publish",
+        "adapter:activate",
+        "capability:invoke"
+      ]
+    },
+    "adapter_authorization_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "bearerToken",
+        "action",
+        "resource",
+        "traceId"
+      ],
+      "properties": {
+        "bearerToken": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "$ref": "#/$defs/adapter_action"
+        },
+        "resource": {
+          "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/resourceRef"
+        },
+        "scope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "approvalArtifact": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192
+        },
+        "adapterId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "adapterVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "executionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "traceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "capability:publish"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "scope",
+              "approvalArtifact"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "adapter:activate"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "adapterId",
+              "adapterVersion"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "capability:invoke"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "scope",
+              "executionId"
+            ]
+          }
+        }
+      ]
+    },
+    "adapter_authorization_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "decisionId",
+        "outcome",
+        "policyVersion",
+        "actorId",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "outcome": {
+          "enum": [
+            "allow",
+            "deny",
+            "approvalRequired",
+            "revoked"
+          ]
+        },
+        "actorId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grantToken": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "decisionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policyVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "masterId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workloadId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subjectRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      }
+    }
+  }
+}

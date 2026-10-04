@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/revocation/v2.0/revocation-check.schema.json",
+  "title": "AEGIVELA Revocation Check v1alpha1",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/revocation_check_request"
+    },
+    {
+      "$ref": "#/$defs/revocation_check_response"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/unauthenticated_error"
+    },
+    {
+      "$ref": "https://aegivela.io/contracts/common/v2.0/types.schema.json#/$defs/revocation_unavailable_error"
+    }
+  ],
+  "$defs": {
+    "selector_kind": {
+      "enum": [
+        "grantJti",
+        "decisionJti",
+        "approvalJti",
+        "exchangeJti",
+        "preAuthorizationJti",
+        "subjectRef",
+        "sessionRef",
+        "policyVersion",
+        "resourceRef"
+      ]
+    },
+    "selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/selector_kind"
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      }
+    },
+    "revocation_check_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "class",
+        "selectors",
+        "traceId"
+      ],
+      "properties": {
+        "class": {
+          "enum": [
+            "preDispatch",
+            "continuation",
+            "connection"
+          ]
+        },
+        "selectors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/selector"
+          },
+          "minItems": 1,
+          "maxItems": 16
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "traceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "revocation_check_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "class",
+        "outcome",
+        "checkedAt",
+        "traceId"
+      ],
+      "properties": {
+        "class": {
+          "enum": [
+            "preDispatch",
+            "continuation",
+            "connection"
+          ]
+        },
+        "outcome": {
+          "enum": [
+            "clear",
+            "revoked"
+          ]
+        },
+        "checkedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apiVersion": {
+          "const": "aegivela.io/v2.0"
+        },
+        "traceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

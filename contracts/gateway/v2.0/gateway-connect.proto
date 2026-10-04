@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package gateway.v2_0;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/gatewaycontract/pb/v2_0;v2_0";
+
+import "google/protobuf/timestamp.proto";
+
+service GatewayService {
+  rpc Connect(GatewayConnectRequest) returns (GatewayConnectResponse);
+}
+
+enum GatewayAction {
+  GATEWAYACTIONUNSPECIFIED = 0;
+  GATEWAYACTIONCONNECTIONOPEN = 1;
+  GATEWAYACTIONBACKENDREQUEST = 2;
+  GATEWAYACTIONCREDENTIALINJECT = 3;
+  GATEWAYACTIONTOOLINVOKE = 4;
+}
+
+enum GatewayAgentClass {
+  GATEWAYAGENTCLASSUNSPECIFIED = 0;
+  GATEWAYAGENTCLASSTWIN = 1;
+  GATEWAYAGENTCLASSSERVICE = 2;
+}
+
+enum GatewayAuthorizationMode {
+  GATEWAYAUTHORIZATIONMODEUNSPECIFIED = 0;
+  GATEWAYAUTHORIZATIONMODESYSTEMAPI = 1;
+  GATEWAYAUTHORIZATIONMODESERVICEAGENTAPI = 2;
+  GATEWAYAUTHORIZATIONMODETWINAGENTAPI = 3;
+}
+
+enum GatewayOutcome {
+  GATEWAYOUTCOMEUNSPECIFIED = 0;
+  GATEWAYOUTCOMEALLOW = 1;
+  GATEWAYOUTCOMEDENY = 2;
+  GATEWAYOUTCOMEAPPROVALREQUIRED = 3;
+  GATEWAYOUTCOMEREVOKED = 4;
+}
+
+enum CredentialClass {
+  CREDENTIALCLASSUNSPECIFIED = 0;
+  CREDENTIALCLASSAWSSIGV4 = 1;
+  CREDENTIALCLASSHEADER = 2;
+  CREDENTIALCLASSQUERY = 3;
+  CREDENTIALCLASSBODY = 4;
+}
+
+message ToolAttribution {
+  string humanRef = 1;
+  string agentRef = 2;
+  string toolId = 3;
+  string skillHash = 4;
+  string implementationDigest = 5;
+  google.protobuf.Timestamp signedAt = 6;
+  string signature = 7;
+}
+
+message GatewayConnectRequest {
+  string apiVersion = 1;
+  GatewayAction action = 2;
+  string tenantId = 3;
+  string agentId = 4;
+  GatewayAgentClass agentClass = 5;
+  string workloadAssertion = 6;
+  ToolAttribution attribution = 7;
+  string argumentDigest = 8;
+  string argumentClassification = 9;
+  string targetHost = 10;
+  string targetScheme = 11;
+  string targetPath = 12;
+  repeated string requestedScope = 13;
+  string audience = 14;
+  string traceId = 15;
+  GatewayAuthorizationMode authorizationMode = 16;
+}
+
+message GatewayConnectResponse {
+  string apiVersion = 1;
+  string decisionId = 2;
+  GatewayOutcome outcome = 3;
+  string policyVersion = 4;
+  google.protobuf.Timestamp expiresAt = 5;
+  int32 ttlSeconds = 6;
+  bool offlineEligible = 7;
+  repeated string scope = 8;
+  repeated string obligations = 9;
+  repeated string evidenceRefs = 10;
+  string credentialRef = 11;
+  CredentialClass credentialClass = 12;
+  bool mitmRequired = 13;
+  repeated string mitmScope = 14;
+  repeated string allowedTargetPaths = 15;
+}
