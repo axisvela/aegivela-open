@@ -1,1 +1,157 @@
-{}
+{
+  "enums": {
+    "DecisionOutcome": {
+      "ALLOW": 1,
+      "APPROVALREQUIRED": 3,
+      "DECISIONOUTCOMEUNSPECIFIED": 0,
+      "DENY": 2,
+      "REVOKED": 4
+    }
+  },
+  "messages": {
+    "ExpectedDecisionBindings": {
+      "fields": {
+        "action": {
+          "number": 2,
+          "type": "string"
+        },
+        "audience": {
+          "number": 5,
+          "type": "optional string"
+        },
+        "principal": {
+          "number": 1,
+          "type": "Principal"
+        },
+        "resource": {
+          "number": 3,
+          "type": "ResourceRef"
+        },
+        "scope": {
+          "number": 4,
+          "type": "repeated string"
+        },
+        "traceId": {
+          "number": 6,
+          "type": "optional string"
+        }
+      }
+    },
+    "PolicyDecisionVerifyRequest": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "expectedBindings": {
+          "number": 3,
+          "type": "ExpectedDecisionBindings"
+        },
+        "signedDecision": {
+          "number": 2,
+          "type": "string"
+        }
+      }
+    },
+    "PolicyDecisionVerifyResponse": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "decisionId": {
+          "number": 2,
+          "type": "string"
+        },
+        "evidenceRefs": {
+          "number": 8,
+          "type": "repeated string"
+        },
+        "expiresAt": {
+          "number": 6,
+          "type": "google.protobuf.Timestamp"
+        },
+        "obligations": {
+          "number": 7,
+          "type": "repeated string"
+        },
+        "outcome": {
+          "number": 4,
+          "type": "DecisionOutcome"
+        },
+        "policyVersion": {
+          "number": 5,
+          "type": "string"
+        },
+        "revoked": {
+          "number": 9,
+          "type": "bool"
+        },
+        "valid": {
+          "number": 3,
+          "type": "bool"
+        }
+      }
+    },
+    "Principal": {
+      "fields": {
+        "actorRef": {
+          "number": 3,
+          "type": "string"
+        },
+        "agentClass": {
+          "number": 7,
+          "type": "optional string"
+        },
+        "agentId": {
+          "number": 6,
+          "type": "optional string"
+        },
+        "attestationRef": {
+          "number": 11,
+          "type": "optional string"
+        },
+        "clientId": {
+          "number": 4,
+          "type": "optional string"
+        },
+        "lifecycleEpoch": {
+          "number": 10,
+          "type": "optional int64"
+        },
+        "masterId": {
+          "number": 8,
+          "type": "optional string"
+        },
+        "organizationAuthorityRoot": {
+          "number": 9,
+          "type": "optional string"
+        },
+        "subjectRef": {
+          "number": 2,
+          "type": "optional string"
+        },
+        "tenantId": {
+          "number": 1,
+          "type": "string"
+        },
+        "workloadRef": {
+          "number": 5,
+          "type": "optional string"
+        }
+      }
+    },
+    "ResourceRef": {
+      "fields": {
+        "kind": {
+          "number": 1,
+          "type": "string"
+        },
+        "reference": {
+          "number": 2,
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,1 +1,152 @@
-{}
+{
+  "enums": {
+    "AgentClass": {
+      "AGENTCLASSUNSPECIFIED": 0,
+      "SERVICE": 2,
+      "TWIN": 1
+    },
+    "EnrollmentStrategy": {
+      "APIONLY": 3,
+      "DEVICEBACKED": 1,
+      "ENROLLMENTSTRATEGYUNSPECIFIED": 0,
+      "HUMANAUTHORIZED": 2
+    },
+    "LifecycleState": {
+      "ACTIVE": 2,
+      "CREATED": 1,
+      "LIFECYCLESTATEUNSPECIFIED": 0,
+      "REVOKED": 4,
+      "SUSPENDED": 3
+    }
+  },
+  "messages": {
+    "AgentEnrollRequest": {
+      "fields": {
+        "audience": {
+          "number": 4,
+          "type": "optional string"
+        },
+        "bearerToken": {
+          "number": 3,
+          "type": "optional string"
+        },
+        "strategies": {
+          "number": 1,
+          "type": "repeated EnrollmentStrategy"
+        },
+        "workloadAssertion": {
+          "number": 2,
+          "type": "optional string"
+        }
+      }
+    },
+    "AgentEnrollResponse": {
+      "fields": {
+        "agentId": {
+          "number": 2,
+          "type": "string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "evidenceRef": {
+          "number": 5,
+          "type": "string"
+        },
+        "lifecycleState": {
+          "number": 3,
+          "type": "LifecycleState"
+        },
+        "strategies": {
+          "number": 6,
+          "type": "repeated EnrollmentStrategy"
+        }
+      }
+    },
+    "AgentGetRequest": {
+      "fields": {
+        "agentId": {
+          "number": 1,
+          "type": "string"
+        }
+      }
+    },
+    "AgentRecord": {
+      "fields": {
+        "agentClass": {
+          "number": 3,
+          "type": "AgentClass"
+        },
+        "agentId": {
+          "number": 2,
+          "type": "string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "authorityRoot": {
+          "number": 4,
+          "type": "string"
+        },
+        "createdAt": {
+          "number": 9,
+          "type": "google.protobuf.Timestamp"
+        },
+        "lifecycleState": {
+          "number": 5,
+          "type": "LifecycleState"
+        },
+        "maximumScopes": {
+          "number": 7,
+          "type": "repeated string"
+        },
+        "updatedAt": {
+          "number": 10,
+          "type": "google.protobuf.Timestamp"
+        },
+        "workloadSelector": {
+          "number": 8,
+          "type": "string"
+        }
+      }
+    },
+    "AgentRegisterRequest": {
+      "fields": {
+        "agentClass": {
+          "number": 2,
+          "type": "AgentClass"
+        },
+        "agentId": {
+          "number": 1,
+          "type": "string"
+        },
+        "masterId": {
+          "number": 3,
+          "type": "optional string"
+        },
+        "maximumScopes": {
+          "number": 5,
+          "type": "repeated string"
+        },
+        "organizationAuthorityRoot": {
+          "number": 4,
+          "type": "optional string"
+        },
+        "workloadSelector": {
+          "number": 6,
+          "type": "string"
+        }
+      }
+    },
+    "AgentTransitionRequest": {
+      "fields": {
+        "agentId": {
+          "number": 1,
+          "type": "string"
+        }
+      }
+    }
+  }
+}

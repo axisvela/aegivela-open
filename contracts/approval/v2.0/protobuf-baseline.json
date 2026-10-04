@@ -1,1 +1,93 @@
-{}
+{
+  "enums": {},
+  "messages": {
+    "ApprovalIssueRequest": {
+      "fields": {
+        "action": {
+          "number": 3,
+          "type": "string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "bearerToken": {
+          "number": 2,
+          "type": "string"
+        },
+        "descriptorVersion": {
+          "number": 14,
+          "type": "optional string"
+        },
+        "evidenceRefs": {
+          "number": 11,
+          "type": "repeated string"
+        },
+        "expiry": {
+          "number": 6,
+          "type": "google.protobuf.Timestamp"
+        },
+        "lifecycle": {
+          "number": 10,
+          "type": "optional string"
+        },
+        "policyVersion": {
+          "number": 8,
+          "type": "string"
+        },
+        "reason": {
+          "number": 7,
+          "type": "string"
+        },
+        "resource": {
+          "number": 4,
+          "type": "ResourceRef"
+        },
+        "scope": {
+          "number": 5,
+          "type": "repeated string"
+        },
+        "session": {
+          "number": 9,
+          "type": "optional string"
+        },
+        "structuredResourceDigest": {
+          "number": 13,
+          "type": "optional string"
+        },
+        "traceId": {
+          "number": 12,
+          "type": "string"
+        }
+      }
+    },
+    "ApprovalIssueResponse": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "approvalArtifact": {
+          "number": 3,
+          "type": "string"
+        },
+        "approvalId": {
+          "number": 2,
+          "type": "string"
+        }
+      }
+    },
+    "ResourceRef": {
+      "fields": {
+        "kind": {
+          "number": 1,
+          "type": "string"
+        },
+        "reference": {
+          "number": 2,
+          "type": "string"
+        }
+      }
+    }
+  }
+}

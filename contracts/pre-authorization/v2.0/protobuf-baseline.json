@@ -1,1 +1,189 @@
-{}
+{
+  "enums": {},
+  "messages": {
+    "PreAuthorizationIssueRequest": {
+      "fields": {
+        "action": {
+          "number": 3,
+          "type": "string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "audience": {
+          "number": 6,
+          "type": "string"
+        },
+        "bearerToken": {
+          "number": 2,
+          "type": "string"
+        },
+        "expiry": {
+          "number": 7,
+          "type": "google.protobuf.Timestamp"
+        },
+        "lifecycle": {
+          "number": 11,
+          "type": "optional string"
+        },
+        "maxGrants": {
+          "number": 12,
+          "type": "int32"
+        },
+        "policyVersion": {
+          "number": 8,
+          "type": "string"
+        },
+        "resource": {
+          "number": 4,
+          "type": "ResourceRef"
+        },
+        "scope": {
+          "number": 5,
+          "type": "repeated string"
+        },
+        "session": {
+          "number": 10,
+          "type": "optional string"
+        },
+        "task": {
+          "number": 9,
+          "type": "optional string"
+        },
+        "traceId": {
+          "number": 13,
+          "type": "string"
+        }
+      }
+    },
+    "PreAuthorizationIssueResponse": {
+      "fields": {
+        "action": {
+          "number": 4,
+          "type": "string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "audience": {
+          "number": 7,
+          "type": "string"
+        },
+        "evidenceRefs": {
+          "number": 16,
+          "type": "repeated string"
+        },
+        "expiresAt": {
+          "number": 8,
+          "type": "google.protobuf.Timestamp"
+        },
+        "issuedAt": {
+          "number": 9,
+          "type": "google.protobuf.Timestamp"
+        },
+        "lifecycle": {
+          "number": 15,
+          "type": "optional string"
+        },
+        "maxGrants": {
+          "number": 11,
+          "type": "int32"
+        },
+        "policyVersion": {
+          "number": 10,
+          "type": "string"
+        },
+        "preAuthorizationId": {
+          "number": 2,
+          "type": "string"
+        },
+        "principal": {
+          "number": 3,
+          "type": "Principal"
+        },
+        "remainingGrants": {
+          "number": 12,
+          "type": "int32"
+        },
+        "resource": {
+          "number": 5,
+          "type": "ResourceRef"
+        },
+        "scope": {
+          "number": 6,
+          "type": "repeated string"
+        },
+        "session": {
+          "number": 14,
+          "type": "optional string"
+        },
+        "task": {
+          "number": 13,
+          "type": "optional string"
+        }
+      }
+    },
+    "Principal": {
+      "fields": {
+        "actorRef": {
+          "number": 3,
+          "type": "string"
+        },
+        "agentClass": {
+          "number": 7,
+          "type": "optional string"
+        },
+        "agentId": {
+          "number": 6,
+          "type": "optional string"
+        },
+        "attestationRef": {
+          "number": 11,
+          "type": "optional string"
+        },
+        "clientId": {
+          "number": 4,
+          "type": "optional string"
+        },
+        "lifecycleEpoch": {
+          "number": 10,
+          "type": "optional int64"
+        },
+        "masterId": {
+          "number": 8,
+          "type": "optional string"
+        },
+        "organizationAuthorityRoot": {
+          "number": 9,
+          "type": "optional string"
+        },
+        "subjectRef": {
+          "number": 2,
+          "type": "optional string"
+        },
+        "tenantId": {
+          "number": 1,
+          "type": "string"
+        },
+        "workloadRef": {
+          "number": 5,
+          "type": "optional string"
+        }
+      }
+    },
+    "ResourceRef": {
+      "fields": {
+        "kind": {
+          "number": 1,
+          "type": "string"
+        },
+        "reference": {
+          "number": 2,
+          "type": "string"
+        }
+      }
+    }
+  }
+}

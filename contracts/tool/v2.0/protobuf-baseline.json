@@ -1,8 +1,107 @@
 {
-  "schema_digest": "tool-invoke.schema.json@v2.0",
-  "protobuf_digest": "tool-invoke.proto@v2.0",
+  "apiVersion": "aegivela.io/v2.0",
   "compatible_versions": [
     "aegivela.io/v2.0"
   ],
-  "apiVersion": "aegivela.io/v2.0"
+  "enums": {},
+  "messages": {
+    "ResourceRef": {
+      "fields": {
+        "kind": {
+          "number": 1,
+          "type": "string"
+        },
+        "reference": {
+          "number": 2,
+          "type": "string"
+        }
+      }
+    },
+    "ToolInvokeRequest": {
+      "fields": {
+        "action": {
+          "number": 3,
+          "type": "string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "approvalArtifact": {
+          "number": 6,
+          "type": "string"
+        },
+        "bearerToken": {
+          "number": 2,
+          "type": "string"
+        },
+        "executionId": {
+          "number": 7,
+          "type": "string"
+        },
+        "implementationDigest": {
+          "number": 10,
+          "type": "string"
+        },
+        "resource": {
+          "number": 4,
+          "type": "ResourceRef"
+        },
+        "scope": {
+          "number": 5,
+          "type": "repeated string"
+        },
+        "skillHash": {
+          "number": 9,
+          "type": "string"
+        },
+        "toolId": {
+          "number": 8,
+          "type": "string"
+        },
+        "traceId": {
+          "number": 11,
+          "type": "string"
+        }
+      }
+    },
+    "ToolInvokeResponse": {
+      "fields": {
+        "actorId": {
+          "number": 6,
+          "type": "string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "decisionId": {
+          "number": 2,
+          "type": "string"
+        },
+        "evidenceRefs": {
+          "number": 9,
+          "type": "repeated string"
+        },
+        "grantToken": {
+          "number": 8,
+          "type": "string"
+        },
+        "outcome": {
+          "number": 3,
+          "type": "string"
+        },
+        "policyVersion": {
+          "number": 4,
+          "type": "string"
+        },
+        "toolId": {
+          "number": 7,
+          "type": "string"
+        }
+      }
+    }
+  },
+  "protobuf_digest": "tool-invoke.proto@v2.0",
+  "schema_digest": "tool-invoke.schema.json@v2.0"
 }

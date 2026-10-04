@@ -1,1 +1,73 @@
-{}
+{
+  "enums": {
+    "CheckOutcome": {
+      "CHECKOUTCOMECLEAR": 1,
+      "CHECKOUTCOMEREVOKED": 2,
+      "CHECKOUTCOMEUNSPECIFIED": 0
+    },
+    "SLOClass": {
+      "SLOCLASSCONNECTION": 3,
+      "SLOCLASSCONTINUATION": 2,
+      "SLOCLASSPREDISPATCH": 1,
+      "SLOCLASSUNSPECIFIED": 0
+    }
+  },
+  "messages": {
+    "RevocationCheckRequest": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "class": {
+          "number": 2,
+          "type": "SLOClass"
+        },
+        "selectors": {
+          "number": 3,
+          "type": "repeated Selector"
+        },
+        "traceId": {
+          "number": 5,
+          "type": "string"
+        }
+      }
+    },
+    "RevocationCheckResponse": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "checkedAt": {
+          "number": 4,
+          "type": "google.protobuf.Timestamp"
+        },
+        "class": {
+          "number": 2,
+          "type": "SLOClass"
+        },
+        "outcome": {
+          "number": 3,
+          "type": "CheckOutcome"
+        },
+        "traceId": {
+          "number": 5,
+          "type": "string"
+        }
+      }
+    },
+    "Selector": {
+      "fields": {
+        "kind": {
+          "number": 1,
+          "type": "string"
+        },
+        "value": {
+          "number": 2,
+          "type": "string"
+        }
+      }
+    }
+  }
+}

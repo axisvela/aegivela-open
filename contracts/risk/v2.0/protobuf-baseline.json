@@ -1,1 +1,69 @@
-{}
+{
+  "enums": {
+    "RiskLevel": {
+      "RISKLEVELCRITICAL": 4,
+      "RISKLEVELHIGH": 3,
+      "RISKLEVELLOW": 1,
+      "RISKLEVELMEDIUM": 2,
+      "RISKLEVELUNSPECIFIED": 0
+    }
+  },
+  "messages": {
+    "RiskSignalRequest": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "reason": {
+          "number": 6,
+          "type": "optional string"
+        },
+        "riskLevel": {
+          "number": 4,
+          "type": "RiskLevel"
+        },
+        "riskRef": {
+          "number": 5,
+          "type": "string"
+        },
+        "sessionRef": {
+          "number": 3,
+          "type": "optional string"
+        },
+        "subjectRef": {
+          "number": 2,
+          "type": "string"
+        },
+        "traceId": {
+          "number": 7,
+          "type": "string"
+        }
+      }
+    },
+    "RiskSignalResponse": {
+      "fields": {
+        "action": {
+          "number": 4,
+          "type": "string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "riskLevel": {
+          "number": 3,
+          "type": "RiskLevel"
+        },
+        "signalId": {
+          "number": 2,
+          "type": "string"
+        },
+        "traceId": {
+          "number": 5,
+          "type": "string"
+        }
+      }
+    }
+  }
+}

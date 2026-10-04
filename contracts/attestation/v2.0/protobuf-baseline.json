@@ -1,1 +1,249 @@
-{}
+{
+  "enums": {},
+  "messages": {
+    "AttestationIssueRequest": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "artifactDigest": {
+          "number": 3,
+          "type": "string"
+        },
+        "artifactRef": {
+          "number": 4,
+          "type": "string"
+        },
+        "audience": {
+          "number": 10,
+          "type": "string"
+        },
+        "bearerToken": {
+          "number": 2,
+          "type": "string"
+        },
+        "environmentClaims": {
+          "number": 9,
+          "type": "google.protobuf.Struct"
+        },
+        "policyVersion": {
+          "number": 11,
+          "type": "string"
+        },
+        "signerIdentity": {
+          "number": 5,
+          "type": "string"
+        },
+        "signerPublicKey": {
+          "number": 6,
+          "type": "string"
+        },
+        "traceId": {
+          "number": 12,
+          "type": "string"
+        },
+        "workloadAssertion": {
+          "number": 7,
+          "type": "optional string"
+        }
+      }
+    },
+    "AttestationIssueResponse": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "artifactDigest": {
+          "number": 4,
+          "type": "string"
+        },
+        "artifactRef": {
+          "number": 5,
+          "type": "string"
+        },
+        "attestationId": {
+          "number": 2,
+          "type": "string"
+        },
+        "audience": {
+          "number": 11,
+          "type": "string"
+        },
+        "environmentClaims": {
+          "number": 10,
+          "type": "google.protobuf.Struct"
+        },
+        "evidenceRefs": {
+          "number": 15,
+          "type": "repeated string"
+        },
+        "expiresAt": {
+          "number": 14,
+          "type": "google.protobuf.Timestamp"
+        },
+        "issuedAt": {
+          "number": 13,
+          "type": "google.protobuf.Timestamp"
+        },
+        "policyVersion": {
+          "number": 12,
+          "type": "string"
+        },
+        "principal": {
+          "number": 3,
+          "type": "Principal"
+        },
+        "signerIdentity": {
+          "number": 6,
+          "type": "string"
+        },
+        "signerPublicKey": {
+          "number": 7,
+          "type": "string"
+        },
+        "workloadEvidence": {
+          "number": 9,
+          "type": "optional string"
+        },
+        "workloadId": {
+          "number": 8,
+          "type": "optional string"
+        }
+      }
+    },
+    "AttestationVerifyRequest": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "expectedBindings": {
+          "number": 3,
+          "type": "ExpectedAttestationBindings"
+        },
+        "signedAttestation": {
+          "number": 2,
+          "type": "string"
+        }
+      }
+    },
+    "AttestationVerifyResponse": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "artifactDigest": {
+          "number": 5,
+          "type": "string"
+        },
+        "artifactRef": {
+          "number": 6,
+          "type": "optional string"
+        },
+        "attestationId": {
+          "number": 2,
+          "type": "string"
+        },
+        "audience": {
+          "number": 8,
+          "type": "string"
+        },
+        "expired": {
+          "number": 10,
+          "type": "bool"
+        },
+        "issuedAt": {
+          "number": 9,
+          "type": "google.protobuf.Timestamp"
+        },
+        "principal": {
+          "number": 4,
+          "type": "Principal"
+        },
+        "revoked": {
+          "number": 11,
+          "type": "bool"
+        },
+        "signerIdentity": {
+          "number": 7,
+          "type": "string"
+        },
+        "valid": {
+          "number": 3,
+          "type": "bool"
+        }
+      }
+    },
+    "ExpectedAttestationBindings": {
+      "fields": {
+        "artifactDigest": {
+          "number": 1,
+          "type": "string"
+        },
+        "audience": {
+          "number": 3,
+          "type": "string"
+        },
+        "signerIdentity": {
+          "number": 2,
+          "type": "string"
+        },
+        "traceId": {
+          "number": 4,
+          "type": "optional string"
+        }
+      }
+    },
+    "Principal": {
+      "fields": {
+        "actorRef": {
+          "number": 3,
+          "type": "string"
+        },
+        "agentClass": {
+          "number": 7,
+          "type": "optional string"
+        },
+        "agentId": {
+          "number": 6,
+          "type": "optional string"
+        },
+        "attestationRef": {
+          "number": 11,
+          "type": "optional string"
+        },
+        "clientId": {
+          "number": 4,
+          "type": "optional string"
+        },
+        "lifecycleEpoch": {
+          "number": 10,
+          "type": "optional int64"
+        },
+        "masterId": {
+          "number": 8,
+          "type": "optional string"
+        },
+        "organizationAuthorityRoot": {
+          "number": 9,
+          "type": "optional string"
+        },
+        "subjectRef": {
+          "number": 2,
+          "type": "optional string"
+        },
+        "tenantId": {
+          "number": 1,
+          "type": "string"
+        },
+        "workloadRef": {
+          "number": 5,
+          "type": "optional string"
+        }
+      }
+    }
+  }
+}

@@ -1,1 +1,151 @@
-{}
+{
+  "enums": {
+    "SubjectTokenType": {
+      "SUBJECTTOKENTYPEUNSPECIFIED": 0,
+      "URNAEGIVELATOKENTYPEEXECUTIONGRANT": 2,
+      "URNIETFPARAMSOAUTHTOKENTYPEJWT": 1
+    }
+  },
+  "messages": {
+    "Principal": {
+      "fields": {
+        "actorRef": {
+          "number": 3,
+          "type": "string"
+        },
+        "agentClass": {
+          "number": 7,
+          "type": "optional string"
+        },
+        "agentId": {
+          "number": 6,
+          "type": "optional string"
+        },
+        "attestationRef": {
+          "number": 11,
+          "type": "optional string"
+        },
+        "clientId": {
+          "number": 4,
+          "type": "optional string"
+        },
+        "lifecycleEpoch": {
+          "number": 10,
+          "type": "optional int64"
+        },
+        "masterId": {
+          "number": 8,
+          "type": "optional string"
+        },
+        "organizationAuthorityRoot": {
+          "number": 9,
+          "type": "optional string"
+        },
+        "subjectRef": {
+          "number": 2,
+          "type": "optional string"
+        },
+        "tenantId": {
+          "number": 1,
+          "type": "string"
+        },
+        "workloadRef": {
+          "number": 5,
+          "type": "optional string"
+        }
+      }
+    },
+    "ResourceRef": {
+      "fields": {
+        "kind": {
+          "number": 1,
+          "type": "string"
+        },
+        "reference": {
+          "number": 2,
+          "type": "string"
+        }
+      }
+    },
+    "TokenExchangeRequest": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "requestedAudience": {
+          "number": 4,
+          "type": "string"
+        },
+        "requestedScope": {
+          "number": 5,
+          "type": "repeated string"
+        },
+        "requestedTaskRef": {
+          "number": 7,
+          "type": "optional string"
+        },
+        "requested_resourceRef": {
+          "number": 6,
+          "type": "optional ResourceRef"
+        },
+        "subjectToken": {
+          "number": 2,
+          "type": "string"
+        },
+        "subjectTokenType": {
+          "number": 3,
+          "type": "SubjectTokenType"
+        },
+        "traceId": {
+          "number": 8,
+          "type": "string"
+        }
+      }
+    },
+    "TokenExchangeResponse": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "audience": {
+          "number": 5,
+          "type": "string"
+        },
+        "evidenceRefs": {
+          "number": 10,
+          "type": "repeated string"
+        },
+        "expiresAt": {
+          "number": 6,
+          "type": "google.protobuf.Timestamp"
+        },
+        "issuedAt": {
+          "number": 7,
+          "type": "google.protobuf.Timestamp"
+        },
+        "principal": {
+          "number": 3,
+          "type": "Principal"
+        },
+        "resourceBinding": {
+          "number": 9,
+          "type": "optional ResourceRef"
+        },
+        "scope": {
+          "number": 4,
+          "type": "repeated string"
+        },
+        "taskBinding": {
+          "number": 8,
+          "type": "optional string"
+        },
+        "tokenId": {
+          "number": 2,
+          "type": "string"
+        }
+      }
+    }
+  }
+}

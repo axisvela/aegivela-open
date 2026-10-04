@@ -1,1 +1,213 @@
-{}
+{
+  "enums": {},
+  "messages": {
+    "ExpectedBindings": {
+      "fields": {
+        "audience": {
+          "number": 1,
+          "type": "string"
+        },
+        "scope": {
+          "number": 2,
+          "type": "repeated string"
+        },
+        "taskBinding": {
+          "number": 3,
+          "type": "optional string"
+        },
+        "traceId": {
+          "number": 4,
+          "type": "optional string"
+        }
+      }
+    },
+    "GrantIssueRequest": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "approvalJti": {
+          "number": 6,
+          "type": "optional string"
+        },
+        "bearerToken": {
+          "number": 2,
+          "type": "string"
+        },
+        "preAuthorizationJti": {
+          "number": 5,
+          "type": "optional string"
+        },
+        "requestedScope": {
+          "number": 4,
+          "type": "repeated string"
+        },
+        "signedAllowDecision": {
+          "number": 3,
+          "type": "string"
+        },
+        "traceId": {
+          "number": 7,
+          "type": "string"
+        }
+      }
+    },
+    "GrantIssueResponse": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "approvalJti": {
+          "number": 10,
+          "type": "optional string"
+        },
+        "audience": {
+          "number": 5,
+          "type": "string"
+        },
+        "evidenceRefs": {
+          "number": 11,
+          "type": "repeated string"
+        },
+        "expiresAt": {
+          "number": 6,
+          "type": "google.protobuf.Timestamp"
+        },
+        "grantId": {
+          "number": 2,
+          "type": "string"
+        },
+        "issuedAt": {
+          "number": 7,
+          "type": "google.protobuf.Timestamp"
+        },
+        "preAuthorizationJti": {
+          "number": 9,
+          "type": "optional string"
+        },
+        "principal": {
+          "number": 3,
+          "type": "Principal"
+        },
+        "scope": {
+          "number": 4,
+          "type": "repeated string"
+        },
+        "taskBinding": {
+          "number": 8,
+          "type": "optional string"
+        }
+      }
+    },
+    "GrantVerifyRequest": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "expectedBindings": {
+          "number": 3,
+          "type": "ExpectedBindings"
+        },
+        "signedGrant": {
+          "number": 2,
+          "type": "string"
+        }
+      }
+    },
+    "GrantVerifyResponse": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "audience": {
+          "number": 6,
+          "type": "string"
+        },
+        "expired": {
+          "number": 8,
+          "type": "bool"
+        },
+        "expiresAt": {
+          "number": 7,
+          "type": "google.protobuf.Timestamp"
+        },
+        "grantId": {
+          "number": 2,
+          "type": "string"
+        },
+        "principal": {
+          "number": 4,
+          "type": "Principal"
+        },
+        "revocationCheckEpoch": {
+          "number": 10,
+          "type": "optional int64"
+        },
+        "revoked": {
+          "number": 9,
+          "type": "bool"
+        },
+        "scope": {
+          "number": 5,
+          "type": "repeated string"
+        },
+        "valid": {
+          "number": 3,
+          "type": "bool"
+        }
+      }
+    },
+    "Principal": {
+      "fields": {
+        "actorRef": {
+          "number": 3,
+          "type": "string"
+        },
+        "agentClass": {
+          "number": 7,
+          "type": "optional string"
+        },
+        "agentId": {
+          "number": 6,
+          "type": "optional string"
+        },
+        "attestationRef": {
+          "number": 11,
+          "type": "optional string"
+        },
+        "clientId": {
+          "number": 4,
+          "type": "optional string"
+        },
+        "lifecycleEpoch": {
+          "number": 10,
+          "type": "optional int64"
+        },
+        "masterId": {
+          "number": 8,
+          "type": "optional string"
+        },
+        "organizationAuthorityRoot": {
+          "number": 9,
+          "type": "optional string"
+        },
+        "subjectRef": {
+          "number": 2,
+          "type": "optional string"
+        },
+        "tenantId": {
+          "number": 1,
+          "type": "string"
+        },
+        "workloadRef": {
+          "number": 5,
+          "type": "optional string"
+        }
+      }
+    }
+  }
+}

@@ -1,1 +1,202 @@
-{}
+{
+  "enums": {
+    "CredentialClass": {
+      "CREDENTIALCLASSAWSSIGV4": 1,
+      "CREDENTIALCLASSBODY": 4,
+      "CREDENTIALCLASSHEADER": 2,
+      "CREDENTIALCLASSQUERY": 3,
+      "CREDENTIALCLASSUNSPECIFIED": 0
+    },
+    "GatewayAction": {
+      "GATEWAYACTIONBACKENDREQUEST": 2,
+      "GATEWAYACTIONCONNECTIONOPEN": 1,
+      "GATEWAYACTIONCREDENTIALINJECT": 3,
+      "GATEWAYACTIONTOOLINVOKE": 4,
+      "GATEWAYACTIONUNSPECIFIED": 0
+    },
+    "GatewayAgentClass": {
+      "GATEWAYAGENTCLASSSERVICE": 2,
+      "GATEWAYAGENTCLASSTWIN": 1,
+      "GATEWAYAGENTCLASSUNSPECIFIED": 0
+    },
+    "GatewayAuthorizationMode": {
+      "GATEWAYAUTHORIZATIONMODESERVICEAGENTAPI": 2,
+      "GATEWAYAUTHORIZATIONMODESYSTEMAPI": 1,
+      "GATEWAYAUTHORIZATIONMODETWINAGENTAPI": 3,
+      "GATEWAYAUTHORIZATIONMODEUNSPECIFIED": 0
+    },
+    "GatewayOutcome": {
+      "GATEWAYOUTCOMEALLOW": 1,
+      "GATEWAYOUTCOMEAPPROVALREQUIRED": 3,
+      "GATEWAYOUTCOMEDENY": 2,
+      "GATEWAYOUTCOMEREVOKED": 4,
+      "GATEWAYOUTCOMEUNSPECIFIED": 0
+    }
+  },
+  "messages": {
+    "GatewayConnectRequest": {
+      "fields": {
+        "action": {
+          "number": 2,
+          "type": "GatewayAction"
+        },
+        "agentClass": {
+          "number": 5,
+          "type": "GatewayAgentClass"
+        },
+        "agentId": {
+          "number": 4,
+          "type": "string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "argumentClassification": {
+          "number": 9,
+          "type": "string"
+        },
+        "argumentDigest": {
+          "number": 8,
+          "type": "string"
+        },
+        "attribution": {
+          "number": 7,
+          "type": "ToolAttribution"
+        },
+        "audience": {
+          "number": 14,
+          "type": "string"
+        },
+        "authorizationMode": {
+          "number": 16,
+          "type": "GatewayAuthorizationMode"
+        },
+        "requestedScope": {
+          "number": 13,
+          "type": "repeated string"
+        },
+        "targetHost": {
+          "number": 10,
+          "type": "string"
+        },
+        "targetPath": {
+          "number": 12,
+          "type": "string"
+        },
+        "targetScheme": {
+          "number": 11,
+          "type": "string"
+        },
+        "tenantId": {
+          "number": 3,
+          "type": "string"
+        },
+        "traceId": {
+          "number": 15,
+          "type": "string"
+        },
+        "workloadAssertion": {
+          "number": 6,
+          "type": "string"
+        }
+      }
+    },
+    "GatewayConnectResponse": {
+      "fields": {
+        "allowedTargetPaths": {
+          "number": 15,
+          "type": "repeated string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "credentialClass": {
+          "number": 12,
+          "type": "CredentialClass"
+        },
+        "credentialRef": {
+          "number": 11,
+          "type": "string"
+        },
+        "decisionId": {
+          "number": 2,
+          "type": "string"
+        },
+        "evidenceRefs": {
+          "number": 10,
+          "type": "repeated string"
+        },
+        "expiresAt": {
+          "number": 5,
+          "type": "google.protobuf.Timestamp"
+        },
+        "mitmRequired": {
+          "number": 13,
+          "type": "bool"
+        },
+        "mitmScope": {
+          "number": 14,
+          "type": "repeated string"
+        },
+        "obligations": {
+          "number": 9,
+          "type": "repeated string"
+        },
+        "offlineEligible": {
+          "number": 7,
+          "type": "bool"
+        },
+        "outcome": {
+          "number": 3,
+          "type": "GatewayOutcome"
+        },
+        "policyVersion": {
+          "number": 4,
+          "type": "string"
+        },
+        "scope": {
+          "number": 8,
+          "type": "repeated string"
+        },
+        "ttlSeconds": {
+          "number": 6,
+          "type": "int32"
+        }
+      }
+    },
+    "ToolAttribution": {
+      "fields": {
+        "agentRef": {
+          "number": 2,
+          "type": "string"
+        },
+        "humanRef": {
+          "number": 1,
+          "type": "string"
+        },
+        "implementationDigest": {
+          "number": 5,
+          "type": "string"
+        },
+        "signature": {
+          "number": 7,
+          "type": "string"
+        },
+        "signedAt": {
+          "number": 6,
+          "type": "google.protobuf.Timestamp"
+        },
+        "skillHash": {
+          "number": 4,
+          "type": "string"
+        },
+        "toolId": {
+          "number": 3,
+          "type": "string"
+        }
+      }
+    }
+  }
+}

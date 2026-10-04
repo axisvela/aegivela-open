@@ -1,1 +1,105 @@
-{}
+{
+  "enums": {},
+  "messages": {
+    "IdentityResolveRequest": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "audience": {
+          "number": 3,
+          "type": "string"
+        },
+        "bearerToken": {
+          "number": 2,
+          "type": "string"
+        },
+        "traceId": {
+          "number": 4,
+          "type": "optional string"
+        }
+      }
+    },
+    "IdentityResolveResponse": {
+      "fields": {
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "principal": {
+          "number": 2,
+          "type": "Principal"
+        }
+      }
+    },
+    "Principal": {
+      "fields": {
+        "actorRef": {
+          "number": 3,
+          "type": "string"
+        },
+        "agentClass": {
+          "number": 7,
+          "type": "optional string"
+        },
+        "agentEpoch": {
+          "number": 14,
+          "type": "optional int64"
+        },
+        "agentId": {
+          "number": 6,
+          "type": "optional string"
+        },
+        "attestationRef": {
+          "number": 11,
+          "type": "optional string"
+        },
+        "authorityBinding": {
+          "number": 13,
+          "type": "optional string"
+        },
+        "clientId": {
+          "number": 4,
+          "type": "optional string"
+        },
+        "identityEpoch": {
+          "number": 15,
+          "type": "optional int64"
+        },
+        "instanceId": {
+          "number": 16,
+          "type": "optional string"
+        },
+        "lifecycleEpoch": {
+          "number": 10,
+          "type": "optional int64"
+        },
+        "masterId": {
+          "number": 8,
+          "type": "optional string"
+        },
+        "namespace": {
+          "number": 12,
+          "type": "optional string"
+        },
+        "organizationAuthorityRoot": {
+          "number": 9,
+          "type": "optional string"
+        },
+        "subjectRef": {
+          "number": 2,
+          "type": "optional string"
+        },
+        "tenantId": {
+          "number": 1,
+          "type": "string"
+        },
+        "workloadRef": {
+          "number": 5,
+          "type": "optional string"
+        }
+      }
+    }
+  }
+}

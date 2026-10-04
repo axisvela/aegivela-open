@@ -1,1 +1,121 @@
-{}
+{
+  "enums": {
+    "AdapterAction": {
+      "ADAPTERACTIONADAPTERACTIVATE": 3,
+      "ADAPTERACTIONCAPABILITYINVOKE": 4,
+      "ADAPTERACTIONCAPABILITYPUBLISH": 2,
+      "ADAPTERACTIONCAPABILITYREAD": 1,
+      "ADAPTERACTIONUNSPECIFIED": 0
+    }
+  },
+  "messages": {
+    "AdapterAuthorizationRequest": {
+      "fields": {
+        "action": {
+          "number": 3,
+          "type": "AdapterAction"
+        },
+        "adapterId": {
+          "number": 7,
+          "type": "optional string"
+        },
+        "adapterVersion": {
+          "number": 8,
+          "type": "optional string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "approvalArtifact": {
+          "number": 6,
+          "type": "optional string"
+        },
+        "bearerToken": {
+          "number": 2,
+          "type": "string"
+        },
+        "executionId": {
+          "number": 9,
+          "type": "optional string"
+        },
+        "resource": {
+          "number": 4,
+          "type": "ResourceRef"
+        },
+        "scope": {
+          "number": 5,
+          "type": "repeated string"
+        },
+        "traceId": {
+          "number": 10,
+          "type": "string"
+        }
+      }
+    },
+    "AdapterAuthorizationResponse": {
+      "fields": {
+        "actorId": {
+          "number": 6,
+          "type": "string"
+        },
+        "agentId": {
+          "number": 7,
+          "type": "optional string"
+        },
+        "apiVersion": {
+          "number": 1,
+          "type": "string"
+        },
+        "decisionId": {
+          "number": 2,
+          "type": "string"
+        },
+        "evidenceRefs": {
+          "number": 12,
+          "type": "repeated string"
+        },
+        "expiresAt": {
+          "number": 11,
+          "type": "google.protobuf.Timestamp"
+        },
+        "grantToken": {
+          "number": 13,
+          "type": "optional string"
+        },
+        "masterId": {
+          "number": 8,
+          "type": "optional string"
+        },
+        "outcome": {
+          "number": 3,
+          "type": "string"
+        },
+        "policyVersion": {
+          "number": 4,
+          "type": "string"
+        },
+        "subjectRef": {
+          "number": 10,
+          "type": "optional string"
+        },
+        "workloadId": {
+          "number": 9,
+          "type": "optional string"
+        }
+      }
+    },
+    "ResourceRef": {
+      "fields": {
+        "kind": {
+          "number": 1,
+          "type": "string"
+        },
+        "reference": {
+          "number": 2,
+          "type": "string"
+        }
+      }
+    }
+  }
+}
