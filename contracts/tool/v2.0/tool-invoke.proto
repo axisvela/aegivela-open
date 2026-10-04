@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package aegivela.tool.v2_0;
+
+option go_package = "github.com/axisrobo/aegivela/backend/internal/toolcontract/pb/v2_0;v2_0";
+
+// ToolInvokeRequest mirrors the adapter wire contract for tool:invoke.
+message ToolInvokeRequest {
+  string apiVersion = 1;
+  string bearerToken = 2;
+  string action = 3;
+  ResourceRef resource = 4;
+  repeated string scope = 5;
+  string approvalArtifact = 6;
+  string executionId = 7;
+  string toolId = 8;
+  string skillHash = 9;
+  string implementationDigest = 10;
+  string traceId = 11;
+}
+
+message ResourceRef {
+  string kind = 1;
+  string reference = 2;
+}
+
+// ToolInvokeResponse is the adapter decision result.
+message ToolInvokeResponse {
+  string apiVersion = 1;
+  string decisionId = 2;
+  string outcome = 3;
+  string policyVersion = 4;
+  string actorId = 6;
+  string toolId = 7;
+  string grantToken = 8;
+  repeated string evidenceRefs = 9;
+}

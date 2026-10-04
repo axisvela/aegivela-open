@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/enterprise-service/v2.0/enterprise-service.schema.json",
+  "title": "AEGIVELA Enterprise Service Authorization Profile v2.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "reference",
+    "resourceType",
+    "productId",
+    "descriptorId",
+    "descriptorVersion",
+    "attributes"
+  ],
+  "properties": {
+    "kind": {
+      "const": "enterpriseService"
+    },
+    "reference": {
+      "type": "string",
+      "minLength": 1
+    },
+    "attributes": {
+      "$ref": "#/$defs/attributes"
+    },
+    "resourceType": {
+      "enum": [
+        "businessService",
+        "applicationService",
+        "technologyService"
+      ]
+    },
+    "productId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "descriptorId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "descriptorVersion": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$defs": {
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dataClassification",
+        "accountableOwner"
+      ],
+      "properties": {
+        "dataClassification": {
+          "enum": [
+            "public",
+            "internal",
+            "confidential",
+            "restricted"
+          ]
+        },
+        "accountableOwner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "segregationOfDuties": {
+          "enum": [
+            "none",
+            "requesterMustDifferFromOwner"
+          ]
+        },
+        "approvalRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "costCenter": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

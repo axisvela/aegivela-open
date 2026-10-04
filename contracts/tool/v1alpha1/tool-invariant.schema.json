@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "aegivela.io/tool/v1alpha1/tool-invariant.schema.json",
+  "title": "Tool Invariant",
+  "description": "Bounds an execution grant to an exact tool implementation (S4).",
+  "type": "object",
+  "required": ["tool_id", "skill_hash", "implementation_digest"],
+  "properties": {
+    "tool_id": { "type": "string", "minLength": 1 },
+    "skill_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "implementation_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "task_id": { "type": "string", "minLength": 1 },
+    "slo_class": { "enum": ["pre_dispatch", "continuation", "connection"] }
+  },
+  "additionalProperties": false
+}

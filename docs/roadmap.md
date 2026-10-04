@@ -412,6 +412,25 @@ lint enforceable in CI:
 Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.1`. The
 Enterprise Edition counts independently (`v1.2.1`, pinning `backend v1.2.0`).
 
+## Patch Release — `1.2.2`
+
+A patch completing the Open Core distribution surface:
+
+- `scripts/sync-oss.ps1` now publishes `contracts/enterprise-service` and
+  `contracts/tool` to `aegivela-open`. Both are AEGIVELA-owned `[OSS]`
+  integration contracts (F5 enterprise-service authorization profile and F2B
+  `tool:invoke` enforcement) and were previously published in the core
+  repository only.
+
+| Repository | Tag |
+|---|---|
+| `aegivela` (core) | `v1.2.2` |
+| `aegivela` backend module | `backend/v1.2.2` |
+| `aegivela-open` | `v1.2.2` |
+
+Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.2`. The
+Enterprise Edition counts independently (`v1.2.1`, pinning `backend v1.2.0`).
+
 ## Required Test Matrix
 
 | Area | Minimum proof |
