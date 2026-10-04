@@ -431,6 +431,30 @@ A patch completing the Open Core distribution surface:
 Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.2`. The
 Enterprise Edition counts independently (`v1.2.1`, pinning `backend v1.2.0`).
 
+## Patch Release — `1.2.3`
+
+A patch that makes the v2.0 protobuf wire contracts machine-enforced:
+
+- Versioned the v2.0 `go_package` paths for the domains that previously shared
+  the v1alphaN output path, so `buf generate` no longer collides.
+- Generated protobuf Go bindings for every contract domain under
+  `backend/internal/<domain>contract/pb`.
+- Added the `backend/internal/contractdrift` test, which pins every v2.0
+  domain's message field numbers, field types, and enum values against the
+  populated `protobuf-baseline.json`. A rename, renumber, or type change now
+  fails the build; run with `-contract-update` to regenerate after an
+  intentional change.
+- Backend CI runs `buf lint` and verifies the generated protobuf is current.
+
+| Repository | Tag |
+|---|---|
+| `aegivela` (core) | `v1.2.3` |
+| `aegivela` backend module | `backend/v1.2.3` |
+| `aegivela-open` | `v1.2.3` |
+
+Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.3`. The
+Enterprise Edition counts independently (`v1.2.1`, pinning `backend v1.2.0`).
+
 ## Required Test Matrix
 
 | Area | Minimum proof |
