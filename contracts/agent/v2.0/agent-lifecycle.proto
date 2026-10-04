@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package agent.v2_0;
 
-option go_package = "github.com/axisrobo/aegivela/backend/internal/agentcontract/pb;pb";
+option go_package = "github.com/axisrobo/aegivela/backend/internal/agentcontract/pb/v2_0;v2_0";
 
 import "google/protobuf/timestamp.proto";
 

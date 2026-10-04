@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package grant.v2_0;
 
-option go_package = "github.com/axisrobo/aegivela/backend/internal/grantcontract/pb;pb";
+option go_package = "github.com/axisrobo/aegivela/backend/internal/grantcontract/pb/v2_0;v2_0";
 
 import "google/protobuf/timestamp.proto";
 
