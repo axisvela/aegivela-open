@@ -41,7 +41,7 @@ message TokenExchangeRequest {
   SubjectTokenType subjectTokenType = 3;
   string requestedAudience = 4;
   repeated string requestedScope = 5;
-  optional ResourceRef requested_resourceRef = 6;
+  optional ResourceRef requestedResourceRef = 6;
   optional string requestedTaskRef = 7;
   string traceId = 8;
 }

@@ -77,6 +77,10 @@
           "number": 4,
           "type": "string"
         },
+        "requestedResourceRef": {
+          "number": 6,
+          "type": "optional ResourceRef"
+        },
         "requestedScope": {
           "number": 5,
           "type": "repeated string"
@@ -84,10 +88,6 @@
         "requestedTaskRef": {
           "number": 7,
           "type": "optional string"
-        },
-        "requested_resourceRef": {
-          "number": 6,
-          "type": "optional ResourceRef"
         },
         "subjectToken": {
           "number": 2,

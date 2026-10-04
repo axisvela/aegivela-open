@@ -67,7 +67,7 @@ components:
         session: { type: string, minLength: 1 }
         lifecycle: { type: string, minLength: 1 }
         evidenceRefs: { type: array, items: { type: string, minLength: 1 }, maxItems: 32 }
-        structuredResourceDigest: { type: string, pattern: ^[0-9a-f]{64}$ }
+        structuredResourceDigest: { type: string, pattern: "^[0-9a-f]{64}$" }
         descriptorVersion: { type: string, minLength: 1 }
         traceId: { type: string, minLength: 1 }
     ApprovalIssueResponse:

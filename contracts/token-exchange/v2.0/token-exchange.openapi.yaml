@@ -52,10 +52,11 @@ components:
       properties:
         apiVersion: { const: aegivela.io/v2.0 }
         subjectToken: { type: string, minLength: 1 }
-        subjectTokenType: { type: string, enum: [urn:ietf:params:oauth:token-type:jwt, urn:aegivela:token-type:execution-grant] }`n        signedDecision: { type: string, minLength: 1, description: "Canonical signed allow decision authorizing the exchange; token exchange never synthesizes an allow." }
+        subjectTokenType: { type: string, enum: [urn:ietf:params:oauth:token-type:jwt, urn:aegivela:token-type:execution-grant] }
+        signedDecision: { type: string, minLength: 1, description: "Canonical signed allow decision authorizing the exchange; token exchange never synthesizes an allow." }
         requestedAudience: { type: string, minLength: 1 }
         requestedScope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
-        requested_resourceRef:
+        requestedResourceRef:
           type: object
           additionalProperties: false
           required: [kind, reference]

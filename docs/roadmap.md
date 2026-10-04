@@ -455,6 +455,29 @@ A patch that makes the v2.0 protobuf wire contracts machine-enforced:
 Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.3`. The
 Enterprise Edition counts independently (`v1.2.1`, pinning `backend v1.2.0`).
 
+## Patch Release — `1.2.4`
+
+A patch extending v2.0 contract enforcement and repairing two invalid artifacts:
+
+- Extended the `contractdrift` test with schema↔OpenAPI property parity for
+  every v2.0 domain: any definition with inline properties and a same-named
+  OpenAPI component must expose the identical property-name set.
+- Repaired `contracts/token-exchange/v2.0` OpenAPI (a literal `` `n`` had
+  replaced a newline) and `contracts/approval/v2.0` OpenAPI (an unquoted regex
+  made the document invalid YAML).
+- Renamed the `contracts/token-exchange/v2.0` proto field
+  `requested_resourceRef` to `requestedResourceRef`, matching the schema and the
+  v2.0 camelCase convention, and regenerated its bindings and baseline.
+
+| Repository | Tag |
+|---|---|
+| `aegivela` (core) | `v1.2.4` |
+| `aegivela` backend module | `backend/v1.2.4` |
+| `aegivela-open` | `v1.2.4` |
+
+Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.4`. The
+Enterprise Edition counts independently (`v1.2.1`, pinning `backend v1.2.0`).
+
 ## Required Test Matrix
 
 | Area | Minimum proof |
