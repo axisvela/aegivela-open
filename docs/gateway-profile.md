@@ -11,7 +11,7 @@ Skill / Tool on desktop or Agent Host
   -> Backend API / LLM / Business Service
 ```
 
-The existing `AXIS-gateway` repository owns the Go proxy, `CONNECT` tunneling, certificate MITM, request forwarding, credential injection, and gateway deployment. AEGIVELA owns the portable security contracts and services consumed at those PEPs. This avoids turning AEGIVELA into another proxy implementation while allowing the same PDP, grant, approval, revocation, and evidence model to secure other agent runtimes.
+The existing `LIMENORA` repository (formerly `AXIS-gateway`) owns the Go proxy, `CONNECT` tunneling, certificate MITM, request forwarding, credential injection, and gateway deployment. AEGIVELA owns the portable security contracts and services consumed at those PEPs. This avoids turning AEGIVELA into another proxy implementation while allowing the same PDP, grant, approval, revocation, and evidence model to secure other agent runtimes.
 
 ## Current Reference Surface
 

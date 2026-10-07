@@ -93,7 +93,7 @@ Web applications and API Gateways consume AEGIVELA as OIDC relying parties and P
 
 ### Agent Gateway Runtime Access Control
 
-The Gateway profile places PEPs around agent-originated traffic. The existing `AXIS-gateway` client and server gateway processes remain independent runtime components. AEGIVELA's adapter evolves their policy API from connection routing toward signed, tool-level and argument-aware enforcement. See [the Gateway profile](gateway-profile.md).
+The Gateway profile places PEPs around agent-originated traffic. The existing `LIMENORA` client and server gateway processes remain independent runtime components. AEGIVELA's adapter evolves their policy API from connection routing toward signed, tool-level and argument-aware enforcement. See [the Gateway profile](gateway-profile.md).
 
 ## Trust Boundaries
 
