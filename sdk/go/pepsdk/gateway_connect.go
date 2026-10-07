@@ -91,6 +91,25 @@ type GatewayConnectDecision struct {
 	AllowedTargetPaths []string
 }
 
+// EnforceObligations verifies that every obligation the decision requires has
+// been enforced before the PEP dispatches the effect. It fails closed: an
+// unenforced named obligation, a required credential injection, or a required
+// MITM inspection returns ErrUnavailable so the effect is not allowed.
+func (decision GatewayConnectDecision) EnforceObligations(enforced map[string]bool) error {
+	for _, obligation := range decision.Obligations {
+		if !enforced[obligation] {
+			return fmt.Errorf("%w: obligation %q not enforced", ErrUnavailable, obligation)
+		}
+	}
+	if decision.CredentialRef != "" && !enforced["credential-injection"] {
+		return fmt.Errorf("%w: credential injection not enforced", ErrUnavailable)
+	}
+	if decision.MitmRequired && !enforced["mitm-inspection"] {
+		return fmt.Errorf("%w: mitm inspection not enforced", ErrUnavailable)
+	}
+	return nil
+}
+
 // GatewayConnect obtains a short-lived connect decision from the Server Gateway endpoint.
 func (c *Client) GatewayConnect(ctx context.Context, internalToken string, request GatewayConnectRequest) (*GatewayConnectDecision, error) {
 	if internalToken == "" || !request.valid() {

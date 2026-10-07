@@ -566,6 +566,26 @@ A patch that satisfies AEGIVELA's Part 7 conformance-claim obligations:
 Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.8`. The
 Enterprise Edition counts independently (`v1.2.3`, pinning `backend v1.2.5`).
 
+## Patch Release — `1.2.9`
+
+A patch that adds PEP obligation enforcement and executes the matching fixture:
+
+- Added `pepsdk.GatewayConnectDecision.EnforceObligations`
+  ([ADR-0009](adr/0009-gateway-decision-obligation-contract.md)): the PEP fails
+  closed when a named obligation, required credential injection, or required
+  MITM inspection has not been enforced before the effect is dispatched.
+- Extended the cross-repository harness to execute the Part 4
+  `obligation-enforcement` fixture (twelve of the thirteen AEGIVELA fixtures).
+
+| Repository | Tag |
+|---|---|
+| `aegivela` (core) | `v1.2.9` |
+| `aegivela` backend module | `backend/v1.2.9` |
+| `aegivela-open` | `v1.2.9` |
+
+Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.9`. The
+Enterprise Edition counts independently (`v1.2.3`, pinning `backend v1.2.5`).
+
 ## Required Test Matrix
 
 | Area | Minimum proof |
