@@ -586,6 +586,27 @@ A patch that adds PEP obligation enforcement and executes the matching fixture:
 Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.9`. The
 Enterprise Edition counts independently (`v1.2.3`, pinning `backend v1.2.5`).
 
+## Patch Release — `1.2.10`
+
+A patch that completes the AEGIVELA-owned cross-repository conformance fixtures
+and makes grant issuance evidence atomic ([ADR-0021](adr/0021-atomic-grant-evidence-persistence.md)):
+
+- The evidence recorder exposes a transactional write, and the execution-grant
+  issuance coordinator writes its `issued` evidence in the grant transaction,
+  rolling back the grant if the evidence write fails.
+- The conformance harness now executes all thirteen AEGIVELA-owned AgentIAM
+  fixtures; the Part 6 `transaction-consistency` fixture runs as a PostgreSQL
+  integration test.
+
+| Repository | Tag |
+|---|---|
+| `aegivela` (core) | `v1.2.10` |
+| `aegivela` backend module | `backend/v1.2.10` |
+| `aegivela-open` | `v1.2.10` |
+
+Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.10`. The
+Enterprise Edition counts independently (`v1.2.3`, pinning `backend v1.2.5`).
+
 ## Required Test Matrix
 
 | Area | Minimum proof |
