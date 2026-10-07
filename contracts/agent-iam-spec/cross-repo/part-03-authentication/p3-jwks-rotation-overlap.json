@@ -1,0 +1,28 @@
+{
+  "id": "cr-p3-jwks-rotation-overlap-001",
+  "part": "agent-iam-3-authentication",
+  "clause": "5.6",
+  "threatRef": "T1",
+  "kind": "positive",
+  "title": "A token signed by the previous key verifies during the rotation overlap window",
+  "contract": { "surface": "eidovela.registry-consumer", "version": "v3.0" },
+  "given": {
+    "activeKid": "2026_10",
+    "previousKid": "2026_09",
+    "overlapSeconds": 900,
+    "maxTokenLifetimeSeconds": 600,
+    "clockSkewSeconds": 60
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/introspect",
+      "body": { "token": "<token signed by 2026_09>", "audience": "https://api.example.com/orders" }
+    }
+  },
+  "expected": {
+    "outcome": "accept",
+    "status": 200,
+    "assertions": ["the verification overlap covers maximum Token lifetime plus clock skew plus publication delay"]
+  }
+}

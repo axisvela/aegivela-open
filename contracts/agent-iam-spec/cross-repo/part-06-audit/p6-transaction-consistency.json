@@ -1,0 +1,24 @@
+{
+  "id": "cr-p6-transaction-consistency-001",
+  "part": "agent-iam-6-audit",
+  "clause": "6",
+  "kind": "positive",
+  "title": "A state change and its security event commit atomically",
+  "contract": { "surface": "aegivela.authorization-plane", "version": "aegivela.io/v2.0" },
+  "given": { "operation": "grant.issue", "evidenceFailures": 0 },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v2/grants",
+      "body": { "signedAllowDecision": "<jws>", "requestedScope": ["read:orders"] }
+    }
+  },
+  "expected": {
+    "outcome": "accept",
+    "status": 201,
+    "assertions": [
+      "the grant and exactly one evidence event are written in the same transaction",
+      "a persistence failure rolls back the state change"
+    ]
+  }
+}

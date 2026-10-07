@@ -1,0 +1,25 @@
+{
+  "id": "cr-p5-active-trust-verification-001",
+  "part": "agent-iam-5-federation",
+  "clause": "5",
+  "threatRef": "F1",
+  "kind": "positive",
+  "title": "A federated introspection verifies an active trust, signature, audience, time, and PoP",
+  "contract": { "surface": "eidovela.registry-consumer", "version": "v3.0" },
+  "given": {
+    "federationTrust": { "peer": "https://peer.example.com", "state": "active", "kid": "peer_2026_1" },
+    "token": { "iss": "https://peer.example.com", "aud": "https://id.example.com", "exp": 1900000300, "cnf": { "jkt": "jkt_peer" } }
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/federation/introspect",
+      "body": { "token": "<peer token>", "audience": "https://id.example.com" }
+    }
+  },
+  "expected": {
+    "outcome": "accept",
+    "status": 200,
+    "assertions": ["the brokered principal preserves the peer Authority Namespace and is not flattened"]
+  }
+}

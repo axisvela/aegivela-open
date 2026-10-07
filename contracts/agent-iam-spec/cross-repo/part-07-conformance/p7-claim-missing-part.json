@@ -1,0 +1,28 @@
+{
+  "id": "cr-p7-claim-missing-part-001",
+  "part": "agent-iam-7-conformance",
+  "clause": "5",
+  "kind": "negative",
+  "title": "A composite-profile claim that omits a required part is rejected",
+  "contract": { "surface": "agent-iam-series", "version": "0.4.1-draft" },
+  "given": { "compositeProfile": "Federated", "requiredParts": [2, 3, 4, 5] },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/conformance/claims",
+      "body": {
+        "compositeProfile": "Federated",
+        "supportedParts": [2, 3, 4],
+        "tokenVersions": ["0.4.1-draft"],
+        "revocationSlo": "PT5M",
+        "discoveryMechanism": "well-known"
+      }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 422,
+    "reasonCode": "incomplete-profile",
+    "assertions": ["the Federated profile requires Parts 2, 3, 4, and 5"]
+  }
+}

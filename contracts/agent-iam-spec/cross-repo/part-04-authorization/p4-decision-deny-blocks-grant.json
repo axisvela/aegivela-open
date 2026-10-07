@@ -1,0 +1,22 @@
+{
+  "id": "cr-p4-decision-deny-blocks-grant-001",
+  "part": "agent-iam-4-authorization",
+  "clause": "4.2",
+  "kind": "negative",
+  "title": "A deny decision never derives a grant",
+  "contract": { "surface": "aegivela.authorization-plane", "version": "aegivela.io/v2.0" },
+  "given": { "signedDecision": { "outcome": "deny", "action": "orders.read", "resourceRef": "order:ord_1" } },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v2/grants",
+      "body": { "signedAllowDecision": "<jws deny>", "requestedScope": ["read:orders"] }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 403,
+    "reasonCode": "decision-not-allow",
+    "assertions": ["no execution grant is issued"]
+  }
+}

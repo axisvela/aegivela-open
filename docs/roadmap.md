@@ -496,7 +496,31 @@ A patch closing the schema↔proto side of v2.0 contract enforcement:
 | `aegivela-open` | `v1.2.5` |
 
 Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.5`. The
-Enterprise Edition counts independently (`v1.2.2`, pinning `backend v1.2.4`).
+Enterprise Edition counts independently (`v1.2.3`, pinning `backend v1.2.5`).
+
+## Patch Release — `1.2.6`
+
+A patch that starts executing the AgentIAM cross-repository conformance fixtures
+and aligns decision obligations with the published contract:
+
+- Vendored the `agent-iam-spec` cross-repository fixtures under
+  `contracts/agent-iam-spec/cross-repo` and added `backend/internal/conformance`,
+  which validates every fixture against its schema, enforces that each
+  AEGIVELA-owned fixture has a mapping, and executes six Part 4 fixtures
+  (revocation pre-dispatch, decision deny/allow grant derivation, approval
+  binding, delegation non-amplification, credential-injection obligation).
+- Aligned the `decision verify` response and the signed-decision claims with the
+  published `decision/v2.0` contract: verified decisions now carry
+  `obligations`, propagated from the policy decision.
+
+| Repository | Tag |
+|---|---|
+| `aegivela` (core) | `v1.2.6` |
+| `aegivela` backend module | `backend/v1.2.6` |
+| `aegivela-open` | `v1.2.6` |
+
+Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.6`. The
+Enterprise Edition counts independently (`v1.2.3`, pinning `backend v1.2.5`).
 
 ## Required Test Matrix
 

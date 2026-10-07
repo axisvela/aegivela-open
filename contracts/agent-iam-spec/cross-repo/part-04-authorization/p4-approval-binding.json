@@ -1,0 +1,27 @@
+{
+  "id": "cr-p4-approval-binding-001",
+  "part": "agent-iam-4-authorization",
+  "clause": "6.2",
+  "kind": "positive",
+  "title": "An approval artifact binds action, resource, scope, expiry, and policy version",
+  "contract": { "surface": "aegivela.authorization-plane", "version": "aegivela.io/v2.0" },
+  "given": {
+    "approvalRequired": true,
+    "request": { "action": "orders.refund", "resourceRef": "order:ord_1", "scope": ["refund:orders"], "expiry": "2026-10-04T10:20:00Z", "policyVersion": "3" }
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v2/approvals",
+      "body": { "action": "orders.refund", "resourceRef": "order:ord_1", "scope": ["refund:orders"], "expiry": "2026-10-04T10:20:00Z", "policyVersion": "3" }
+    }
+  },
+  "expected": {
+    "outcome": "accept",
+    "status": 201,
+    "assertions": [
+      "the approval artifact is a signed JWS over tenant, action, immutable resource version, scope, expiry, and policy version",
+      "the artifact is still subject to the authoritative approvalJti revocation check"
+    ]
+  }
+}

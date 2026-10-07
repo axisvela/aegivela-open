@@ -1,0 +1,24 @@
+{
+  "id": "cr-p6-security-event-persisted-001",
+  "part": "agent-iam-6-audit",
+  "clause": "5",
+  "kind": "positive",
+  "title": "A rejected authorization emits one redacted security event correlated by namespace and trace",
+  "contract": { "surface": "aegivela.authorization-plane", "version": "aegivela.io/v2.0" },
+  "given": { "traceId": "trace_01", "namespace": "https://registry.example.com/namespaces/acme" },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v2/evidence/events",
+      "body": { "eventType": "authorization.denied", "traceId": "trace_01", "namespace": "https://registry.example.com/namespaces/acme", "reasonCode": "delegation-amplification" }
+    }
+  },
+  "expected": {
+    "outcome": "accept",
+    "status": 201,
+    "assertions": [
+      "the stored envelope is append-only and correlated by namespace and traceId",
+      "no credential value is stored"
+    ]
+  }
+}

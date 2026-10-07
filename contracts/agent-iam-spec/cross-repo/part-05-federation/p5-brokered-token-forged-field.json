@@ -1,0 +1,25 @@
+{
+  "id": "cr-p5-brokered-token-forged-field-001",
+  "part": "agent-iam-5-federation",
+  "clause": "5",
+  "threatRef": "BR",
+  "kind": "negative",
+  "title": "A brokered token cannot forge local fields",
+  "contract": { "surface": "eidovela.registry-consumer", "version": "v3.0" },
+  "given": {
+    "brokeredToken": { "iss": "https://peer.example.com", "namespace": "https://registry.example.com/namespaces/acme", "agentEpoch": 7 }
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/federation/introspect",
+      "body": { "token": "<brokered token with forged local namespace>", "audience": "https://id.example.com" }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 401,
+    "reasonCode": "brokered-field-forgery",
+    "assertions": ["the brokered subject keeps the source issuer and peer Namespace"]
+  }
+}

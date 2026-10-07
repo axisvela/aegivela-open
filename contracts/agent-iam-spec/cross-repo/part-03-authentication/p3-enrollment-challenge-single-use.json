@@ -1,0 +1,23 @@
+{
+  "id": "cr-p3-enrollment-challenge-single-use-001",
+  "part": "agent-iam-3-authentication",
+  "clause": "4.2",
+  "threatRef": "T2",
+  "kind": "negative",
+  "title": "A consumed enrollment challenge cannot be replayed",
+  "contract": { "surface": "eidovela.registry-consumer", "version": "v3.0" },
+  "given": { "challenge": { "challengeId": "chl_02", "consumed": true } },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/enrollments",
+      "body": { "challengeId": "chl_02", "proof": { "jti": "jti_02", "challengeId": "chl_02" } }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 409,
+    "reasonCode": "challenge-already-consumed",
+    "assertions": ["no credential or token is issued"]
+  }
+}

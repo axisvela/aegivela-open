@@ -1,0 +1,26 @@
+{
+  "id": "cr-p4-obligation-enforcement-001",
+  "part": "agent-iam-4-authorization",
+  "clause": "6",
+  "kind": "negative",
+  "title": "A PEP must not allow an effect when a mandatory obligation is not enforced",
+  "contract": { "surface": "aegivela.authorization-plane", "version": "aegivela.io/v2.0" },
+  "given": {
+    "decision": { "outcome": "allow", "action": "orders.call", "resourceRef": "service:orders-api" },
+    "obligation": { "type": "revocation_recheck", "class": "continuation" },
+    "obligationEnforceable": false
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v2/pep/enforce",
+      "body": { "signedGrant": "<jws>", "attemptedEffect": { "action": "orders.call", "resourceRef": "service:orders-api" } }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 503,
+    "reasonCode": "obligation-not-enforced",
+    "assertions": ["an effect is allowed only after every obligation is enforced"]
+  }
+}

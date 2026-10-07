@@ -1,0 +1,22 @@
+{
+  "id": "cr-p4-revocation-pre-dispatch-fail-closed-001",
+  "part": "agent-iam-4-authorization",
+  "clause": "7",
+  "kind": "negative",
+  "title": "A pre-dispatch revocation check fails closed when the authority is unavailable",
+  "contract": { "surface": "aegivela.authorization-plane", "version": "aegivela.io/v2.0" },
+  "given": { "freshnessClass": "pre_dispatch", "revocationAuthority": "unavailable" },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v2/revocations/check",
+      "body": { "class": "pre_dispatch", "selectors": [{ "kind": "grant_jti", "value": "grant_jti_1" }] }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 503,
+    "reasonCode": "revocation-authority-unavailable",
+    "assertions": ["pre_dispatch and continuation classes are cache-free and fail closed"]
+  }
+}

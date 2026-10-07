@@ -1,0 +1,22 @@
+{
+  "id": "cr-p6-event-redaction-001",
+  "part": "agent-iam-6-audit",
+  "clause": "5",
+  "kind": "negative",
+  "title": "A security event carrying a secret is rejected or redacted before storage",
+  "contract": { "surface": "aegivela.authorization-plane", "version": "aegivela.io/v2.0" },
+  "given": { "secretInPayload": { "accessToken": "eyJhbGciOi..." } },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v2/evidence/events",
+      "body": { "eventType": "authorization.denied", "traceId": "trace_02", "accessToken": "eyJhbGciOi..." }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 400,
+    "reasonCode": "prohibited-field",
+    "assertions": ["tokens, proofs, and unrestricted attributes are never persisted"]
+  }
+}

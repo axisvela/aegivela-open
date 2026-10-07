@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/AICTRI/agent-iam-spec/conformance/cross-repo/fixture.schema.json",
+  "title": "AgentIAM Cross-Repository Conformance Fixture",
+  "description": "A language-neutral, executable fixture that an implementation runs against its published contract surface for AgentIAM Parts 3-7.",
+  "x-agent-iam-series-version": "0.4.1-draft",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "part", "clause", "kind", "title", "contract", "operation", "expected"],
+  "properties": {
+    "id": { "type": "string" },
+    "part": {
+      "enum": [
+        "agent-iam-3-authentication",
+        "agent-iam-4-authorization",
+        "agent-iam-5-federation",
+        "agent-iam-6-audit",
+        "agent-iam-7-conformance"
+      ]
+    },
+    "clause": { "type": "string" },
+    "threatRef": { "type": "string" },
+    "kind": { "enum": ["positive", "negative"] },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["surface", "version"],
+      "properties": {
+        "surface": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "given": { "type": "object" },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["http"],
+      "properties": {
+        "http": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method", "path"],
+          "properties": {
+            "method": { "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+            "path": { "type": "string" },
+            "headers": { "type": "object" },
+            "body": { "type": "object" }
+          }
+        }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome"],
+      "properties": {
+        "outcome": { "enum": ["accept", "reject"] },
+        "status": { "type": "integer" },
+        "reasonCode": { "type": "string" },
+        "assertions": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      }
+    }
+  }
+}

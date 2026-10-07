@@ -1,0 +1,26 @@
+{
+  "id": "cr-p3-registry-context-fail-closed-001",
+  "part": "agent-iam-3-authentication",
+  "clause": "5.3",
+  "threatRef": "I1",
+  "kind": "negative",
+  "title": "Token issuance fails closed when the Registry Context read is unavailable or inconsistent",
+  "contract": { "surface": "eidovela.registry-consumer", "version": "v3.0" },
+  "given": {
+    "namespace": "https://registry.example.com/namespaces/acme",
+    "registryContext": { "available": false, "inconsistent": false }
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/tokens",
+      "body": { "agentId": "agt_01", "instanceId": "inst_01", "audience": "https://api.example.com/orders" }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 503,
+    "reasonCode": "registry-context-unavailable",
+    "assertions": ["issuance and authoritative online verification use the single Registry Context read and fail closed without it"]
+  }
+}

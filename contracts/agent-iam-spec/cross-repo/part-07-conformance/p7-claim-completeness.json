@@ -1,0 +1,31 @@
+{
+  "id": "cr-p7-claim-completeness-001",
+  "part": "agent-iam-7-conformance",
+  "clause": "5",
+  "kind": "positive",
+  "title": "A conformance claim listing parts, profile, versions, SLO, and extensions is accepted",
+  "contract": { "surface": "agent-iam-series", "version": "0.4.1-draft" },
+  "given": { "claim": "conformance-claim" },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/conformance/claims",
+      "body": {
+        "implementation": "example-agent-iam",
+        "supportedParts": [2, 3, 4, 5, 6],
+        "compositeProfile": "Federated",
+        "proofProfiles": ["spiffe", "dpop"],
+        "tokenVersions": ["0.4.1-draft"],
+        "revocationSlo": "PT5M",
+        "discoveryMechanism": "well-known",
+        "knownExtensions": [],
+        "unmetClauses": []
+      }
+    }
+  },
+  "expected": {
+    "outcome": "accept",
+    "status": 201,
+    "assertions": ["the claim names every supported part and the composite profile it satisfies"]
+  }
+}

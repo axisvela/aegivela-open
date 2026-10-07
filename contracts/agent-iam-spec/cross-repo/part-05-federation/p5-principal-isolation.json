@@ -1,0 +1,26 @@
+{
+  "id": "cr-p5-principal-isolation-001",
+  "part": "agent-iam-5-federation",
+  "clause": "4",
+  "threatRef": "F1",
+  "kind": "negative",
+  "title": "A federated principal cannot act in the local Namespace",
+  "contract": { "surface": "eidovela.registry-consumer", "version": "v3.0" },
+  "given": {
+    "federatedPrincipal": { "namespace": "https://peer.example.com/namespaces/beta" },
+    "resourceNamespace": "https://registry.example.com/namespaces/acme"
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/federation/introspect",
+      "body": { "token": "<peer token>", "audience": "https://registry.example.com/namespaces/acme" }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 403,
+    "reasonCode": "namespace-isolation",
+    "assertions": ["a peer Namespace is not flattened into another Namespace"]
+  }
+}

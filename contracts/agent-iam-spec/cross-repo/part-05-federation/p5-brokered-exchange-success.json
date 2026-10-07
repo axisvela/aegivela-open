@@ -1,0 +1,28 @@
+{
+  "id": "cr-p5-brokered-exchange-success-001",
+  "part": "agent-iam-5-federation",
+  "clause": "5",
+  "threatRef": "BR",
+  "kind": "positive",
+  "title": "A brokered exchange succeeds and preserves the source Authority Namespace",
+  "contract": { "surface": "eidovela.registry-consumer", "version": "v3.0" },
+  "given": {
+    "federationTrust": { "peer": "https://peer.example.com", "state": "active", "kid": "peer_2026_1" },
+    "subjectToken": { "iss": "https://peer.example.com", "sub": "peer-agent-7", "namespace": "https://peer.example.com/namespaces/beta" }
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/federation/exchange",
+      "body": { "subjectToken": "<peer token>", "audience": "https://api.example.com", "requestedScope": ["read:orders"] }
+    }
+  },
+  "expected": {
+    "outcome": "accept",
+    "status": 200,
+    "assertions": [
+      "the brokered token carries the external issuer and the peer Authority Namespace",
+      "the brokered token does not forge local agentClass, instanceId, workloadId, or epochs"
+    ]
+  }
+}

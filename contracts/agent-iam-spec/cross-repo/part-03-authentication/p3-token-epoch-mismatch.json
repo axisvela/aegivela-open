@@ -1,0 +1,26 @@
+{
+  "id": "cr-p3-token-epoch-mismatch-001",
+  "part": "agent-iam-3-authentication",
+  "clause": "5.4",
+  "threatRef": "T4",
+  "kind": "negative",
+  "title": "A token is invalidated online when either epoch advances",
+  "contract": { "surface": "eidovela.registry-consumer", "version": "v3.0" },
+  "given": {
+    "token": { "agentEpoch": 7, "identityEpoch": 3 },
+    "registry": { "agentEpoch": 7, "identityEpoch": 4 }
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/introspect",
+      "body": { "token": "<opaque>", "audience": "https://api.example.com/orders" }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 401,
+    "reasonCode": "stale-identity-epoch",
+    "assertions": ["an identityEpoch mismatch invalidates an otherwise unexpired token"]
+  }
+}

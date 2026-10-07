@@ -1,0 +1,33 @@
+{
+  "id": "cr-p3-workload-proof-profile-unknown-version-001",
+  "part": "agent-iam-3-authentication",
+  "clause": "4.5",
+  "threatRef": "T2",
+  "kind": "negative",
+  "title": "Enrollment fails closed on an unknown workload proof profile version",
+  "contract": { "surface": "eidovela.registry-consumer", "version": "v3.0" },
+  "given": {
+    "workloadRegistration": {
+      "workloadRegistrationRef": "wlr_01",
+      "proofRequirements": {
+        "schemaVersion": "1",
+        "methods": [{ "method": "spiffe_svid", "profileVersion": "1" }],
+        "selectorSchemaVersion": "1"
+      }
+    },
+    "submitted": { "method": "spiffe_svid", "profileVersion": "2", "selectorSchemaVersion": "1" }
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/enrollments",
+      "body": { "workloadRegistrationRef": "wlr_01", "proof": { "jti": "jti_09" } }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 400,
+    "reasonCode": "unknown-proof-profile-version",
+    "assertions": ["the verifier requires a declared, known profile version and fails closed otherwise"]
+  }
+}

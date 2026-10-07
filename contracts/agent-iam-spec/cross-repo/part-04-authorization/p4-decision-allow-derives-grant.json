@@ -1,0 +1,27 @@
+{
+  "id": "cr-p4-decision-allow-derives-grant-001",
+  "part": "agent-iam-4-authorization",
+  "clause": "4.3",
+  "kind": "positive",
+  "title": "A verified allow decision may derive an Execution Grant",
+  "contract": { "surface": "aegivela.authorization-plane", "version": "aegivela.io/v2.0" },
+  "given": {
+    "verifiedPrincipal": { "namespace": "https://registry.example.com/namespaces/acme", "agentId": "agt_01", "agentEpoch": 7, "identityEpoch": 3, "authorityBindingRef": "ab_1" },
+    "signedAllowDecision": { "outcome": "allow", "action": "orders.read", "resourceRef": "order:ord_1", "scope": ["read:orders"], "audience": "https://api.example.com", "policyVersion": "3", "expiresAt": "2026-10-04T10:05:00Z" }
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v2/grants",
+      "body": { "signedAllowDecision": "<jws>", "requestedScope": ["read:orders"], "audience": "https://api.example.com" }
+    }
+  },
+  "expected": {
+    "outcome": "accept",
+    "status": 201,
+    "assertions": [
+      "the grant scope is the intersection of decision and requested scope",
+      "the grant principal preserves namespace, agentEpoch, and identityEpoch"
+    ]
+  }
+}

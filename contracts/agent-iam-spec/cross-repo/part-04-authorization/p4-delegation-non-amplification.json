@@ -1,0 +1,25 @@
+{
+  "id": "cr-p4-delegation-non-amplification-001",
+  "part": "agent-iam-4-authorization",
+  "clause": "5.1",
+  "kind": "negative",
+  "title": "A child artifact that widens parent authority is denied",
+  "contract": { "surface": "aegivela.authorization-plane", "version": "aegivela.io/v2.0" },
+  "given": {
+    "parentGrant": { "scope": ["read:orders"], "audience": "https://api.example.com", "expiresAt": "2026-10-04T10:10:00Z", "taskBinding": "task:42" },
+    "requestedChild": { "scope": ["read:orders", "write:orders"], "audience": "https://api.example.com", "expiresAt": "2026-10-04T11:00:00Z", "taskBinding": "task:42" }
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v2/grants/attenuate",
+      "body": { "parentGrant": "<jws>", "scope": ["read:orders", "write:orders"], "expiresAt": "2026-10-04T11:00:00Z" }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 403,
+    "reasonCode": "delegation-amplification",
+    "assertions": ["scope, audience, expiry, action, resource, task, and principal identity are all non-amplifying"]
+  }
+}

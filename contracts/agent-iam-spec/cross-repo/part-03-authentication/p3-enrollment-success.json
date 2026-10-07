@@ -1,0 +1,39 @@
+{
+  "id": "cr-p3-enrollment-success-001",
+  "part": "agent-iam-3-authentication",
+  "clause": "4",
+  "threatRef": "T2",
+  "kind": "positive",
+  "title": "A bound enrollment proof over verified workload evidence is accepted",
+  "contract": { "surface": "eidovela.registry-consumer", "version": "v3.0" },
+  "given": {
+    "namespace": "https://registry.example.com/namespaces/acme",
+    "agent": { "agentId": "agt_01JABCDEF0000000000000000", "agentState": "active", "agentEpoch": 7, "identityEpoch": 3 },
+    "workloadRegistration": {
+      "workloadRegistrationRef": "wlr_01",
+      "proofRequirements": { "schemaVersion": "1", "methods": [{ "method": "spiffe_svid", "profileVersion": "1" }], "selectorSchemaVersion": "1" }
+    },
+    "challenge": { "challengeId": "chl_02", "consumed": false }
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/enrollments",
+      "body": {
+        "namespace": "https://registry.example.com/namespaces/acme",
+        "agentId": "agt_01JABCDEF0000000000000000",
+        "workloadRegistrationRef": "wlr_01",
+        "challengeId": "chl_02",
+        "proof": { "iss": "agt_01JABCDEF0000000000000000", "aud": "eidovela:enroll", "jti": "jti_02", "challengeId": "chl_02" }
+      }
+    }
+  },
+  "expected": {
+    "outcome": "accept",
+    "status": 201,
+    "assertions": [
+      "the issued credential carries agentEpoch 7 and identityEpoch 3",
+      "the challenge is recorded as consumed"
+    ]
+  }
+}

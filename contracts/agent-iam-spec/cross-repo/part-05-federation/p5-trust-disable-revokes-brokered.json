@@ -1,0 +1,26 @@
+{
+  "id": "cr-p5-trust-disable-revokes-brokered-001",
+  "part": "agent-iam-5-federation",
+  "clause": "6",
+  "threatRef": "F1",
+  "kind": "negative",
+  "title": "Disabling a federation trust invalidates an unexpired brokered token online",
+  "contract": { "surface": "eidovela.registry-consumer", "version": "v3.0" },
+  "given": {
+    "federationTrust": { "peer": "https://peer.example.com", "state": "disabled" },
+    "brokeredToken": { "iss": "https://peer.example.com", "exp": 1900000300 }
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/federation/introspect",
+      "body": { "token": "<unexpired brokered token>", "audience": "https://id.example.com" }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 401,
+    "reasonCode": "federation-trust-disabled",
+    "assertions": ["the brokered token is rejected before its expiry on the next online verification"]
+  }
+}

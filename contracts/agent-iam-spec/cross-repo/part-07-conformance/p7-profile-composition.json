@@ -1,0 +1,25 @@
+{
+  "id": "cr-p7-profile-composition-001",
+  "part": "agent-iam-7-conformance",
+  "clause": "6",
+  "kind": "positive",
+  "title": "Per-part vectors compose into the declared composite profile",
+  "contract": { "surface": "agent-iam-series", "version": "0.4.1-draft" },
+  "given": {
+    "compositeProfile": "Authorization",
+    "parts": [2, 3, 4],
+    "vectors": { "part2": "pass", "part3": "pass", "part4": "pass" }
+  },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/conformance/claims",
+      "body": { "compositeProfile": "Authorization", "supportedParts": [2, 3, 4], "revocationSlo": "PT0S", "discoveryMechanism": "well-known" }
+    }
+  },
+  "expected": {
+    "outcome": "accept",
+    "status": 201,
+    "assertions": ["a profile is satisfied only when every required part's vectors pass"]
+  }
+}

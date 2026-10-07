@@ -1,0 +1,24 @@
+{
+  "id": "cr-p3-pop-proof-replay-001",
+  "part": "agent-iam-3-authentication",
+  "clause": "5.4",
+  "threatRef": "T1",
+  "kind": "negative",
+  "title": "A replayed proof JTI is rejected",
+  "contract": { "surface": "eidovela.registry-consumer", "version": "v3.0" },
+  "given": { "seenProofJti": ["jti_proof_9"], "clockSkewSeconds": 30 },
+  "operation": {
+    "http": {
+      "method": "POST",
+      "path": "/v1/introspect",
+      "headers": { "DPoP": "<proof with jti_proof_9>" },
+      "body": { "token": "<opaque>", "audience": "https://api.example.com/orders" }
+    }
+  },
+  "expected": {
+    "outcome": "reject",
+    "status": 401,
+    "reasonCode": "proof-jti-replayed",
+    "assertions": ["a proof JTI is single-use within its validity window"]
+  }
+}
