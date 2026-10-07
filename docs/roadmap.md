@@ -545,6 +545,27 @@ harness to AEGIVELA's Part 6 fixtures:
 Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.7`. The
 Enterprise Edition counts independently (`v1.2.3`, pinning `backend v1.2.5`).
 
+## Patch Release — `1.2.8`
+
+A patch that satisfies AEGIVELA's Part 7 conformance-claim obligations:
+
+- Added the AgentIAM Part 7 claim validator `conformance.ValidateClaim`, which
+  enforces composite-profile composition (Identity = Parts 2, 3; Authorization =
+  2, 3, 4; Federated = 2, 3, 4, 5).
+- Published AEGIVELA's component conformance claim at
+  [conformance-claim.md](conformance-claim.md).
+- Extended the cross-repository harness to execute the three Part 7 fixtures
+  (eleven AEGIVELA fixtures executed in total).
+
+| Repository | Tag |
+|---|---|
+| `aegivela` (core) | `v1.2.8` |
+| `aegivela` backend module | `backend/v1.2.8` |
+| `aegivela-open` | `v1.2.8` |
+
+Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.8`. The
+Enterprise Edition counts independently (`v1.2.3`, pinning `backend v1.2.5`).
+
 ## Required Test Matrix
 
 | Area | Minimum proof |
