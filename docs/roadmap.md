@@ -605,7 +605,7 @@ and makes grant issuance evidence atomic ([ADR-0021](adr/0021-atomic-grant-evide
 | `aegivela-open` | `v1.2.10` |
 
 Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.10`. The
-Enterprise Edition counts independently (`v1.2.3`, pinning `backend v1.2.5`).
+Enterprise Edition counts independently (`v1.2.4`, pinning `backend v1.2.10`).
 
 ## Required Test Matrix
 
