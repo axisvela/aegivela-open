@@ -522,6 +522,29 @@ and aligns decision obligations with the published contract:
 Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.6`. The
 Enterprise Edition counts independently (`v1.2.3`, pinning `backend v1.2.5`).
 
+## Patch Release — `1.2.7`
+
+A patch that adds the evidence ingestion boundary and extends the conformance
+harness to AEGIVELA's Part 6 fixtures:
+
+- Added `securityevidence.Ingest` ([ADR-0020](adr/0020-evidence-ingestion-boundary.md)):
+  a validated ingestion gate that rejects prohibited fields (raw tokens,
+  credentials, proofs, prompts, arguments, attributes), rejects unknown fields,
+  requires the correlation fields, and normalizes the event to the canonical v2
+  envelope.
+- Extended the cross-repository harness to execute the Part 6
+  `security-event-persisted` and `event-redaction` fixtures (eight AEGIVELA
+  fixtures executed in total).
+
+| Repository | Tag |
+|---|---|
+| `aegivela` (core) | `v1.2.7` |
+| `aegivela` backend module | `backend/v1.2.7` |
+| `aegivela-open` | `v1.2.7` |
+
+Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.7`. The
+Enterprise Edition counts independently (`v1.2.3`, pinning `backend v1.2.5`).
+
 ## Required Test Matrix
 
 | Area | Minimum proof |
