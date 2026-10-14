@@ -109,3 +109,8 @@ type (
 	DecisionVerifyRequest = pepsdk.DecisionVerifyRequest
 	VerifiedDecision      = pepsdk.VerifiedDecision
 )
+
+// Risk signals.
+type (
+	RiskSignalRequest = pepsdk.RiskSignalRequest
+)
