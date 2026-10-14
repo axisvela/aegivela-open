@@ -114,3 +114,9 @@ type (
 type (
 	RiskSignalRequest = pepsdk.RiskSignalRequest
 )
+
+// Policies.
+type (
+	Policy              = pepsdk.Policy
+	CreatePolicyRequest = pepsdk.CreatePolicyRequest
+)
