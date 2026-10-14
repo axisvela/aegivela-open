@@ -103,6 +103,7 @@ type (
 	ResourceRef             = grantsdk.ResourceRef
 	ApprovalRequest         = grantsdk.ApprovalRequest
 	PreAuthorizationRequest = grantsdk.PreAuthorizationRequest
+	TokenExchangeRequest    = grantsdk.TokenExchangeRequest
 )
 
 // Attestations.

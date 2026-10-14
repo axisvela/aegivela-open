@@ -101,6 +101,68 @@ func (c *Client) IssuePreAuthorization(ctx context.Context, internalToken string
 	return c.authorityJSON(ctx, "/v1/pre-authorizations/issue", internalToken, body)
 }
 
+// TokenExchangeRequest is the input to ExchangeToken (v1alpha1).
+type TokenExchangeRequest struct {
+	SubjectToken     string
+	SubjectTokenType string
+	Scope            []string
+	Audience         string
+	Action           string
+	Resource         ResourceRef
+	SignedDecision   string
+	TraceID          string
+}
+
+type exchangeWire struct {
+	SubjectToken     string      `json:"subject_token"`
+	SubjectTokenType string      `json:"subject_token_type"`
+	Scope            []string    `json:"scope"`
+	Audience         string      `json:"audience"`
+	Action           string      `json:"action"`
+	Resource         ResourceRef `json:"resource_ref"`
+	SignedDecision   string      `json:"signed_decision"`
+	TraceID          string      `json:"trace_id"`
+}
+
+type exchangeResponse struct {
+	Grant string `json:"grant"`
+}
+
+// ExchangeToken exchanges a subject token for a grant token
+// (POST /v1/token-exchange). The caller presents the AEGIVELA internal token.
+func (c *Client) ExchangeToken(ctx context.Context, internalToken string, req TokenExchangeRequest) (string, error) {
+	if strings.TrimSpace(internalToken) == "" || strings.TrimSpace(req.SubjectToken) == "" ||
+		strings.TrimSpace(req.SubjectTokenType) == "" || len(req.Scope) == 0 ||
+		strings.TrimSpace(req.Audience) == "" || strings.TrimSpace(req.Action) == "" ||
+		strings.TrimSpace(req.Resource.Kind) == "" || strings.TrimSpace(req.SignedDecision) == "" {
+		return "", pepsdk.ErrInvalidInput
+	}
+	traceID := req.TraceID
+	if traceID == "" {
+		traceID = httpx.GenerateTraceID()
+	}
+	body, err := json.Marshal(exchangeWire{
+		SubjectToken: req.SubjectToken, SubjectTokenType: req.SubjectTokenType, Scope: req.Scope,
+		Audience: req.Audience, Action: req.Action, Resource: req.Resource,
+		SignedDecision: req.SignedDecision, TraceID: traceID,
+	})
+	if err != nil {
+		return "", fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
+	}
+	raw, err := c.authorityJSON(ctx, "/v1/token-exchange", internalToken, body)
+	if err != nil {
+		return "", err
+	}
+	var out exchangeResponse
+	if err := json.Unmarshal(raw, &out); err != nil {
+		return "", fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
+	}
+	if strings.TrimSpace(out.Grant) == "" {
+		return "", fmt.Errorf("%w: empty grant", pepsdk.ErrUnavailable)
+	}
+	return out.Grant, nil
+}
+
 func (c *Client) authorityJSON(ctx context.Context, path, internalToken string, body []byte) (json.RawMessage, error) {
 	resp, err := c.HC.Request(ctx, http.MethodPost, path, internalHeader(internalToken), body)
 	if err != nil {
