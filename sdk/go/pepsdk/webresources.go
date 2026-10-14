@@ -64,9 +64,9 @@ func (c *Client) webJSON(ctx context.Context, method, path, internalToken string
 	var httpReq *http.Request
 	var err error
 	if reader != nil {
-		httpReq, err = http.NewRequestWithContext(ctx, method, c.baseURL+path, reader)
+		httpReq, err = http.NewRequestWithContext(ctx, method, c.hc.BaseURL+path, reader)
 	} else {
-		httpReq, err = http.NewRequestWithContext(ctx, method, c.baseURL+path, nil)
+		httpReq, err = http.NewRequestWithContext(ctx, method, c.hc.BaseURL+path, nil)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
@@ -75,7 +75,7 @@ func (c *Client) webJSON(ctx context.Context, method, path, internalToken string
 		httpReq.Header.Set("Content-Type", "application/json")
 	}
 	httpReq.Header.Set("X-Aegivela-Internal-Token", internalToken)
-	resp, err := c.httpClient.Do(httpReq)
+	resp, err := c.hc.HTTP.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}

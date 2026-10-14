@@ -11,17 +11,18 @@ import (
 	"strings"
 	"time"
 
+	"github.com/axisrobo/aegivela-open/sdk/go/internal/httpx"
 	"github.com/axisrobo/aegivela-open/sdk/go/pepsdk"
 )
 
 // Client is the workload-identity client.
 type Client struct {
-	PE *pepsdk.Client
+	HC *httpx.Client
 }
 
 // New creates a workload-identity client.
 func New(baseURL string, httpClient *http.Client) *Client {
-	return &Client{PE: pepsdk.NewClient(baseURL, httpClient)}
+	return &Client{HC: httpx.New(baseURL, httpClient)}
 }
 
 func internalHeader(token string) map[string]string {
@@ -74,7 +75,7 @@ func (c *Client) IssueWorkloadAssertion(ctx context.Context, internalToken strin
 	}
 	traceID := req.TraceID
 	if traceID == "" {
-		traceID = pepsdk.GenerateTraceID()
+		traceID = httpx.GenerateTraceID()
 	}
 	body, err := json.Marshal(workloadAssertionRequest{
 		APIVersion: apiVersion, SubjectRef: req.SubjectRef, OrganizationRoot: req.OrganizationRoot,
@@ -84,7 +85,7 @@ func (c *Client) IssueWorkloadAssertion(ctx context.Context, internalToken strin
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
-	resp, err := c.PE.Request(ctx, http.MethodPost, "/v1/workload-assertions/issue", internalHeader(internalToken), body)
+	resp, err := c.HC.Request(ctx, http.MethodPost, "/v1/workload-assertions/issue", internalHeader(internalToken), body)
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
@@ -101,7 +102,7 @@ func (c *Client) IssueWorkloadAssertion(ctx context.Context, internalToken strin
 		return "", pepsdk.ErrUnavailable
 	}
 	var wire workloadAssertionResponse
-	if err := pepsdk.DecodeJSON(resp.Body, &wire, false); err != nil {
+	if err := httpx.DecodeBounded(resp.Body, &wire, false); err != nil {
 		return "", fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	if strings.TrimSpace(wire.WorkloadAssertion) == "" {
@@ -145,7 +146,7 @@ func (c *Client) CreateWorkloadBinding(ctx context.Context, internalToken string
 	}
 	traceID := req.TraceID
 	if traceID == "" {
-		traceID = pepsdk.GenerateTraceID()
+		traceID = httpx.GenerateTraceID()
 	}
 	body, err := json.Marshal(createWorkloadBindingWire{
 		APIVersion: apiVersion, SubjectRef: req.SubjectRef, OrganizationRoot: req.OrganizationRoot,
@@ -154,7 +155,7 @@ func (c *Client) CreateWorkloadBinding(ctx context.Context, internalToken string
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
-	resp, err := c.PE.Request(ctx, http.MethodPost, "/v1/workload-bindings", internalHeader(internalToken), body)
+	resp, err := c.HC.Request(ctx, http.MethodPost, "/v1/workload-bindings", internalHeader(internalToken), body)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
@@ -171,7 +172,7 @@ func (c *Client) CreateWorkloadBinding(ctx context.Context, internalToken string
 		return nil, pepsdk.ErrUnavailable
 	}
 	var raw json.RawMessage
-	if err := pepsdk.DecodeJSON(resp.Body, &raw, false); err != nil {
+	if err := httpx.DecodeBounded(resp.Body, &raw, false); err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	return raw, nil
@@ -179,7 +180,7 @@ func (c *Client) CreateWorkloadBinding(ctx context.Context, internalToken string
 
 // WorkloadAssertionJWKS returns the raw JWKS used to verify workload assertions.
 func (c *Client) WorkloadAssertionJWKS(ctx context.Context) (json.RawMessage, error) {
-	resp, err := c.PE.Request(ctx, http.MethodGet, "/v1/workload-assertions/jwks", nil, nil)
+	resp, err := c.HC.Request(ctx, http.MethodGet, "/v1/workload-assertions/jwks", nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
@@ -188,7 +189,7 @@ func (c *Client) WorkloadAssertionJWKS(ctx context.Context) (json.RawMessage, er
 		return nil, pepsdk.ErrUnavailable
 	}
 	var raw json.RawMessage
-	if err := pepsdk.DecodeJSON(resp.Body, &raw, false); err != nil {
+	if err := httpx.DecodeBounded(resp.Body, &raw, false); err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	return raw, nil

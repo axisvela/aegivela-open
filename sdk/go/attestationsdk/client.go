@@ -9,17 +9,18 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/axisrobo/aegivela-open/sdk/go/internal/httpx"
 	"github.com/axisrobo/aegivela-open/sdk/go/pepsdk"
 )
 
 // Client is the attestation client.
 type Client struct {
-	PE *pepsdk.Client
+	HC *httpx.Client
 }
 
 // New creates an attestation client.
 func New(baseURL string, httpClient *http.Client) *Client {
-	return &Client{PE: pepsdk.NewClient(baseURL, httpClient)}
+	return &Client{HC: httpx.New(baseURL, httpClient)}
 }
 
 func internalHeader(token string) map[string]string {
@@ -74,7 +75,7 @@ func (c *Client) IssueAttestation(ctx context.Context, internalToken string, req
 	}
 	traceID := req.TraceID
 	if traceID == "" {
-		traceID = pepsdk.GenerateTraceID()
+		traceID = httpx.GenerateTraceID()
 	}
 	body, err := json.Marshal(attestationIssueRequestWire{
 		BearerToken: req.BearerToken, ArtifactDigest: req.ArtifactDigest, ArtifactRef: req.ArtifactRef,
@@ -85,7 +86,7 @@ func (c *Client) IssueAttestation(ctx context.Context, internalToken string, req
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
-	resp, err := c.PE.Request(ctx, http.MethodPost, "/v1/attestations/issue", internalHeader(internalToken), body)
+	resp, err := c.HC.Request(ctx, http.MethodPost, "/v1/attestations/issue", internalHeader(internalToken), body)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
@@ -102,7 +103,7 @@ func (c *Client) IssueAttestation(ctx context.Context, internalToken string, req
 		return nil, pepsdk.ErrUnavailable
 	}
 	var wire attestationIssueResponse
-	if err := pepsdk.DecodeJSON(resp.Body, &wire, false); err != nil {
+	if err := httpx.DecodeBounded(resp.Body, &wire, false); err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	if strings.TrimSpace(wire.SignedArtifact) == "" {
@@ -131,7 +132,7 @@ func (c *Client) VerifyAttestation(ctx context.Context, internalToken string, re
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
-	resp, err := c.PE.Request(ctx, http.MethodPost, "/v1/attestations/verify", internalHeader(internalToken), body)
+	resp, err := c.HC.Request(ctx, http.MethodPost, "/v1/attestations/verify", internalHeader(internalToken), body)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
@@ -150,7 +151,7 @@ func (c *Client) VerifyAttestation(ctx context.Context, internalToken string, re
 		return nil, pepsdk.ErrUnavailable
 	}
 	var raw json.RawMessage
-	if err := pepsdk.DecodeJSON(resp.Body, &raw, false); err != nil {
+	if err := httpx.DecodeBounded(resp.Body, &raw, false); err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	return raw, nil
@@ -158,7 +159,7 @@ func (c *Client) VerifyAttestation(ctx context.Context, internalToken string, re
 
 // AttestationJWKS returns the raw JWKS for attestation verification.
 func (c *Client) AttestationJWKS(ctx context.Context) (json.RawMessage, error) {
-	resp, err := c.PE.Request(ctx, http.MethodGet, "/v1/attestations/jwks", nil, nil)
+	resp, err := c.HC.Request(ctx, http.MethodGet, "/v1/attestations/jwks", nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
@@ -167,7 +168,7 @@ func (c *Client) AttestationJWKS(ctx context.Context) (json.RawMessage, error) {
 		return nil, pepsdk.ErrUnavailable
 	}
 	var raw json.RawMessage
-	if err := pepsdk.DecodeJSON(resp.Body, &raw, false); err != nil {
+	if err := httpx.DecodeBounded(resp.Body, &raw, false); err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	return raw, nil

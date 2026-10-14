@@ -229,12 +229,12 @@ func (c *Client) RevocationList(ctx context.Context, internalToken string, since
 	if !since.IsZero() {
 		path += "?since=" + url.QueryEscape(since.UTC().Format(time.RFC3339))
 	}
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, c.baseURL+path, nil)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, c.hc.BaseURL+path, nil)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	httpReq.Header.Set("X-Aegivela-Internal-Token", internalToken)
-	resp, err := c.httpClient.Do(httpReq)
+	resp, err := c.hc.HTTP.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
@@ -257,13 +257,13 @@ func (c *Client) RevocationList(ctx context.Context, internalToken string, since
 
 // postInternal POSTs a JSON body with the internal-token header.
 func (c *Client) postInternal(ctx context.Context, path, internalToken string, body []byte) (*http.Response, error) {
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+path, bytes.NewReader(body))
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.hc.BaseURL+path, bytes.NewReader(body))
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("X-Aegivela-Internal-Token", internalToken)
-	resp, err := c.httpClient.Do(httpReq)
+	resp, err := c.hc.HTTP.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
@@ -272,11 +272,11 @@ func (c *Client) postInternal(ctx context.Context, path, internalToken string, b
 
 // getJWKS fetches a raw JWKS document (unauthenticated GET).
 func (c *Client) getJWKS(ctx context.Context, path string) (json.RawMessage, error) {
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, c.baseURL+path, nil)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, c.hc.BaseURL+path, nil)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
-	resp, err := c.httpClient.Do(httpReq)
+	resp, err := c.hc.HTTP.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}

@@ -10,17 +10,18 @@ import (
 	"strings"
 	"time"
 
+	"github.com/axisrobo/aegivela-open/sdk/go/internal/httpx"
 	"github.com/axisrobo/aegivela-open/sdk/go/pepsdk"
 )
 
 // Client is the execution-grant client.
 type Client struct {
-	PE *pepsdk.Client
+	HC *httpx.Client
 }
 
 // New creates an execution-grant client.
 func New(baseURL string, httpClient *http.Client) *Client {
-	return &Client{PE: pepsdk.NewClient(baseURL, httpClient)}
+	return &Client{HC: httpx.New(baseURL, httpClient)}
 }
 
 func internalHeader(token string) map[string]string {
@@ -57,7 +58,7 @@ func (c *Client) IssueGrant(ctx context.Context, internalToken string, req Grant
 	}
 	traceID := req.TraceID
 	if traceID == "" {
-		traceID = pepsdk.GenerateTraceID()
+		traceID = httpx.GenerateTraceID()
 	}
 	body, err := json.Marshal(grantIssueRequestWire{
 		BearerToken: req.BearerToken, SignedDecision: req.SignedAllowDecision, Scope: req.Scope,
@@ -66,7 +67,7 @@ func (c *Client) IssueGrant(ctx context.Context, internalToken string, req Grant
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
-	resp, err := c.PE.Request(ctx, http.MethodPost, "/v1/grants/issue", internalHeader(internalToken), body)
+	resp, err := c.HC.Request(ctx, http.MethodPost, "/v1/grants/issue", internalHeader(internalToken), body)
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
@@ -85,7 +86,7 @@ func (c *Client) IssueGrant(ctx context.Context, internalToken string, req Grant
 		return "", pepsdk.ErrUnavailable
 	}
 	var wire grantIssueResponse
-	if err := pepsdk.DecodeJSON(resp.Body, &wire, false); err != nil {
+	if err := httpx.DecodeBounded(resp.Body, &wire, false); err != nil {
 		return "", fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	if strings.TrimSpace(wire.Grant) == "" {
@@ -152,7 +153,7 @@ func (c *Client) VerifyGrant(ctx context.Context, internalToken string, req Gran
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
-	resp, err := c.PE.Request(ctx, http.MethodPost, "/v1/grants/verify", internalHeader(internalToken), body)
+	resp, err := c.HC.Request(ctx, http.MethodPost, "/v1/grants/verify", internalHeader(internalToken), body)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
@@ -171,7 +172,7 @@ func (c *Client) VerifyGrant(ctx context.Context, internalToken string, req Gran
 		return nil, pepsdk.ErrUnavailable
 	}
 	var wire grantVerifyResponseV2
-	if err := pepsdk.DecodeJSON(resp.Body, &wire, false); err != nil {
+	if err := httpx.DecodeBounded(resp.Body, &wire, false); err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	return &VerifyGrantResult{
@@ -183,7 +184,7 @@ func (c *Client) VerifyGrant(ctx context.Context, internalToken string, req Gran
 
 // GrantJWKS returns the raw JWKS for grant verification.
 func (c *Client) GrantJWKS(ctx context.Context) (json.RawMessage, error) {
-	resp, err := c.PE.Request(ctx, http.MethodGet, "/v1/grants/jwks", nil, nil)
+	resp, err := c.HC.Request(ctx, http.MethodGet, "/v1/grants/jwks", nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
@@ -192,7 +193,7 @@ func (c *Client) GrantJWKS(ctx context.Context) (json.RawMessage, error) {
 		return nil, pepsdk.ErrUnavailable
 	}
 	var raw json.RawMessage
-	if err := pepsdk.DecodeJSON(resp.Body, &raw, false); err != nil {
+	if err := httpx.DecodeBounded(resp.Body, &raw, false); err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	return raw, nil

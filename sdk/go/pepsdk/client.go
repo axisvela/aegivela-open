@@ -3,33 +3,32 @@ package pepsdk
 import (
 	"bytes"
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/axisrobo/aegivela-open/sdk/go/internal/httpx"
 )
 
-const maxResponseBytes = 1 << 20
+const maxResponseBytes = httpx.MaxResponseBytes
 
 type Client struct {
-	baseURL    string
-	httpClient *http.Client
-	tenantID   string
+	hc *httpx.Client
 }
 
+// NewClient creates an AEGIVELA client for baseURL.
 func NewClient(baseURL string, httpClient *http.Client) *Client {
-	return &Client{baseURL: baseURL, httpClient: httpClient}
+	return &Client{hc: httpx.New(baseURL, httpClient)}
 }
 
 // WithTenant sets the tenant whose revocation scope the PEP rechecks. The
 // revocation-check contract requires it, and a PEP must not be able to widen
 // its scope through request fields.
 func (c *Client) WithTenant(tenantID string) *Client {
-	c.tenantID = tenantID
+	c.hc.WithTenant(tenantID)
 	return c
 }
 
@@ -170,14 +169,14 @@ func (c *Client) Authorize(ctx context.Context, route Route, input Authorization
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 
-	url := c.baseURL + "/v1/policy/decisions/evaluate"
+	url := c.hc.BaseURL + "/v1/policy/decisions/evaluate"
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 
-	resp, err := c.httpClient.Do(httpReq)
+	resp, err := c.hc.HTTP.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
@@ -328,34 +327,11 @@ func decodeV2Error(resp *http.Response) error {
 }
 
 func decodeStrictResponse(body io.Reader, target any) error {
-	return decodeBoundedResponse(body, target, true)
+	return httpx.DecodeStrict(body, target)
 }
 
 func decodeBoundedResponse(body io.Reader, target any, strict bool) error {
-	encoded, err := io.ReadAll(io.LimitReader(body, maxResponseBytes+1))
-	if err != nil {
-		return err
-	}
-	if len(encoded) > maxResponseBytes {
-		return fmt.Errorf("response exceeds size limit")
-	}
-	decoder := json.NewDecoder(bytes.NewReader(encoded))
-	if strict {
-		decoder.DisallowUnknownFields()
-	}
-	if err := decoder.Decode(target); err != nil {
-		return err
-	}
-	if err := decoder.Decode(&struct{}{}); err != io.EOF {
-		return fmt.Errorf("trailing response data")
-	}
-	return nil
+	return httpx.DecodeBounded(body, target, strict)
 }
 
-func generateTraceID() string {
-	var buf [16]byte
-	if _, err := rand.Read(buf[:]); err != nil {
-		return "fallback-trace-id"
-	}
-	return hex.EncodeToString(buf[:])
-}
+func generateTraceID() string { return httpx.GenerateTraceID() }

@@ -145,13 +145,13 @@ func (c *Client) GatewayConnect(ctx context.Context, internalToken string, reque
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/v1/gateway/connect", bytes.NewReader(payload))
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.hc.BaseURL+"/v1/gateway/connect", bytes.NewReader(payload))
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("X-Aegivela-Internal-Token", internalToken)
-	resp, err := c.httpClient.Do(httpReq)
+	resp, err := c.hc.HTTP.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}

@@ -31,7 +31,7 @@ func (c *Client) CheckRevocation(ctx context.Context, internalToken string, clas
 	if class != ClassPreDispatch && class != ClassContinuation && class != ClassConnection {
 		return ErrInvalidInput
 	}
-	if len(selectors) == 0 || len(selectors) > 16 || internalToken == "" || strings.TrimSpace(c.tenantID) == "" {
+	if len(selectors) == 0 || len(selectors) > 16 || internalToken == "" || strings.TrimSpace(c.hc.TenantID) == "" {
 		return ErrInvalidInput
 	}
 	bodyMap := map[string]any{
@@ -47,14 +47,14 @@ func (c *Client) CheckRevocation(ctx context.Context, internalToken string, clas
 	if err != nil {
 		return fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/v1/revocations/check", bytes.NewReader(body))
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.hc.BaseURL+"/v1/revocations/check", bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("X-AEGIVELA-PEP", internalToken)
-	httpReq.Header.Set("X-Aegivela-Tenant-ID", c.tenantID)
-	resp, err := c.httpClient.Do(httpReq)
+	httpReq.Header.Set("X-Aegivela-Tenant-ID", c.hc.TenantID)
+	resp, err := c.hc.HTTP.Do(httpReq)
 	if err != nil {
 		return fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}

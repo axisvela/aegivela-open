@@ -84,12 +84,12 @@ func (c *Client) GetPolicyVersion(ctx context.Context, internalToken, policyID, 
 }
 
 func (c *Client) getPolicy(ctx context.Context, internalToken, path string) (*Policy, error) {
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, c.baseURL+path, nil)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, c.hc.BaseURL+path, nil)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	httpReq.Header.Set("X-Aegivela-Internal-Token", internalToken)
-	resp, err := c.httpClient.Do(httpReq)
+	resp, err := c.hc.HTTP.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
