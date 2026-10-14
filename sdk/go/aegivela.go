@@ -12,6 +12,7 @@ package aegivela
 
 import (
 	"github.com/axisrobo/aegivela-open/sdk/go/attestationsdk"
+	"github.com/axisrobo/aegivela-open/sdk/go/governancesdk"
 	"github.com/axisrobo/aegivela-open/sdk/go/grantsdk"
 	"github.com/axisrobo/aegivela-open/sdk/go/identitysdk"
 	"github.com/axisrobo/aegivela-open/sdk/go/pepsdk"
@@ -114,13 +115,6 @@ type (
 	AttestationVerifyRequest = attestationsdk.AttestationVerifyRequest
 )
 
-// Domain client constructors.
-var (
-	NewIdentityClient    = identitysdk.New
-	NewGrantClient       = grantsdk.New
-	NewAttestationClient = attestationsdk.New
-)
-
 // Tool invocation + decision verification.
 type (
 	ToolInvokeRequest     = pepsdk.ToolInvokeRequest
@@ -129,19 +123,20 @@ type (
 	VerifiedDecision      = pepsdk.VerifiedDecision
 )
 
-// Risk signals.
+// Governance: policies, web resources, risk signals.
 type (
-	RiskSignalRequest = pepsdk.RiskSignalRequest
+	GovernanceClient             = governancesdk.Client
+	Policy                       = governancesdk.Policy
+	CreatePolicyRequest          = governancesdk.CreatePolicyRequest
+	RiskSignalRequest            = governancesdk.RiskSignalRequest
+	CreateWebResourceRequest     = governancesdk.CreateWebResourceRequest
+	CreateWebResourceRuleRequest = governancesdk.CreateWebResourceRuleRequest
 )
 
-// Policies.
-type (
-	Policy              = pepsdk.Policy
-	CreatePolicyRequest = pepsdk.CreatePolicyRequest
-)
-
-// Web resources.
-type (
-	CreateWebResourceRequest     = pepsdk.CreateWebResourceRequest
-	CreateWebResourceRuleRequest = pepsdk.CreateWebResourceRuleRequest
+// Domain client constructors.
+var (
+	NewIdentityClient    = identitysdk.New
+	NewGrantClient       = grantsdk.New
+	NewAttestationClient = attestationsdk.New
+	NewGovernanceClient  = governancesdk.New
 )
