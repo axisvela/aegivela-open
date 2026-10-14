@@ -10,7 +10,12 @@
 // (issue / verify / JWKS).
 package aegivela
 
-import "github.com/axisrobo/aegivela-open/sdk/go/pepsdk"
+import (
+	"github.com/axisrobo/aegivela-open/sdk/go/attestationsdk"
+	"github.com/axisrobo/aegivela-open/sdk/go/grantsdk"
+	"github.com/axisrobo/aegivela-open/sdk/go/identitysdk"
+	"github.com/axisrobo/aegivela-open/sdk/go/pepsdk"
+)
 
 // Core client.
 type (
@@ -84,22 +89,32 @@ const (
 
 // Workload identity.
 type (
-	WorkloadAssertionRequest     = pepsdk.WorkloadAssertionRequest
-	CreateWorkloadBindingRequest = pepsdk.CreateWorkloadBindingRequest
+	IdentityClient               = identitysdk.Client
+	WorkloadAssertionRequest     = identitysdk.WorkloadAssertionRequest
+	CreateWorkloadBindingRequest = identitysdk.CreateWorkloadBindingRequest
 )
 
 // Execution grants.
 type (
-	GrantIssueRequest  = pepsdk.GrantIssueRequest
-	GrantVerifyRequest = pepsdk.GrantVerifyRequest
-	VerifyGrantResult  = pepsdk.VerifyGrantResult
+	GrantClient        = grantsdk.Client
+	GrantIssueRequest  = grantsdk.GrantIssueRequest
+	GrantVerifyRequest = grantsdk.GrantVerifyRequest
+	VerifyGrantResult  = grantsdk.VerifyGrantResult
 )
 
 // Attestations.
 type (
-	AttestationRequest       = pepsdk.AttestationRequest
-	AttestationResult        = pepsdk.AttestationResult
-	AttestationVerifyRequest = pepsdk.AttestationVerifyRequest
+	AttestationClient        = attestationsdk.Client
+	AttestationRequest       = attestationsdk.AttestationRequest
+	AttestationResult        = attestationsdk.AttestationResult
+	AttestationVerifyRequest = attestationsdk.AttestationVerifyRequest
+)
+
+// Domain client constructors.
+var (
+	NewIdentityClient    = identitysdk.New
+	NewGrantClient       = grantsdk.New
+	NewAttestationClient = attestationsdk.New
 )
 
 // Tool invocation + decision verification.

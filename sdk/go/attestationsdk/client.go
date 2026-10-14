@@ -1,15 +1,32 @@
-package pepsdk
+// Package attestationsdk is the Apache-2.0 AEGIVELA attestation client: issue,
+// verify, and the attestation JWKS. It wraps the shared pepsdk client.
+package attestationsdk
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/axisrobo/aegivela-open/sdk/go/pepsdk"
 )
 
-// AttestationRequest is the input to IssueAttestation (v1alpha1 contract).
+// Client is the attestation client.
+type Client struct {
+	PE *pepsdk.Client
+}
+
+// New creates an attestation client.
+func New(baseURL string, httpClient *http.Client) *Client {
+	return &Client{PE: pepsdk.NewClient(baseURL, httpClient)}
+}
+
+func internalHeader(token string) map[string]string {
+	return map[string]string{"X-Aegivela-Internal-Token": token}
+}
+
+// AttestationRequest is the input to IssueAttestation (v1alpha1).
 type AttestationRequest struct {
 	BearerToken       string
 	ArtifactDigest    string
@@ -47,22 +64,17 @@ type attestationIssueResponse struct {
 	JTI            string `json:"jti"`
 }
 
-// IssueAttestation issues a signed attestation artifact. The caller presents the
-// AEGIVELA internal token.
+// IssueAttestation issues a signed attestation artifact.
 func (c *Client) IssueAttestation(ctx context.Context, internalToken string, req AttestationRequest) (*AttestationResult, error) {
-	if strings.TrimSpace(internalToken) == "" ||
-		strings.TrimSpace(req.BearerToken) == "" ||
-		strings.TrimSpace(req.ArtifactDigest) == "" ||
-		len(req.ArtifactRef) == 0 ||
-		strings.TrimSpace(req.SignerIdentity) == "" ||
-		strings.TrimSpace(req.SignerPublicKey) == "" ||
-		strings.TrimSpace(req.Audience) == "" ||
-		strings.TrimSpace(req.PolicyVersion) == "" {
-		return nil, ErrInvalidInput
+	if strings.TrimSpace(internalToken) == "" || strings.TrimSpace(req.BearerToken) == "" ||
+		strings.TrimSpace(req.ArtifactDigest) == "" || len(req.ArtifactRef) == 0 ||
+		strings.TrimSpace(req.SignerIdentity) == "" || strings.TrimSpace(req.SignerPublicKey) == "" ||
+		strings.TrimSpace(req.Audience) == "" || strings.TrimSpace(req.PolicyVersion) == "" {
+		return nil, pepsdk.ErrInvalidInput
 	}
 	traceID := req.TraceID
 	if traceID == "" {
-		traceID = generateTraceID()
+		traceID = pepsdk.GenerateTraceID()
 	}
 	body, err := json.Marshal(attestationIssueRequestWire{
 		BearerToken: req.BearerToken, ArtifactDigest: req.ArtifactDigest, ArtifactRef: req.ArtifactRef,
@@ -71,37 +83,30 @@ func (c *Client) IssueAttestation(ctx context.Context, internalToken string, req
 		Audience: req.Audience, PolicyVersion: req.PolicyVersion, TraceID: traceID,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/v1/attestations/issue", bytes.NewReader(body))
+	resp, err := c.PE.Request(ctx, http.MethodPost, "/v1/attestations/issue", internalHeader(internalToken), body)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
-	}
-	httpReq.Header.Set("Content-Type", "application/json")
-	httpReq.Header.Set("X-Aegivela-Internal-Token", internalToken)
-
-	resp, err := c.httpClient.Do(httpReq)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	defer resp.Body.Close()
 	switch resp.StatusCode {
 	case http.StatusUnauthorized:
-		return nil, ErrUnauthenticated
+		return nil, pepsdk.ErrUnauthenticated
 	case http.StatusBadRequest:
-		return nil, ErrInvalidInput
+		return nil, pepsdk.ErrInvalidInput
 	case http.StatusServiceUnavailable:
-		return nil, ErrUnavailable
+		return nil, pepsdk.ErrUnavailable
 	case http.StatusOK, http.StatusCreated:
 	default:
-		return nil, ErrUnavailable
+		return nil, pepsdk.ErrUnavailable
 	}
 	var wire attestationIssueResponse
-	if err := decodeBoundedResponse(resp.Body, &wire, false); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+	if err := pepsdk.DecodeJSON(resp.Body, &wire, false); err != nil {
+		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	if strings.TrimSpace(wire.SignedArtifact) == "" {
-		return nil, fmt.Errorf("%w: empty signed artifact", ErrUnavailable)
+		return nil, fmt.Errorf("%w: empty signed artifact", pepsdk.ErrUnavailable)
 	}
 	return &AttestationResult{SignedArtifact: wire.SignedArtifact, JTI: wire.JTI}, nil
 }
@@ -114,68 +119,56 @@ type AttestationVerifyRequest struct {
 }
 
 // VerifyAttestation verifies an attestation artifact; the result JSON is
-// returned verbatim (its shape is AEGIVELA-owned).
+// returned verbatim.
 func (c *Client) VerifyAttestation(ctx context.Context, internalToken string, req AttestationVerifyRequest) (json.RawMessage, error) {
-	if strings.TrimSpace(internalToken) == "" ||
-		strings.TrimSpace(req.SignedArtifact) == "" ||
+	if strings.TrimSpace(internalToken) == "" || strings.TrimSpace(req.SignedArtifact) == "" ||
 		strings.TrimSpace(req.Issuer) == "" || strings.TrimSpace(req.Audience) == "" {
-		return nil, ErrInvalidInput
+		return nil, pepsdk.ErrInvalidInput
 	}
 	body, err := json.Marshal(map[string]string{
 		"signed_artifact": req.SignedArtifact, "issuer": req.Issuer, "audience": req.Audience,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/v1/attestations/verify", bytes.NewReader(body))
+	resp, err := c.PE.Request(ctx, http.MethodPost, "/v1/attestations/verify", internalHeader(internalToken), body)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
-	}
-	httpReq.Header.Set("Content-Type", "application/json")
-	httpReq.Header.Set("X-Aegivela-Internal-Token", internalToken)
-
-	resp, err := c.httpClient.Do(httpReq)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	defer resp.Body.Close()
 	switch resp.StatusCode {
 	case http.StatusUnauthorized:
-		return nil, ErrUnauthenticated
+		return nil, pepsdk.ErrUnauthenticated
 	case http.StatusForbidden:
-		return nil, ErrDenied
+		return nil, pepsdk.ErrDenied
 	case http.StatusBadRequest:
-		return nil, ErrInvalidInput
+		return nil, pepsdk.ErrInvalidInput
 	case http.StatusServiceUnavailable:
-		return nil, ErrUnavailable
+		return nil, pepsdk.ErrUnavailable
 	case http.StatusOK:
 	default:
-		return nil, ErrUnavailable
+		return nil, pepsdk.ErrUnavailable
 	}
 	var raw json.RawMessage
-	if err := decodeBoundedResponse(resp.Body, &raw, false); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+	if err := pepsdk.DecodeJSON(resp.Body, &raw, false); err != nil {
+		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	return raw, nil
 }
 
-// AttestationJWKS returns the raw JSON Web Key Set for attestation verification.
+// AttestationJWKS returns the raw JWKS for attestation verification.
 func (c *Client) AttestationJWKS(ctx context.Context) (json.RawMessage, error) {
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, c.baseURL+"/v1/attestations/jwks", nil)
+	resp, err := c.PE.Request(ctx, http.MethodGet, "/v1/attestations/jwks", nil, nil)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
-	}
-	resp, err := c.httpClient.Do(httpReq)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return nil, ErrUnavailable
+		return nil, pepsdk.ErrUnavailable
 	}
 	var raw json.RawMessage
-	if err := decodeBoundedResponse(resp.Body, &raw, false); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+	if err := pepsdk.DecodeJSON(resp.Body, &raw, false); err != nil {
+		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
 	return raw, nil
 }
