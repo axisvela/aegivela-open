@@ -96,10 +96,13 @@ type (
 
 // Execution grants.
 type (
-	GrantClient        = grantsdk.Client
-	GrantIssueRequest  = grantsdk.GrantIssueRequest
-	GrantVerifyRequest = grantsdk.GrantVerifyRequest
-	VerifyGrantResult  = grantsdk.VerifyGrantResult
+	GrantClient             = grantsdk.Client
+	GrantIssueRequest       = grantsdk.GrantIssueRequest
+	GrantVerifyRequest      = grantsdk.GrantVerifyRequest
+	VerifyGrantResult       = grantsdk.VerifyGrantResult
+	ResourceRef             = grantsdk.ResourceRef
+	ApprovalRequest         = grantsdk.ApprovalRequest
+	PreAuthorizationRequest = grantsdk.PreAuthorizationRequest
 )
 
 // Attestations.
@@ -134,4 +137,10 @@ type (
 type (
 	Policy              = pepsdk.Policy
 	CreatePolicyRequest = pepsdk.CreatePolicyRequest
+)
+
+// Web resources.
+type (
+	CreateWebResourceRequest     = pepsdk.CreateWebResourceRequest
+	CreateWebResourceRuleRequest = pepsdk.CreateWebResourceRuleRequest
 )
