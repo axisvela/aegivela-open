@@ -101,3 +101,11 @@ type (
 	AttestationResult        = pepsdk.AttestationResult
 	AttestationVerifyRequest = pepsdk.AttestationVerifyRequest
 )
+
+// Tool invocation + decision verification.
+type (
+	ToolInvokeRequest     = pepsdk.ToolInvokeRequest
+	ToolInvokeResult      = pepsdk.ToolInvokeResult
+	DecisionVerifyRequest = pepsdk.DecisionVerifyRequest
+	VerifiedDecision      = pepsdk.VerifiedDecision
+)
