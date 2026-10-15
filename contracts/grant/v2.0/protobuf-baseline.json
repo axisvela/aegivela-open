@@ -106,6 +106,10 @@
         "taskBinding": {
           "number": 8,
           "type": "optional string"
+        },
+        "signedGrant": {
+          "number": 12,
+          "type": "optional string"
         }
       }
     },

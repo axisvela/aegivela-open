@@ -23,6 +23,7 @@
 | pre-authorization JTI | `executionGrant.preAuthorizationJti` | `GrantIssueResponse.preAuthorizationJti` | `GrantIssueResponse.preAuthorizationJti` = 9 |
 | approval JTI | `executionGrant.approvalJti` | `GrantIssueResponse.approvalJti` | `GrantIssueResponse.approvalJti` = 10 |
 | evidence refs | `executionGrant.evidenceRefs` | `GrantIssueResponse.evidenceRefs` | `GrantIssueResponse.evidenceRefs` = 11 |
+| signed grant | `executionGrant.signedGrant` | `GrantIssueResponse.signedGrant` | `GrantIssueResponse.signedGrant` = 12 |
 | verify signed grant | `grantVerifyRequest.signedGrant` | `GrantVerifyRequest.signedGrant` | `GrantVerifyRequest.signedGrant` = 2 |
 | expected bindings | `grantVerifyRequest.expectedBindings` | `GrantVerifyRequest.expectedBindings` | `GrantVerifyRequest.expectedBindings` = 3 |
 | expected audience | `expectedBindings.audience` | `ExpectedBindings.audience` | `ExpectedBindings.audience` = 1 |

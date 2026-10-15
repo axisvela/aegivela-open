@@ -49,6 +49,7 @@ message GrantIssueResponse {
   optional string preAuthorizationJti = 9;
   optional string approvalJti = 10;
   repeated string evidenceRefs = 11;
+  optional string signedGrant = 12;
 }
 
 message ExpectedBindings {

@@ -48,7 +48,18 @@ type grantIssueRequestWire struct {
 }
 
 type grantIssueResponse struct {
+	// Grant is the v1-style envelope field.
 	Grant string `json:"grant"`
+	// SignedGrant is the v2 structured-response field carrying the same compact
+	// signed grant artifact.
+	SignedGrant string `json:"signedGrant"`
+}
+
+func (r grantIssueResponse) token() string {
+	if strings.TrimSpace(r.Grant) != "" {
+		return r.Grant
+	}
+	return r.SignedGrant
 }
 
 // IssueGrant mints an execution grant from a signed allow decision.
@@ -89,10 +100,10 @@ func (c *Client) IssueGrant(ctx context.Context, internalToken string, req Grant
 	if err := httpx.DecodeBounded(resp.Body, &wire, false); err != nil {
 		return "", fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
-	if strings.TrimSpace(wire.Grant) == "" {
+	if strings.TrimSpace(wire.token()) == "" {
 		return "", fmt.Errorf("%w: empty grant", pepsdk.ErrUnavailable)
 	}
-	return wire.Grant, nil
+	return wire.token(), nil
 }
 
 // GrantVerifyRequest is the input to VerifyGrant (v2).

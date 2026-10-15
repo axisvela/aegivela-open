@@ -138,6 +138,7 @@ components:
         preAuthorizationJti: { type: string, minLength: 1 }
         approvalJti: { type: string, minLength: 1 }
         evidenceRefs: { type: array, items: { type: string, minLength: 1 }, minItems: 1 }
+        signedGrant: { type: string, minLength: 1 }
     GrantVerifyRequest:
       type: object
       additionalProperties: false
