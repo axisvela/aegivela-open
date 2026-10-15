@@ -134,6 +134,7 @@ type VerifiedDecision struct {
 	APIVersion    string
 	DecisionID    string
 	Valid         bool
+	Revoked       bool
 	Outcome       string
 	PolicyVersion string
 	ExpiresAt     time.Time
@@ -160,6 +161,7 @@ type decisionVerifyResponseV2 struct {
 	APIVersion    string    `json:"apiVersion"`
 	DecisionID    string    `json:"decisionId"`
 	Valid         bool      `json:"valid"`
+	Revoked       bool      `json:"revoked,omitempty"`
 	Outcome       string    `json:"outcome"`
 	PolicyVersion string    `json:"policyVersion"`
 	ExpiresAt     time.Time `json:"expiresAt"`
@@ -208,7 +210,7 @@ func (c *Client) VerifyDecision(ctx context.Context, internalToken string, req D
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	return &VerifiedDecision{
-		APIVersion: wire.APIVersion, DecisionID: wire.DecisionID, Valid: wire.Valid,
+		APIVersion: wire.APIVersion, DecisionID: wire.DecisionID, Valid: wire.Valid, Revoked: wire.Revoked,
 		Outcome: wire.Outcome, PolicyVersion: wire.PolicyVersion, ExpiresAt: wire.ExpiresAt,
 		Obligations: wire.Obligations, EvidenceRefs: wire.EvidenceRefs,
 	}, nil
