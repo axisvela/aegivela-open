@@ -19,9 +19,30 @@ type Client struct {
 	HC *httpx.Client
 }
 
+// Option configures a client before it is shared between requests.
+type Option func(*Client)
+
+// WithHeaders copies default request headers (for example the configured
+// Authorization / X-AEGIVELA-* credentials). Endpoint-specific headers win, so
+// the per-call X-Aegivela-Internal-Token is never overridden. Cross-origin
+// redirects are refused when defaults are configured.
+func WithHeaders(headers map[string]string) Option {
+	defaults := make(map[string]string, len(headers))
+	for key, value := range headers {
+		defaults[key] = value
+	}
+	return func(c *Client) { c.HC.WithHeaders(defaults) }
+}
+
 // New creates an execution-grant client.
-func New(baseURL string, httpClient *http.Client) *Client {
-	return &Client{HC: httpx.New(baseURL, httpClient)}
+func New(baseURL string, httpClient *http.Client, opts ...Option) *Client {
+	c := &Client{HC: httpx.New(baseURL, httpClient)}
+	for _, opt := range opts {
+		if opt != nil {
+			opt(c)
+		}
+	}
+	return c
 }
 
 func internalHeader(token string) map[string]string {
@@ -85,16 +106,16 @@ func (c *Client) IssueGrant(ctx context.Context, internalToken string, req Grant
 	defer resp.Body.Close()
 	switch resp.StatusCode {
 	case http.StatusUnauthorized:
-		return "", pepsdk.ErrUnauthenticated
+		return "", &pepsdk.APIError{StatusCode: resp.StatusCode, Err: pepsdk.ErrUnauthenticated}
 	case http.StatusForbidden:
-		return "", pepsdk.ErrDenied
+		return "", &pepsdk.APIError{StatusCode: resp.StatusCode, Err: pepsdk.ErrDenied}
 	case http.StatusBadRequest:
-		return "", pepsdk.ErrInvalidInput
+		return "", &pepsdk.APIError{StatusCode: resp.StatusCode, Err: pepsdk.ErrInvalidInput}
 	case http.StatusServiceUnavailable:
-		return "", pepsdk.ErrUnavailable
+		return "", &pepsdk.APIError{StatusCode: resp.StatusCode, Err: pepsdk.ErrUnavailable}
 	case http.StatusOK, http.StatusCreated:
 	default:
-		return "", pepsdk.ErrUnavailable
+		return "", &pepsdk.APIError{StatusCode: resp.StatusCode, Err: pepsdk.ErrUnavailable}
 	}
 	var wire grantIssueResponse
 	if err := httpx.DecodeBounded(resp.Body, &wire, false); err != nil {
