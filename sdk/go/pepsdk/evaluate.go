@@ -22,14 +22,26 @@ type EvaluateResult struct {
 }
 
 // Evaluate posts the policy evaluate request and returns the raw outcome
-// (allow | deny | approval_required | …). Only transport/unavailable failures
-// are errors; a deny is a normal result.
+// (allow | deny | approval_required | ...). A valid deny response is a normal
+// result; invalid input, HTTP failures and malformed responses are errors.
 func (c *Client) Evaluate(ctx context.Context, route Route, input AuthorizationInput) (*EvaluateResult, error) {
 	if err := input.Validate(); err != nil {
 		return nil, err
 	}
 	if err := route.Validate(); err != nil {
 		return nil, err
+	}
+	if len(route.Modes) > 0 {
+		allowed := false
+		for _, mode := range route.Modes {
+			if mode == input.Mode {
+				allowed = true
+				break
+			}
+		}
+		if !allowed {
+			return nil, ErrInvalidInput
+		}
 	}
 	apiVersion := input.APIVersion
 	if apiVersion == "" {
@@ -67,42 +79,36 @@ func (c *Client) Evaluate(ctx context.Context, route Route, input AuthorizationI
 	}
 	resp, err := c.hc.Request(ctx, http.MethodPost, "/v1/policy/decisions/evaluate", nil, body)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+		return nil, fmt.Errorf("%w: %w", ErrUnavailable, err)
 	}
 	defer resp.Body.Close()
+	if apiVersion == APIVersionV2 && resp.StatusCode != http.StatusOK {
+		return nil, &APIError{StatusCode: resp.StatusCode, Err: decodeV2Error(resp)}
+	}
 	switch resp.StatusCode {
 	case http.StatusUnauthorized:
-		return nil, ErrUnauthenticated
-	case http.StatusServiceUnavailable:
-		return nil, ErrUnavailable
+		return nil, &APIError{StatusCode: resp.StatusCode, Err: ErrUnauthenticated}
+	case http.StatusForbidden:
+		return nil, &APIError{StatusCode: resp.StatusCode, Err: ErrDenied}
 	case http.StatusOK:
 	default:
-		return nil, ErrUnavailable
+		return nil, &APIError{StatusCode: resp.StatusCode, Err: ErrUnavailable}
 	}
 
 	if apiVersion == APIVersionV2 {
-		var wire evaluateResponseV2
-		if err := decodeBoundedResponse(resp.Body, &wire, false); err != nil {
-			return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
-		}
-		outcome := wire.Result
-		if outcome == "" {
-			outcome = wire.Outcome
-		}
-		return &EvaluateResult{
-			DecisionID: wire.DecisionID, Outcome: outcome, PolicyVersion: wire.PolicyVersion,
-			EvidenceRefs: wire.EvidenceRefs, ExpiresAt: wire.ExpiresAt, Obligations: wire.Obligations,
-			SignedDecision: firstNonEmpty(wire.SignedDecision, wire.SignedDecisionLegacy),
-		}, nil
+		return decodeV2Evaluate(resp)
 	}
 
 	var wire evaluateResponse
 	if err := decodeBoundedResponse(resp.Body, &wire, false); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+		return nil, fmt.Errorf("%w: %v", ErrMalformed, err)
+	}
+	if wire.DecisionID == "" || wire.PolicyVersion == "" {
+		return nil, ErrMalformed
 	}
 	return &EvaluateResult{
 		DecisionID: wire.DecisionID, Outcome: wire.Outcome, PolicyVersion: wire.PolicyVersion,
-		EvidenceRefs: wire.EvidenceRefs,
+		EvidenceRefs:   wire.EvidenceRefs,
 		SignedDecision: firstNonEmpty(wire.SignedDecision, wire.SignedDecisionLegacy),
 	}, nil
 }

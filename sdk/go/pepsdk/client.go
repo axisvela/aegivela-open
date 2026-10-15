@@ -1,7 +1,6 @@
 package pepsdk
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -19,14 +18,32 @@ type Client struct {
 	hc *httpx.Client
 }
 
+// Option configures a client before it is shared between requests.
+type Option func(*Client)
+
+// WithHeaders copies default request headers. Endpoint-specific headers win.
+// Cross-origin redirects are refused when defaults are configured.
+func WithHeaders(headers map[string]string) Option {
+	defaults := make(map[string]string, len(headers))
+	for key, value := range headers {
+		defaults[key] = value
+	}
+	return func(c *Client) { c.hc.WithHeaders(defaults) }
+}
+
 // NewClient creates an AEGIVELA client for baseURL.
-func NewClient(baseURL string, httpClient *http.Client) *Client {
-	return &Client{hc: httpx.New(baseURL, httpClient)}
+func NewClient(baseURL string, httpClient *http.Client, opts ...Option) *Client {
+	c := &Client{hc: httpx.New(baseURL, httpClient)}
+	for _, opt := range opts {
+		if opt != nil {
+			opt(c)
+		}
+	}
+	return c
 }
 
 // WithTenant sets the tenant whose revocation scope the PEP rechecks. The
-// revocation-check contract requires it, and a PEP must not be able to widen
-// its scope through request fields.
+// revocation-check contract requires it; requests cannot widen this scope.
 func (c *Client) WithTenant(tenantID string) *Client {
 	c.hc.WithTenant(tenantID)
 	return c
@@ -54,14 +71,13 @@ type minimalPrincipal struct {
 }
 
 type evaluateResponse struct {
-	APIVersion    string   `json:"api_version"`
-	DecisionID    string   `json:"decision_id"`
-	Outcome       string   `json:"outcome"`
-	PolicyVersion string   `json:"policy_version"`
-	EvidenceRefs  []string `json:"evidence_refs"`
-	// SignedDecision carries the signed-decision artifact (either spelling).
-	SignedDecision       string `json:"signedDecision,omitempty"`
-	SignedDecisionLegacy string `json:"signed_decision,omitempty"`
+	APIVersion           string   `json:"api_version"`
+	DecisionID           string   `json:"decision_id"`
+	Outcome              string   `json:"outcome"`
+	PolicyVersion        string   `json:"policy_version"`
+	EvidenceRefs         []string `json:"evidence_refs"`
+	SignedDecision       string   `json:"signedDecision,omitempty"`
+	SignedDecisionLegacy string   `json:"signed_decision,omitempty"`
 }
 
 type evaluateRequestV2 struct {
@@ -81,21 +97,9 @@ type evaluateRequestV2 struct {
 	RiskContext          *riskContextV2  `json:"riskContext,omitempty"`
 }
 
-// riskContextV2 is the optional risk hint carried on a v2 evaluate request.
 type riskContextV2 struct {
 	Level string `json:"riskLevel,omitempty"`
 	Ref   string `json:"riskRef,omitempty"`
-}
-
-type authorizationInputV2 struct {
-	APIVersion           string   `json:"apiVersion"`
-	Mode                 string   `json:"mode"`
-	BearerToken          string   `json:"bearerToken,omitempty"`
-	WorkloadAssertion    string   `json:"workloadAssertion,omitempty"`
-	ParentExecutionGrant string   `json:"parentExecutionGrant,omitempty"`
-	RequestedScope       []string `json:"requestedScope"`
-	Audience             string   `json:"audience"`
-	TraceID              string   `json:"traceId"`
 }
 
 type minimalPrincipalV2 struct {
@@ -113,9 +117,8 @@ type evaluateResponseV2 struct {
 	ExpiresAt                time.Time `json:"expiresAt,omitempty"`
 	Obligations              []string  `json:"obligations,omitempty"`
 	EvidenceRefs             []string  `json:"evidenceRefs"`
-	// SignedDecision carries the signed-decision artifact (either spelling).
-	SignedDecision       string `json:"signedDecision,omitempty"`
-	SignedDecisionLegacy string `json:"signed_decision,omitempty"`
+	SignedDecision           string    `json:"signedDecision,omitempty"`
+	SignedDecisionLegacy     string    `json:"signed_decision,omitempty"`
 }
 
 type errorEnvelopeV2 struct {
@@ -124,126 +127,23 @@ type errorEnvelopeV2 struct {
 	ErrorCode  string `json:"errorCode,omitempty"`
 }
 
+// Authorize evaluates the request and rejects every outcome other than allow.
+// SignedDecision is exposed but is not cryptographically verified here.
 func (c *Client) Authorize(ctx context.Context, route Route, input AuthorizationInput) (*Result, error) {
-	if err := input.Validate(); err != nil {
+	evaluated, err := c.Evaluate(ctx, route, input)
+	if err != nil {
 		return nil, err
 	}
-	if err := route.Validate(); err != nil {
-		return nil, err
-	}
-	if len(route.Modes) > 0 {
-		allowed := false
-		for _, m := range route.Modes {
-			if m == input.Mode {
-				allowed = true
-				break
-			}
-		}
-		if !allowed {
-			return nil, ErrInvalidInput
-		}
-	}
-
-	apiVersion := input.APIVersion
-	if apiVersion == "" {
-		apiVersion = APIVersionV1Alpha1
-	}
-	// The v2.0 evaluate contract cannot express the agent principal binding and
-	// parent authority that service/twin agent modes require, so those modes are
-	// rejected up front rather than sent as requests that can never succeed.
-	if apiVersion == APIVersionV2 && (input.Mode == ModeServiceAgentAPI || input.Mode == ModeTwinAgentAPI) {
-		return nil, ErrInvalidInput
-	}
-
-	var reqBody any
-	if apiVersion == APIVersionV2 {
-		pepInput := newAuthorizationInputV2(route, input, generateTraceID())
-		reqBody = evaluateRequestV2{
-			APIVersion: pepInput.APIVersion, AuthorizationMode: pepInput.Mode, Principal: buildV2Principal(input),
-			BearerToken: pepInput.BearerToken, WorkloadAssertion: pepInput.WorkloadAssertion,
-			ParentExecutionGrant: pepInput.ParentExecutionGrant, Action: route.Action,
-			Resource: Resource{Kind: route.Kind, Reference: route.Reference}, RequestedScope: pepInput.RequestedScope,
-			Audience: pepInput.Audience, RequestedExpiresAt: time.Now().Add(5 * time.Minute),
-			TaskBinding: input.TaskBinding, TraceID: pepInput.TraceID, RiskContext: buildRiskContext(input),
-		}
-	} else {
-		reqBody = evaluateRequest{
-			APIVersion: apiVersion, AuthorizationMode: input.Mode, Principal: minimalPrincipal{},
-			BearerToken: input.BearerToken, WorkloadAssertion: input.WorkloadAssertion,
-			ParentExecutionGrant: input.ParentExecutionGrant, Action: route.Action,
-			Resource: Resource{Kind: route.Kind, Reference: route.Reference}, RequestedScope: route.Scope,
-			Audience: route.Audience, RequestedExpiresAt: time.Now().Add(5 * time.Minute),
-			TaskBinding: input.TaskBinding, TraceID: generateTraceID(),
-		}
-	}
-
-	body, err := json.Marshal(reqBody)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
-	}
-
-	url := c.hc.BaseURL + "/v1/policy/decisions/evaluate"
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
-	}
-	httpReq.Header.Set("Content-Type", "application/json")
-
-	resp, err := c.hc.HTTP.Do(httpReq)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
-	}
-	defer resp.Body.Close()
-
-	if apiVersion == APIVersionV2 && resp.StatusCode != http.StatusOK {
-		return nil, decodeV2Error(resp)
-	}
-
-	switch resp.StatusCode {
-	case http.StatusUnauthorized:
-		return nil, ErrUnauthenticated
-	case http.StatusForbidden:
-		return nil, ErrDenied
-	case http.StatusOK:
-	default:
-		if resp.StatusCode == http.StatusServiceUnavailable {
-			return nil, ErrUnavailable
-		}
-		return nil, ErrUnavailable
-	}
-
-	if apiVersion == APIVersionV2 {
-		return decodeV2Result(resp)
-	}
-
-	var evalResp evaluateResponse
-	if err := decodeBoundedResponse(resp.Body, &evalResp, false); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
-	}
-
-	if evalResp.DecisionID == "" {
-		return nil, fmt.Errorf("%w: empty decision ID", ErrUnavailable)
-	}
-	if evalResp.PolicyVersion == "" {
-		return nil, fmt.Errorf("%w: empty policy version", ErrUnavailable)
-	}
-
-	if evalResp.Outcome != "allow" {
+	if evaluated.Outcome != "allow" {
 		return nil, ErrDenied
 	}
-
-	result := &Result{
-		DecisionID:     evalResp.DecisionID,
-		PolicyVersion:  evalResp.PolicyVersion,
-		EvidenceRefs:   evalResp.EvidenceRefs,
-		Outcome:        evalResp.Outcome,
-		SignedDecision: firstNonEmpty(evalResp.SignedDecision, evalResp.SignedDecisionLegacy),
-	}
-	return result, nil
+	return &Result{
+		DecisionID: evaluated.DecisionID, PolicyVersion: evaluated.PolicyVersion,
+		EvidenceRefs: evaluated.EvidenceRefs, Outcome: evaluated.Outcome,
+		SignedDecision: evaluated.SignedDecision,
+	}, nil
 }
 
-// buildV2Principal returns the wire principal for a v2 evaluate request: the
-// caller-supplied raw principal when set, else a minimal one.
 func buildV2Principal(input AuthorizationInput) json.RawMessage {
 	if len(input.Principal) > 0 {
 		return input.Principal
@@ -252,20 +152,11 @@ func buildV2Principal(input AuthorizationInput) json.RawMessage {
 	return b
 }
 
-// buildRiskContext returns the optional risk context for a v2 evaluate request.
 func buildRiskContext(input AuthorizationInput) *riskContextV2 {
 	if input.RiskLevel == "" && input.RiskRef == "" {
 		return nil
 	}
 	return &riskContextV2{Level: input.RiskLevel, Ref: input.RiskRef}
-}
-
-func newAuthorizationInputV2(route Route, input AuthorizationInput, traceID string) authorizationInputV2 {
-	return authorizationInputV2{
-		APIVersion: input.APIVersion, Mode: modeV2(input.Mode), BearerToken: input.BearerToken,
-		WorkloadAssertion: input.WorkloadAssertion, ParentExecutionGrant: input.ParentExecutionGrant,
-		RequestedScope: route.Scope, Audience: route.Audience, TraceID: traceID,
-	}
 }
 
 func modeV2(mode Mode) string {
@@ -285,31 +176,31 @@ func modeV2(mode Mode) string {
 	}
 }
 
-func decodeV2Result(resp *http.Response) (*Result, error) {
+func decodeV2Evaluate(resp *http.Response) (*EvaluateResult, error) {
 	var wire evaluateResponseV2
 	if err := decodeStrictResponse(resp.Body, &wire); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
+		return nil, fmt.Errorf("%w: %v", ErrMalformed, err)
 	}
 	if wire.APIVersion != APIVersionV2 || wire.DecisionID == "" || len(wire.EvidenceRefs) == 0 {
-		return nil, ErrUnavailable
+		return nil, ErrMalformed
 	}
 	if (wire.Result == "") == (wire.Outcome == "") {
-		return nil, ErrUnavailable
+		return nil, ErrMalformed
 	}
 	outcome := wire.Result
 	if outcome == "" {
 		outcome = wire.Outcome
 		if wire.PolicyVersion == "" {
-			return nil, ErrUnavailable
+			return nil, ErrMalformed
 		}
 	}
-	if outcome != "allow" {
-		return nil, ErrDenied
-	}
-	return &Result{DecisionID: wire.DecisionID, PolicyVersion: wire.PolicyVersion, EvidenceRefs: wire.EvidenceRefs, Outcome: outcome, SignedDecision: firstNonEmpty(wire.SignedDecision, wire.SignedDecisionLegacy)}, nil
+	return &EvaluateResult{
+		DecisionID: wire.DecisionID, PolicyVersion: wire.PolicyVersion, EvidenceRefs: wire.EvidenceRefs,
+		Outcome: outcome, SignedDecision: firstNonEmpty(wire.SignedDecision, wire.SignedDecisionLegacy),
+		ExpiresAt: wire.ExpiresAt, Obligations: wire.Obligations,
+	}, nil
 }
 
-// firstNonEmpty returns the first non-empty string.
 func firstNonEmpty(values ...string) string {
 	for _, v := range values {
 		if v != "" {

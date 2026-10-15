@@ -234,7 +234,7 @@ func (c *Client) RevocationList(ctx context.Context, internalToken string, since
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	httpReq.Header.Set("X-Aegivela-Internal-Token", internalToken)
-	resp, err := c.hc.HTTP.Do(httpReq)
+	resp, err := c.hc.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
@@ -263,7 +263,7 @@ func (c *Client) postInternal(ctx context.Context, path, internalToken string, b
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("X-Aegivela-Internal-Token", internalToken)
-	resp, err := c.hc.HTTP.Do(httpReq)
+	resp, err := c.hc.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
@@ -276,7 +276,7 @@ func (c *Client) getJWKS(ctx context.Context, path string) (json.RawMessage, err
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
-	resp, err := c.hc.HTTP.Do(httpReq)
+	resp, err := c.hc.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}

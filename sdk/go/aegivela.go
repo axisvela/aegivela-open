@@ -20,8 +20,10 @@ import (
 
 // Core client.
 type (
-	Client = pepsdk.Client
-	Mode   = pepsdk.Mode
+	Client   = pepsdk.Client
+	Mode     = pepsdk.Mode
+	Option   = pepsdk.Option
+	APIError = pepsdk.APIError
 )
 
 // Error sentinels.
@@ -31,6 +33,7 @@ var (
 	ErrUnauthenticated = pepsdk.ErrUnauthenticated
 	ErrDenied          = pepsdk.ErrDenied
 	ErrUnavailable     = pepsdk.ErrUnavailable
+	ErrMalformed       = pepsdk.ErrMalformed
 )
 
 // API versions and modes.
@@ -48,6 +51,7 @@ const (
 // Constructors.
 var (
 	NewClient                     = pepsdk.NewClient
+	WithHeaders                   = pepsdk.WithHeaders
 	NewAuthorizeMiddleware        = pepsdk.NewAuthorizeMiddleware
 	WithEvidenceRecorder          = pepsdk.WithEvidenceRecorder
 	WithMode                      = pepsdk.WithMode
@@ -64,6 +68,7 @@ type (
 	AuthorizationInput         = pepsdk.AuthorizationInput
 	Principal                  = pepsdk.Principal
 	Result                     = pepsdk.Result
+	EvaluateResult             = pepsdk.EvaluateResult
 	Authorizer                 = pepsdk.Authorizer
 	Evidence                   = pepsdk.Evidence
 	EvidenceRecorder           = pepsdk.EvidenceRecorder

@@ -127,7 +127,7 @@ func (c *Client) ModuregisAuthorize(ctx context.Context, internalToken string, r
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("X-Aegivela-Internal-Token", internalToken)
-	resp, err := c.hc.HTTP.Do(httpReq)
+	resp, err := c.hc.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}

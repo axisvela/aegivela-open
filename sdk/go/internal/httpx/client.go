@@ -24,6 +24,7 @@ type Client struct {
 	BaseURL  string
 	HTTP     *http.Client
 	TenantID string
+	headers  http.Header
 }
 
 // New creates a transport client. A nil httpClient gets a 10s-timeout default.
@@ -38,6 +39,46 @@ func New(baseURL string, httpClient *http.Client) *Client {
 func (c *Client) WithTenant(tenantID string) *Client {
 	c.TenantID = tenantID
 	return c
+}
+
+// WithHeaders copies construction-time defaults. Explicit endpoint headers win.
+// Configured headers must never be forwarded to a different origin by redirects.
+func (c *Client) WithHeaders(headers map[string]string) {
+	c.headers = make(http.Header, len(headers))
+	for key, value := range headers {
+		c.headers.Set(key, value)
+	}
+	if len(c.headers) == 0 {
+		return
+	}
+	hc := *c.HTTP
+	checkRedirect := hc.CheckRedirect
+	hc.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		if len(via) > 0 && (req.URL.Scheme != via[0].URL.Scheme || req.URL.Host != via[0].URL.Host) {
+			return fmt.Errorf("refusing redirect of configured headers to another origin")
+		}
+		if checkRedirect != nil {
+			return checkRedirect(req, via)
+		}
+		if len(via) >= 10 {
+			return fmt.Errorf("stopped after 10 redirects")
+		}
+		return nil
+	}
+	c.HTTP = &hc
+}
+
+// Do applies defaults without modifying the caller's request.
+func (c *Client) Do(req *http.Request) (*http.Response, error) {
+	if len(c.headers) > 0 {
+		req = req.Clone(req.Context())
+		for key, values := range c.headers {
+			if _, exists := req.Header[key]; !exists {
+				req.Header[key] = append([]string(nil), values...)
+			}
+		}
+	}
+	return c.HTTP.Do(req)
 }
 
 // Request performs an HTTP request against BaseURL. When body is non-nil it is
@@ -57,7 +98,7 @@ func (c *Client) Request(ctx context.Context, method, path string, headers map[s
 	for k, v := range headers {
 		req.Header.Set(k, v)
 	}
-	return c.HTTP.Do(req)
+	return c.Do(req)
 }
 
 // DecodeBounded reads a size-bounded JSON body into target. When strict,

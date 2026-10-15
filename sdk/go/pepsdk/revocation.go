@@ -54,7 +54,7 @@ func (c *Client) CheckRevocation(ctx context.Context, internalToken string, clas
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("X-AEGIVELA-PEP", internalToken)
 	httpReq.Header.Set("X-Aegivela-Tenant-ID", c.hc.TenantID)
-	resp, err := c.hc.HTTP.Do(httpReq)
+	resp, err := c.hc.Do(httpReq)
 	if err != nil {
 		return fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}

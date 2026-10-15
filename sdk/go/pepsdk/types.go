@@ -88,6 +88,15 @@ type AuthorizationInput struct {
 }
 
 func (in AuthorizationInput) Validate() error {
+	if in.APIVersion != "" && in.APIVersion != APIVersionV1Alpha1 && in.APIVersion != APIVersionV2 {
+		return ErrInvalidInput
+	}
+	if in.APIVersion == APIVersionV2 && len(in.Principal) > 0 {
+		var principal map[string]json.RawMessage
+		if err := json.Unmarshal(in.Principal, &principal); err != nil || principal == nil {
+			return ErrInvalidInput
+		}
+	}
 	switch in.Mode {
 	case ModeHumanWeb:
 		if in.BearerToken == "" {
