@@ -1,6 +1,9 @@
 package pepsdk
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+)
 
 type Mode string
 
@@ -70,6 +73,18 @@ type AuthorizationInput struct {
 	ParentExecutionGrant string
 	APIVersion           string
 	TaskBinding          string
+	// Principal is the wire principal (raw JSON object) carried on a v2
+	// evaluate request. When empty, a minimal principal is built from
+	// Namespace/ActorRef.
+	Principal json.RawMessage
+	// Namespace / ActorRef are the minimal principal fields used when Principal
+	// is empty.
+	Namespace string
+	ActorRef  string
+	// RiskLevel / RiskRef optionally carry a risk context onto a v2 evaluate
+	// request.
+	RiskLevel string
+	RiskRef   string
 }
 
 func (in AuthorizationInput) Validate() error {

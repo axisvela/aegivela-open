@@ -65,19 +65,26 @@ type evaluateResponse struct {
 }
 
 type evaluateRequestV2 struct {
-	APIVersion           string             `json:"apiVersion"`
-	AuthorizationMode    string             `json:"authorizationMode"`
-	Principal            minimalPrincipalV2 `json:"principal"`
-	BearerToken          string             `json:"bearerToken,omitempty"`
-	WorkloadAssertion    string             `json:"workloadAssertion,omitempty"`
-	ParentExecutionGrant string             `json:"parentExecutionGrant,omitempty"`
-	Action               string             `json:"action"`
-	Resource             Resource           `json:"resource"`
-	RequestedScope       []string           `json:"requestedScope"`
-	Audience             string             `json:"audience"`
-	RequestedExpiresAt   time.Time          `json:"requestedExpiresAt"`
-	TaskBinding          string             `json:"taskBinding"`
-	TraceID              string             `json:"traceId"`
+	APIVersion           string          `json:"apiVersion"`
+	AuthorizationMode    string          `json:"authorizationMode"`
+	Principal            json.RawMessage `json:"principal"`
+	BearerToken          string          `json:"bearerToken,omitempty"`
+	WorkloadAssertion    string          `json:"workloadAssertion,omitempty"`
+	ParentExecutionGrant string          `json:"parentExecutionGrant,omitempty"`
+	Action               string          `json:"action"`
+	Resource             Resource        `json:"resource"`
+	RequestedScope       []string        `json:"requestedScope"`
+	Audience             string          `json:"audience"`
+	RequestedExpiresAt   time.Time       `json:"requestedExpiresAt"`
+	TaskBinding          string          `json:"taskBinding"`
+	TraceID              string          `json:"traceId"`
+	RiskContext          *riskContextV2  `json:"riskContext,omitempty"`
+}
+
+// riskContextV2 is the optional risk hint carried on a v2 evaluate request.
+type riskContextV2 struct {
+	Level string `json:"riskLevel,omitempty"`
+	Ref   string `json:"riskRef,omitempty"`
 }
 
 type authorizationInputV2 struct {
@@ -152,12 +159,12 @@ func (c *Client) Authorize(ctx context.Context, route Route, input Authorization
 	if apiVersion == APIVersionV2 {
 		pepInput := newAuthorizationInputV2(route, input, generateTraceID())
 		reqBody = evaluateRequestV2{
-			APIVersion: pepInput.APIVersion, AuthorizationMode: pepInput.Mode, Principal: minimalPrincipalV2{},
+			APIVersion: pepInput.APIVersion, AuthorizationMode: pepInput.Mode, Principal: buildV2Principal(input),
 			BearerToken: pepInput.BearerToken, WorkloadAssertion: pepInput.WorkloadAssertion,
 			ParentExecutionGrant: pepInput.ParentExecutionGrant, Action: route.Action,
 			Resource: Resource{Kind: route.Kind, Reference: route.Reference}, RequestedScope: pepInput.RequestedScope,
 			Audience: pepInput.Audience, RequestedExpiresAt: time.Now().Add(5 * time.Minute),
-			TaskBinding: input.TaskBinding, TraceID: pepInput.TraceID,
+			TaskBinding: input.TaskBinding, TraceID: pepInput.TraceID, RiskContext: buildRiskContext(input),
 		}
 	} else {
 		reqBody = evaluateRequest{
@@ -233,6 +240,24 @@ func (c *Client) Authorize(ctx context.Context, route Route, input Authorization
 		SignedDecision: firstNonEmpty(evalResp.SignedDecision, evalResp.SignedDecisionLegacy),
 	}
 	return result, nil
+}
+
+// buildV2Principal returns the wire principal for a v2 evaluate request: the
+// caller-supplied raw principal when set, else a minimal one.
+func buildV2Principal(input AuthorizationInput) json.RawMessage {
+	if len(input.Principal) > 0 {
+		return input.Principal
+	}
+	b, _ := json.Marshal(minimalPrincipalV2{Namespace: input.Namespace, ActorRef: input.ActorRef})
+	return b
+}
+
+// buildRiskContext returns the optional risk context for a v2 evaluate request.
+func buildRiskContext(input AuthorizationInput) *riskContextV2 {
+	if input.RiskLevel == "" && input.RiskRef == "" {
+		return nil
+	}
+	return &riskContextV2{Level: input.RiskLevel, Ref: input.RiskRef}
 }
 
 func newAuthorizationInputV2(route Route, input AuthorizationInput, traceID string) authorizationInputV2 {
