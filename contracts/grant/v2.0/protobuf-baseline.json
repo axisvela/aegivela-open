@@ -31,9 +31,17 @@
           "number": 6,
           "type": "optional string"
         },
+        "authorizationMode": {
+          "number": 8,
+          "type": "optional string"
+        },
+        "workloadAssertion": {
+          "number": 9,
+          "type": "optional string"
+        },
         "bearerToken": {
           "number": 2,
-          "type": "string"
+          "type": "optional string"
         },
         "preAuthorizationJti": {
           "number": 5,

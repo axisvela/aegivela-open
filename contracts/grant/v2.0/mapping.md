@@ -6,6 +6,8 @@
 | --- | --- | --- | --- |
 | issue request API version | `grantIssueRequest.apiVersion` | `GrantIssueRequest.apiVersion` | `GrantIssueRequest.apiVersion` = 1 |
 | bearer token | `grantIssueRequest.bearerToken` | `GrantIssueRequest.bearerToken` | `GrantIssueRequest.bearerToken` = 2 |
+| authorization mode | `grantIssueRequest.authorizationMode` | `GrantIssueRequest.authorizationMode` | `GrantIssueRequest.authorizationMode` = 8 |
+| workload assertion | `grantIssueRequest.workloadAssertion` | `GrantIssueRequest.workloadAssertion` | `GrantIssueRequest.workloadAssertion` = 9 |
 | signed allow decision | `grantIssueRequest.signedAllowDecision` | `GrantIssueRequest.signedAllowDecision` | `GrantIssueRequest.signedAllowDecision` = 3 |
 | requested scope | `grantIssueRequest.requestedScope` | `GrantIssueRequest.requestedScope` | `GrantIssueRequest.requestedScope` = 4 |
 | pre-authorization JTI | `grantIssueRequest.preAuthorizationJti` | `GrantIssueRequest.preAuthorizationJti` | `GrantIssueRequest.preAuthorizationJti` = 5 |

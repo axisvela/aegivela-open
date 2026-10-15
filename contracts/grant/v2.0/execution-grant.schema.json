@@ -92,7 +92,6 @@
       "additionalProperties": false,
       "required": [
         "apiVersion",
-        "bearerToken",
         "signedAllowDecision",
         "requestedScope",
         "traceId"
@@ -101,6 +100,20 @@
         "bearerToken": {
           "type": "string",
           "minLength": 1
+        },
+        "workloadAssertion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorizationMode": {
+          "type": "string",
+          "enum": [
+            "humanWeb",
+            "systemApi",
+            "delegatedApi",
+            "serviceAgentApi",
+            "twinAgentApi"
+          ]
         },
         "signedAllowDecision": {
           "type": "string",
@@ -124,7 +137,23 @@
           "type": "string",
           "minLength": 1
         }
-      }
+      },
+      "allOf": [
+        {
+          "anyOf": [
+            { "required": ["bearerToken"] },
+            { "required": ["workloadAssertion"] }
+          ]
+        },
+        {
+          "if": { "properties": { "authorizationMode": { "enum": ["systemApi", "serviceAgentApi", "twinAgentApi"] } } },
+          "then": { "required": ["workloadAssertion"], "not": { "required": ["bearerToken"] } }
+        },
+        {
+          "if": { "properties": { "authorizationMode": { "enum": ["humanWeb", "delegatedApi"] } } },
+          "then": { "required": ["bearerToken"], "not": { "required": ["workloadAssertion"] } }
+        }
+      ]
     },
     "grant_issue_response": {
       "$ref": "#/$defs/execution_grant"

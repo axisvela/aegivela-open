@@ -90,15 +90,25 @@ components:
     GrantIssueRequest:
       type: object
       additionalProperties: false
-      required: [apiVersion, bearerToken, signedAllowDecision, requestedScope, traceId]
+      required: [apiVersion, signedAllowDecision, requestedScope, traceId]
       properties:
         apiVersion: { const: aegivela.io/v2.0 }
         bearerToken: { type: string, minLength: 1 }
+        workloadAssertion: { type: string, minLength: 1 }
+        authorizationMode: { type: string, enum: [humanWeb, systemApi, delegatedApi, serviceAgentApi, twinAgentApi] }
         signedAllowDecision: { type: string, minLength: 1 }
         requestedScope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
         preAuthorizationJti: { type: string, minLength: 1 }
         approvalJti: { type: string, minLength: 1 }
         traceId: { type: string, minLength: 1 }
+      allOf:
+        - anyOf:
+            - required: [bearerToken]
+            - required: [workloadAssertion]
+        - if: { properties: { authorizationMode: { enum: [systemApi, serviceAgentApi, twinAgentApi] } } }
+          then: { required: [workloadAssertion], not: { required: [bearerToken] } }
+        - if: { properties: { authorizationMode: { enum: [humanWeb, delegatedApi] } } }
+          then: { required: [bearerToken], not: { required: [workloadAssertion] } }
     GrantIssueResponse:
       type: object
       additionalProperties: false
@@ -110,7 +120,7 @@ components:
           type: object
           additionalProperties: false
           required: [actorRef]
-          properties:
+          properties:
             subjectRef: { type: string, minLength: 1 }
             actorRef: { type: string, minLength: 1 }
             clientId: { type: string, minLength: 1 }
@@ -118,7 +128,7 @@ components:
             agentId: { type: string, minLength: 1 }
             agentClass: { type: string }
             masterId: { type: string, minLength: 1 }
-            organizationAuthorityRoot: { type: string, minLength: 1 }
+            organizationAuthorityRoot: { type: string, minLength: 1 }
             attestationRef: { type: string, minLength: 1 }
         scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
         audience: { type: string, minLength: 1 }
@@ -156,7 +166,7 @@ components:
           type: object
           additionalProperties: false
           required: [actorRef]
-          properties:
+          properties:
             subjectRef: { type: string, minLength: 1 }
             actorRef: { type: string, minLength: 1 }
             clientId: { type: string, minLength: 1 }
@@ -164,7 +174,7 @@ components:
             agentId: { type: string, minLength: 1 }
             agentClass: { type: string }
             masterId: { type: string, minLength: 1 }
-            organizationAuthorityRoot: { type: string, minLength: 1 }
+            organizationAuthorityRoot: { type: string, minLength: 1 }
             attestationRef: { type: string, minLength: 1 }
         scope: { type: array, items: { type: string, minLength: 1 }, minItems: 1, uniqueItems: true }
         audience: { type: string, minLength: 1 }

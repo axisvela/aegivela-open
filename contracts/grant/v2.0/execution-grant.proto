@@ -27,12 +27,14 @@ message Principal {
 
 message GrantIssueRequest {
   string apiVersion = 1;
-  string bearerToken = 2;
+  optional string bearerToken = 2;
   string signedAllowDecision = 3;
   repeated string requestedScope = 4;
   optional string preAuthorizationJti = 5;
   optional string approvalJti = 6;
   string traceId = 7;
+  optional string authorizationMode = 8;
+  optional string workloadAssertion = 9;
 }
 
 message GrantIssueResponse {
