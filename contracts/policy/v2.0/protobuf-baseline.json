@@ -59,6 +59,10 @@
           "number": 2,
           "type": "AuthorizationMode"
         },
+        "bearerToken": {
+          "number": 14,
+          "type": "optional string"
+        },
         "parentAuthority": {
           "number": 10,
           "type": "ParentAuthority"
@@ -94,6 +98,10 @@
         "traceId": {
           "number": 12,
           "type": "string"
+        },
+        "workloadAssertion": {
+          "number": 15,
+          "type": "optional string"
         }
       }
     },

@@ -82,6 +82,8 @@ message PolicyDecisionRequest {
   RiskContext riskContext = 11;
   string traceId = 12;
   optional string parentExecutionGrant = 13;
+  optional string bearerToken = 14;
+  optional string workloadAssertion = 15;
 }
 
 message PolicyDecisionResponse {

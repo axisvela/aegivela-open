@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://aegivela.io/contracts/policy/v1alpha3/policy-decision.schema.json",
-  "title": "AEGIVELA Policy Decision v1alpha3",
+  "$id": "https://aegivela.io/contracts/policy/v2.0/policy-decision.schema.json",
+  "title": "AEGIVELA Policy Decision v2.0",
   "oneOf": [
     {
       "$ref": "#/$defs/policyDecisionRequest"
@@ -262,7 +262,7 @@
           "minLength": 1
         },
         "apiVersion": {
-          "const": "aegivela.io/v1alpha3"
+          "const": "aegivela.io/v2.0"
         },
         "authorizationMode": {
           "$ref": "#/$defs/authorizationMode"
@@ -291,6 +291,8 @@
           "type": "string",
           "minLength": 1
         },
+        "bearerToken": { "type": "string", "minLength": 1 },
+        "workloadAssertion": { "type": "string", "minLength": 1 },
         "riskContext": {
           "$ref": "#/$defs/riskContext"
         },
@@ -300,6 +302,20 @@
         }
       },
       "allOf": [
+        {
+          "if": { "properties": { "authorizationMode": { "const": "humanWeb" } } },
+          "then": { "not": { "required": ["parentAuthority"] }, "properties": { "principal": {
+            "required": ["subjectRef"],
+            "not": { "anyOf": [{ "required": ["agentId"] }, { "required": ["masterId"] }, { "required": ["organizationAuthorityRoot"] }] }
+          } } }
+        },
+        {
+          "if": { "properties": { "authorizationMode": { "const": "systemApi" } } },
+          "then": { "not": { "required": ["parentAuthority"] }, "properties": { "principal": {
+            "required": ["clientId", "workloadRef", "organizationAuthorityRoot"],
+            "not": { "anyOf": [{ "required": ["subjectRef"] }, { "required": ["masterId"] }] }
+          } } }
+        },
         {
           "if": {
             "properties": {
@@ -357,9 +373,12 @@
             }
           },
           "then": {
-            "required": [
-              "parentAuthority"
-            ]
+            "required": ["parentAuthority", "taskBinding"],
+            "properties": { "principal": {
+              "required": ["agentId", "agentClass", "workloadRef", "organizationAuthorityRoot", "authorityBinding", "agentEpoch", "identityEpoch"],
+              "properties": { "agentClass": { "const": "service" }, "authorityBinding": { "const": "organizationRoot" } },
+              "not": { "required": ["masterId"] }
+            } }
           }
         },
         {
@@ -371,9 +390,12 @@
             }
           },
           "then": {
-            "required": [
-              "parentAuthority"
-            ]
+            "required": ["parentAuthority", "taskBinding"],
+            "properties": { "principal": {
+              "required": ["agentId", "agentClass", "workloadRef", "masterId", "authorityBinding", "agentEpoch", "identityEpoch"],
+              "properties": { "agentClass": { "const": "twin" }, "authorityBinding": { "const": "humanMaster" } },
+              "not": { "required": ["organizationAuthorityRoot"] }
+            } }
           }
         }
       ]
@@ -403,7 +425,7 @@
           }
         },
         "apiVersion": {
-          "const": "aegivela.io/v1alpha3"
+          "const": "aegivela.io/v2.0"
         },
         "structuredResourceDigest": {
           "type": "string",

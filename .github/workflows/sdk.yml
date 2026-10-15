@@ -16,6 +16,9 @@ jobs:
       - name: Build SDK
         working-directory: sdk/go
         run: go build ./...
+      - name: Test SDK and public contract conformance
+        working-directory: sdk/go
+        run: go test -tags conformance ./...
       - name: Build examples
         working-directory: examples/web-api-pep
         run: go build ./...

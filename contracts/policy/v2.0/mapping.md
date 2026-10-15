@@ -2,9 +2,12 @@
 
 `apiVersion` is `aegivela.io/v2.0`; the protobuf service is `PolicyDecisionService.Evaluate`. v2.0 uses camelCase JSON property names. `PolicyDecisionRequest.parentExecutionGrant` is an optional string at protobuf field `13`.
 
-For `delegatedApi`, `parentExecutionGrant` is required and `parentAuthority` is prohibited on HTTP requests. The compact grant is verified for signature, configured issuer, expiry, audience, structured-resource digest, and tenant-scoped revocation before principal resolution or policy evaluation. A verified grant exclusively supplies the parent authority: JTI, exact action/resource, scope, audience, expiry, and task binding. Action/resource equality and monotonic scope/audience/expiry/task binding are enforced before evaluation.
+For `delegatedApi`, `parentExecutionGrant` is required and `parentAuthority` is prohibited on HTTP requests. Trusted principal resolution and compact-grant verification both precede policy evaluation. Grant verification checks signature, configured issuer, expiry, audience, structured-resource digest and tenant-scoped revocation; the grant's tenant/subject must match the resolved principal. A verified grant exclusively supplies the parent authority: JTI, exact action/resource, scope, audience, expiry, and task binding. Action/resource equality and monotonic scope/audience/expiry/task binding are enforced before evaluation or signing.
 
-v1alpha3 uses the v1alpha2 structured-resource digest rule. v1alpha1 and v1alpha2 contracts and artifacts are immutable.
+V2 uses its canonical camelCase structured-resource digest rule. Credentials are
+verification inputs, never principal authority or evidence payloads. Existing
+protobuf field numbers are unchanged; optional credential fields occupy 14/15.
+Earlier versioned contracts are unchanged.
 
 | Semantic field | JSON Schema property | OpenAPI property | Protobuf field number and name |
 | --- | --- | --- | --- |
@@ -21,6 +24,8 @@ v1alpha3 uses the v1alpha2 structured-resource digest rule. v1alpha1 and v1alpha
 | risk context | `policyDecisionRequest.riskContext` | `PolicyDecisionRequest.riskContext` | `PolicyDecisionRequest.riskContext` = 11 |
 | trace ID | `policyDecisionRequest.traceId` | `PolicyDecisionRequest.traceId` | `PolicyDecisionRequest.traceId` = 12 |
 | parent execution grant | `policyDecisionRequest.parentExecutionGrant` | `PolicyDecisionRequest.parentExecutionGrant` | `PolicyDecisionRequest.parentExecutionGrant` = 13 |
+| bearer credential | `policyDecisionRequest.bearerToken` | `PolicyDecisionRequest.bearerToken` | `PolicyDecisionRequest.bearerToken` = 14 |
+| workload assertion | `policyDecisionRequest.workloadAssertion` | `PolicyDecisionRequest.workloadAssertion` | `PolicyDecisionRequest.workloadAssertion` = 15 |
 | subject reference | `principal.subjectRef` | `Principal.subjectRef` | `Principal.subjectRef` = 2 |
 | actor reference | `principal.actorRef` | `Principal.actorRef` | `Principal.actorRef` = 3 |
 | client ID | `principal.clientId` | `Principal.clientId` | `Principal.clientId` = 4 |
@@ -57,6 +62,19 @@ v1alpha3 uses the v1alpha2 structured-resource digest rule. v1alpha1 and v1alpha
 | obligations | `policyDecisionResponse.obligations` | `PolicyDecisionResponse.obligations` | `PolicyDecisionResponse.obligations` = 6 |
 | evidence references | `policyDecisionResponse.evidenceRefs` | `PolicyDecisionResponse.evidenceRefs` | `PolicyDecisionResponse.evidenceRefs` = 7 |
 | structured resource digest | `policyDecisionResponse.structuredResourceDigest` | `PolicyDecisionResponse.structuredResourceDigest` | `PolicyDecisionResponse.structuredResourceDigest` = 8 |
+
+## Result And Verification Boundaries
+
+Evaluate returns `PolicyDecisionResponse`: a raw PDP result, not independently
+verified execution authority. Sign's successful HTTP envelope is only
+`{"signedDecision":"<artifact>"}`, not another canonical decision response.
+The builtin signing/artifact path still needs v2 authority and credential-validity
+alignment; do not infer signed-v2 support from schema conformance. Unavailable
+signing fails closed. Agent parent metadata is not signed delegation proof.
+
+JSON Schema/OpenAPI check structural validity. Exact delegated parent action,
+resource and attenuation, trusted identity, artifact signature and revocation
+are separate runtime checks; a schema-valid expansion must still be denied.
 
 ## Transport Errors
 
