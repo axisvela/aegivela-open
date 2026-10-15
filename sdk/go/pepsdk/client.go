@@ -30,6 +30,13 @@ func WithHeaders(headers map[string]string) Option {
 	return func(c *Client) { c.hc.WithHeaders(defaults) }
 }
 
+// WithRetry bounds retries for idempotent requests (transport failures and 5xx
+// responses). attempts < 1 disables retries; non-idempotent methods are never
+// retried.
+func WithRetry(attempts int) Option {
+	return func(c *Client) { c.hc.SetRetry(attempts) }
+}
+
 // NewClient creates an AEGIVELA client for baseURL.
 func NewClient(baseURL string, httpClient *http.Client, opts ...Option) *Client {
 	c := &Client{hc: httpx.New(baseURL, httpClient)}

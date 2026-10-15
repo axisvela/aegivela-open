@@ -50,6 +50,26 @@ func TestClientHeadersAreCopiedAndEndpointCredentialsWin(t *testing.T) {
 	}
 }
 
+func TestWithRetryRetriesDecisionJWKS(t *testing.T) {
+	var calls int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if atomic.AddInt32(&calls, 1) < 2 {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+		_, _ = w.Write([]byte(`{"keys":[]}`))
+	}))
+	defer srv.Close()
+
+	c := NewClient(srv.URL, srv.Client(), WithRetry(3))
+	if _, err := c.DecisionJWKS(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if got := atomic.LoadInt32(&calls); got != 2 {
+		t.Fatalf("calls = %d, want 2", got)
+	}
+}
+
 func TestClientHeadersRefuseCrossOriginRedirect(t *testing.T) {
 	var upstreamCalls atomic.Int32
 	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

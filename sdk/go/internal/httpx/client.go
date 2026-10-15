@@ -19,12 +19,23 @@ import (
 // MaxResponseBytes bounds how much of a response body is read.
 const MaxResponseBytes = 1 << 20
 
+// Retry defaults: idempotent requests are retried on transport failures and 5xx
+// responses, with a linear backoff starting at defaultBackoff.
+const (
+	defaultMaxAttempts = 3
+	defaultBackoff     = 100 * time.Millisecond
+)
+
 // Client is the shared HTTP transport.
 type Client struct {
 	BaseURL  string
 	HTTP     *http.Client
 	TenantID string
 	headers  http.Header
+	// maxAttempts bounds retries for idempotent requests.
+	maxAttempts int
+	// backoff is the first retry delay; it grows linearly per attempt.
+	backoff time.Duration
 }
 
 // New creates a transport client. A nil httpClient gets a 10s-timeout default.
@@ -32,7 +43,13 @@ func New(baseURL string, httpClient *http.Client) *Client {
 	if httpClient == nil {
 		httpClient = &http.Client{Timeout: 10 * time.Second}
 	}
-	return &Client{BaseURL: baseURL, HTTP: httpClient}
+	return &Client{BaseURL: baseURL, HTTP: httpClient, maxAttempts: defaultMaxAttempts, backoff: defaultBackoff}
+}
+
+// SetRetry bounds the attempts for idempotent requests (transport failures and
+// 5xx). attempts < 1 disables retries. Non-idempotent methods are never retried.
+func (c *Client) SetRetry(attempts int) {
+	c.maxAttempts = attempts
 }
 
 // WithTenant sets the tenant scope (used by the revocation-check contract).
@@ -68,17 +85,89 @@ func (c *Client) WithHeaders(headers map[string]string) {
 	c.HTTP = &hc
 }
 
-// Do applies defaults without modifying the caller's request.
+// Do applies defaults without modifying the caller's request and retries
+// idempotent requests on transport failures and 5xx responses. A fresh attempt
+// replays the request body via GetBody, so the caller's request is untouched.
 func (c *Client) Do(req *http.Request) (*http.Response, error) {
-	if len(c.headers) > 0 {
-		req = req.Clone(req.Context())
-		for key, values := range c.headers {
-			if _, exists := req.Header[key]; !exists {
-				req.Header[key] = append([]string(nil), values...)
+	attempts := c.maxAttempts
+	if attempts < 1 || !retryable(req.Method) {
+		attempts = 1
+	}
+	var lastErr error
+	for i := 0; i < attempts; i++ {
+		if i > 0 && !sleep(req.Context(), time.Duration(i)*c.backoff) {
+			if lastErr != nil {
+				return nil, lastErr
 			}
+			return nil, req.Context().Err()
+		}
+		resp, err := c.attempt(req, i > 0)
+		if err != nil {
+			lastErr = err
+			if i == attempts-1 {
+				return nil, err
+			}
+			continue
+		}
+		if resp.StatusCode >= 500 && i < attempts-1 {
+			_ = resp.Body.Close()
+			lastErr = fmt.Errorf("httpx: status %d from %s", resp.StatusCode, req.URL)
+			continue
+		}
+		return resp, nil
+	}
+	return nil, lastErr
+}
+
+// attempt performs a single request, applying default headers and, on a retry,
+// a fresh body from GetBody so the original request is never reused.
+func (c *Client) attempt(req *http.Request, replay bool) (*http.Response, error) {
+	if len(c.headers) == 0 && !replay {
+		return c.HTTP.Do(req)
+	}
+	clone := req.Clone(req.Context())
+	for key, values := range c.headers {
+		if _, exists := clone.Header[key]; !exists {
+			clone.Header[key] = append([]string(nil), values...)
 		}
 	}
-	return c.HTTP.Do(req)
+	if replay && req.Body != nil {
+		if req.GetBody == nil {
+			return nil, fmt.Errorf("httpx: cannot replay request body for retry")
+		}
+		body, err := req.GetBody()
+		if err != nil {
+			return nil, err
+		}
+		clone.Body = body
+	}
+	return c.HTTP.Do(clone)
+}
+
+// retryable reports whether a method is safe to re-send after a transient
+// failure.
+func retryable(method string) bool {
+	switch method {
+	case http.MethodGet, http.MethodHead, http.MethodPut, http.MethodDelete, http.MethodOptions:
+		return true
+	}
+	return false
+}
+
+// sleep waits for d, returning false when the context is cancelled first. A
+// non-positive d returns immediately.
+func sleep(ctx context.Context, d time.Duration) bool {
+	if d <= 0 {
+		return true
+	}
+	timer := time.NewTimer(d)
+	defer timer.Stop()
+	select {
+	case <-ctx.Done():
+		return false
+	case <-timer.C:
+		return true
+	}
 }
 
 // Request performs an HTTP request against BaseURL. When body is non-nil it is
