@@ -113,6 +113,7 @@ components:
         apiVersion: { const: aegivela.io/v2.0 }
         structuredResourceDigest: { type: string, pattern: '^[0-9a-f]{64}$' }
         decisionId: { type: string, minLength: 1 }
+        signedDecision: { type: string, minLength: 1 }
         outcome: { type: string, enum: [allow, deny, approvalRequired, revoked] }
         policyVersion: { type: string, minLength: 1 }
         expiresAt: { type: string, format: date-time }

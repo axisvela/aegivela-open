@@ -62,15 +62,18 @@ Earlier versioned contracts are unchanged.
 | obligations | `policyDecisionResponse.obligations` | `PolicyDecisionResponse.obligations` | `PolicyDecisionResponse.obligations` = 6 |
 | evidence references | `policyDecisionResponse.evidenceRefs` | `PolicyDecisionResponse.evidenceRefs` | `PolicyDecisionResponse.evidenceRefs` = 7 |
 | structured resource digest | `policyDecisionResponse.structuredResourceDigest` | `PolicyDecisionResponse.structuredResourceDigest` | `PolicyDecisionResponse.structuredResourceDigest` = 8 |
+| signed artifact | `policyDecisionResponse.signedDecision` | `PolicyDecisionResponse.signedDecision` | `PolicyDecisionResponse.signedDecision` = 9 |
 
 ## Result And Verification Boundaries
 
-Evaluate returns `PolicyDecisionResponse`: a raw PDP result, not independently
-verified execution authority. Sign's successful HTTP envelope is only
-`{"signedDecision":"<artifact>"}`, not another canonical decision response.
-The builtin signing/artifact path still needs v2 authority and credential-validity
-alignment; do not infer signed-v2 support from schema conformance. Unavailable
-signing fails closed. Agent parent metadata is not signed delegation proof.
+Evaluate returns `PolicyDecisionResponse`; configured v2 signing adds optional
+`signedDecision` at response protobuf field 9. The production composition signs
+exactly one PDP evaluation and does not return unsigned success when signing
+fails. Reference/raw evaluators may omit the artifact; their allow result is
+not execution authority. Sign's successful HTTP envelope remains only
+`{"signedDecision":"<artifact>"}`. Consumers must verify the artifact and exact
+expected bindings. See [signed artifact semantics](../../decision/v2.0/signed-artifact.md).
+Agent parent metadata is not signed delegation proof.
 
 JSON Schema/OpenAPI check structural validity. Exact delegated parent action,
 resource and attenuation, trusted identity, artifact signature and revocation

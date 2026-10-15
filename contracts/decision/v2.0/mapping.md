@@ -21,7 +21,7 @@
 | evidence refs | `policyDecisionVerifyResponse.evidenceRefs` | `PolicyDecisionVerifyResponse.evidenceRefs` | `PolicyDecisionVerifyResponse.evidenceRefs` = 8 |
 | revoked | `policyDecisionVerifyResponse.revoked` | `PolicyDecisionVerifyResponse.revoked` | `PolicyDecisionVerifyResponse.revoked` = 9 |
 
-Decision outcomes are `allow`, `deny`, `approvalRequired`, and `revoked`. This is the first public v1alpha1 protobuf baseline: `DECISION_OUTCOME_UNSPECIFIED=0` is an invalid sentinel; valid outcomes use `ALLOW=1`, `DENY=2`, `APPROVAL_REQUIRED=3`, and `REVOKED=4`. The GET /v1/policy/decisions/jwks endpoint returns a public JWKS document. The verify endpoint requires the `X-AEGIVELA-PEP` internal header. Future releases must preserve this baseline's enum values, field numbers, and field types.
+Decision outcomes are `allow`, `deny`, `approvalRequired`, and `revoked`. The zero enum value is an invalid sentinel; valid outcome numbers are 1 through 4. Existing protobuf field numbers and types remain unchanged. GET /v1/policy/decisions/jwks returns public keys; verify uses `X-Aegivela-Internal-Token`. See [signed artifact semantics](signed-artifact.md) for identity, validity, encoding limits and acceptance boundaries.
 
 ## Transport Errors
 

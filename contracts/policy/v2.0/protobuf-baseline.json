@@ -138,6 +138,10 @@
         "structuredResourceDigest": {
           "number": 8,
           "type": "optional string"
+        },
+        "signedDecision": {
+          "number": 9,
+          "type": "optional string"
         }
       }
     },
