@@ -139,4 +139,8 @@ type Result struct {
 	PolicyVersion string
 	EvidenceRefs  []string
 	Outcome       string
+	// SignedDecision is the signed-decision artifact returned by evaluate,
+	// when present, so the caller can verify it against the decision JWKS
+	// (pepsdk.DecisionJWKS) before acting. Empty when the decision is unsigned.
+	SignedDecision string
 }

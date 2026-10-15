@@ -59,6 +59,9 @@ type evaluateResponse struct {
 	Outcome       string   `json:"outcome"`
 	PolicyVersion string   `json:"policy_version"`
 	EvidenceRefs  []string `json:"evidence_refs"`
+	// SignedDecision carries the signed-decision artifact (either spelling).
+	SignedDecision       string `json:"signedDecision,omitempty"`
+	SignedDecisionLegacy string `json:"signed_decision,omitempty"`
 }
 
 type evaluateRequestV2 struct {
@@ -103,6 +106,9 @@ type evaluateResponseV2 struct {
 	ExpiresAt                time.Time `json:"expiresAt,omitempty"`
 	Obligations              []string  `json:"obligations,omitempty"`
 	EvidenceRefs             []string  `json:"evidenceRefs"`
+	// SignedDecision carries the signed-decision artifact (either spelling).
+	SignedDecision       string `json:"signedDecision,omitempty"`
+	SignedDecisionLegacy string `json:"signed_decision,omitempty"`
 }
 
 type errorEnvelopeV2 struct {
@@ -220,10 +226,11 @@ func (c *Client) Authorize(ctx context.Context, route Route, input Authorization
 	}
 
 	result := &Result{
-		DecisionID:    evalResp.DecisionID,
-		PolicyVersion: evalResp.PolicyVersion,
-		EvidenceRefs:  evalResp.EvidenceRefs,
-		Outcome:       evalResp.Outcome,
+		DecisionID:     evalResp.DecisionID,
+		PolicyVersion:  evalResp.PolicyVersion,
+		EvidenceRefs:   evalResp.EvidenceRefs,
+		Outcome:        evalResp.Outcome,
+		SignedDecision: firstNonEmpty(evalResp.SignedDecision, evalResp.SignedDecisionLegacy),
 	}
 	return result, nil
 }
@@ -274,7 +281,17 @@ func decodeV2Result(resp *http.Response) (*Result, error) {
 	if outcome != "allow" {
 		return nil, ErrDenied
 	}
-	return &Result{DecisionID: wire.DecisionID, PolicyVersion: wire.PolicyVersion, EvidenceRefs: wire.EvidenceRefs, Outcome: outcome}, nil
+	return &Result{DecisionID: wire.DecisionID, PolicyVersion: wire.PolicyVersion, EvidenceRefs: wire.EvidenceRefs, Outcome: outcome, SignedDecision: firstNonEmpty(wire.SignedDecision, wire.SignedDecisionLegacy)}, nil
+}
+
+// firstNonEmpty returns the first non-empty string.
+func firstNonEmpty(values ...string) string {
+	for _, v := range values {
+		if v != "" {
+			return v
+		}
+	}
+	return ""
 }
 
 func decodeV2Error(resp *http.Response) error {
