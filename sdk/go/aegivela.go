@@ -66,6 +66,8 @@ type (
 	Route                      = pepsdk.Route
 	Resource                   = pepsdk.Resource
 	AuthorizationInput         = pepsdk.AuthorizationInput
+	PolicyPrincipalV2          = pepsdk.PolicyPrincipalV2
+	ParentAuthority            = pepsdk.ParentAuthority
 	Principal                  = pepsdk.Principal
 	Result                     = pepsdk.Result
 	EvaluateResult             = pepsdk.EvaluateResult

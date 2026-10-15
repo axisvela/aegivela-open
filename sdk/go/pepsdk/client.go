@@ -2,7 +2,6 @@ package pepsdk
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -81,30 +80,26 @@ type evaluateResponse struct {
 }
 
 type evaluateRequestV2 struct {
-	APIVersion           string          `json:"apiVersion"`
-	AuthorizationMode    string          `json:"authorizationMode"`
-	Principal            json.RawMessage `json:"principal"`
-	BearerToken          string          `json:"bearerToken,omitempty"`
-	WorkloadAssertion    string          `json:"workloadAssertion,omitempty"`
-	ParentExecutionGrant string          `json:"parentExecutionGrant,omitempty"`
-	Action               string          `json:"action"`
-	Resource             Resource        `json:"resource"`
-	RequestedScope       []string        `json:"requestedScope"`
-	Audience             string          `json:"audience"`
-	RequestedExpiresAt   time.Time       `json:"requestedExpiresAt"`
-	TaskBinding          string          `json:"taskBinding"`
-	TraceID              string          `json:"traceId"`
-	RiskContext          *riskContextV2  `json:"riskContext,omitempty"`
+	APIVersion           string             `json:"apiVersion"`
+	AuthorizationMode    string             `json:"authorizationMode"`
+	Principal            *PolicyPrincipalV2 `json:"principal"`
+	ParentAuthority      *ParentAuthority   `json:"parentAuthority,omitempty"`
+	BearerToken          string             `json:"bearerToken,omitempty"`
+	WorkloadAssertion    string             `json:"workloadAssertion,omitempty"`
+	ParentExecutionGrant string             `json:"parentExecutionGrant,omitempty"`
+	Action               string             `json:"action"`
+	Resource             Resource           `json:"resource"`
+	RequestedScope       []string           `json:"requestedScope"`
+	Audience             string             `json:"audience"`
+	RequestedExpiresAt   time.Time          `json:"requestedExpiresAt"`
+	TaskBinding          string             `json:"taskBinding"`
+	TraceID              string             `json:"traceId"`
+	RiskContext          *riskContextV2     `json:"riskContext,omitempty"`
 }
 
 type riskContextV2 struct {
 	Level string `json:"riskLevel,omitempty"`
 	Ref   string `json:"riskRef,omitempty"`
-}
-
-type minimalPrincipalV2 struct {
-	Namespace string `json:"namespace"`
-	ActorRef  string `json:"actorRef"`
 }
 
 type evaluateResponseV2 struct {
@@ -142,14 +137,6 @@ func (c *Client) Authorize(ctx context.Context, route Route, input Authorization
 		EvidenceRefs: evaluated.EvidenceRefs, Outcome: evaluated.Outcome,
 		SignedDecision: evaluated.SignedDecision,
 	}, nil
-}
-
-func buildV2Principal(input AuthorizationInput) json.RawMessage {
-	if len(input.Principal) > 0 {
-		return input.Principal
-	}
-	b, _ := json.Marshal(minimalPrincipalV2{Namespace: input.Namespace, ActorRef: input.ActorRef})
-	return b
 }
 
 func buildRiskContext(input AuthorizationInput) *riskContextV2 {

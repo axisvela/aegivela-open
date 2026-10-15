@@ -1,8 +1,8 @@
 package pepsdk
 
 import (
-	"encoding/json"
 	"errors"
+	"time"
 )
 
 type Mode string
@@ -47,7 +47,7 @@ func (r Route) Validate() error {
 	if r.Action == "" {
 		return ErrInvalidRoute
 	}
-	if len(r.Scope) == 0 {
+	if !validStringSet(r.Scope) {
 		return ErrInvalidRoute
 	}
 	if r.Kind == "" {
@@ -73,14 +73,14 @@ type AuthorizationInput struct {
 	ParentExecutionGrant string
 	APIVersion           string
 	TaskBinding          string
-	// Principal is the wire principal (raw JSON object) carried on a v2
-	// evaluate request. When empty, a minimal principal is built from
-	// Namespace/ActorRef.
-	Principal json.RawMessage
-	// Namespace / ActorRef are the minimal principal fields used when Principal
-	// is empty.
-	Namespace string
-	ActorRef  string
+	// Principal contains comparison-only identity hints for v2. The authority
+	// must resolve and verify them from the presented credentials.
+	Principal *PolicyPrincipalV2
+	// ParentAuthority is the v2 agent-mode attenuation bound. Delegated mode
+	// instead requires ParentExecutionGrant and prohibits caller-supplied bounds.
+	ParentAuthority    *ParentAuthority
+	RequestedExpiresAt time.Time
+	TraceID            string
 	// RiskLevel / RiskRef optionally carry a risk context onto a v2 evaluate
 	// request.
 	RiskLevel string
@@ -91,11 +91,12 @@ func (in AuthorizationInput) Validate() error {
 	if in.APIVersion != "" && in.APIVersion != APIVersionV1Alpha1 && in.APIVersion != APIVersionV2 {
 		return ErrInvalidInput
 	}
-	if in.APIVersion == APIVersionV2 && len(in.Principal) > 0 {
-		var principal map[string]json.RawMessage
-		if err := json.Unmarshal(in.Principal, &principal); err != nil || principal == nil {
+	if in.APIVersion == APIVersionV2 {
+		if in.Principal == nil || in.Principal.Namespace == "" || in.Principal.ActorRef == "" {
 			return ErrInvalidInput
 		}
+	} else if in.Principal != nil || in.ParentAuthority != nil {
+		return ErrInvalidInput
 	}
 	switch in.Mode {
 	case ModeHumanWeb:
@@ -141,7 +142,72 @@ func (in AuthorizationInput) Validate() error {
 	default:
 		return ErrInvalidInput
 	}
+	if in.APIVersion == APIVersionV2 {
+		if in.Mode != ModeServiceAgentAPI && in.Mode != ModeTwinAgentAPI {
+			if in.ParentAuthority != nil {
+				return ErrInvalidInput
+			}
+			return nil
+		}
+		p := in.Principal
+		if p.AgentID == "" || p.WorkloadRef == "" || p.AgentEpoch == nil || *p.AgentEpoch < 1 || p.IdentityEpoch == nil || *p.IdentityEpoch < 1 {
+			return ErrInvalidInput
+		}
+		if in.Mode == ModeServiceAgentAPI {
+			if p.AgentClass != "service" || p.OrganizationAuthorityRoot == "" || p.MasterID != "" || p.AuthorityBinding != "organizationRoot" {
+				return ErrInvalidInput
+			}
+		} else if p.AgentClass != "twin" || p.MasterID == "" || p.OrganizationAuthorityRoot != "" || p.AuthorityBinding != "humanMaster" {
+			return ErrInvalidInput
+		}
+		parent := in.ParentAuthority
+		if parent == nil || parent.AuthorityRef == "" || !validStringSet(parent.Scope) || !validStringSet(parent.Audience) ||
+			parent.ExpiresAt.IsZero() || parent.TaskBinding == "" || in.TaskBinding != parent.TaskBinding {
+			return ErrInvalidInput
+		}
+	}
 	return nil
+}
+
+// PolicyPrincipalV2 follows the supplier's camelCase principal contract.
+// Epoch pointers distinguish absent values from explicitly invalid zero epochs.
+type PolicyPrincipalV2 struct {
+	Namespace                 string `json:"namespace"`
+	SubjectRef                string `json:"subjectRef,omitempty"`
+	ActorRef                  string `json:"actorRef"`
+	ClientID                  string `json:"clientId,omitempty"`
+	WorkloadRef               string `json:"workloadRef,omitempty"`
+	AgentID                   string `json:"agentId,omitempty"`
+	AgentClass                string `json:"agentClass,omitempty"`
+	MasterID                  string `json:"masterId,omitempty"`
+	OrganizationAuthorityRoot string `json:"organizationAuthorityRoot,omitempty"`
+	AuthorityBinding          string `json:"authorityBinding,omitempty"`
+	AgentEpoch                *int64 `json:"agentEpoch,omitempty"`
+	IdentityEpoch             *int64 `json:"identityEpoch,omitempty"`
+	InstanceID                string `json:"instanceId,omitempty"`
+	AttestationRef            string `json:"attestationRef,omitempty"`
+}
+
+type ParentAuthority struct {
+	AuthorityRef string    `json:"authorityRef"`
+	Scope        []string  `json:"parentScope"`
+	Audience     []string  `json:"parentAudience"`
+	ExpiresAt    time.Time `json:"parentExpiresAt"`
+	TaskBinding  string    `json:"parentTaskBinding"`
+}
+
+func validStringSet(values []string) bool {
+	if len(values) == 0 {
+		return false
+	}
+	seen := make(map[string]bool, len(values))
+	for _, value := range values {
+		if value == "" || seen[value] {
+			return false
+		}
+		seen[value] = true
+	}
+	return true
 }
 
 type Principal struct {

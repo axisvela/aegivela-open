@@ -15,8 +15,12 @@
 // outcomes as data. Authorize rejects all non-allow outcomes. Neither method
 // verifies SignedDecision cryptographically; consumers requiring execution
 // authority must verify the artifact and its expected bindings before dispatch.
-// V2 service/twin-agent inputs remain rejected until the parent-authority
-// contract is represented; a raw principal alone does not make them supported.
+// V2 inputs use PolicyPrincipalV2 rather than raw JSON or duplicated namespace/
+// actor fields. Service/twin agents require workload proof, bound positive dual
+// epochs and ParentAuthority; scope, audience, task and expiry cannot expand
+// beyond those bounds. A default requested expiry is capped by the parent.
+// ParentAuthority metadata is not independently verified proof of delegation.
+// Delegated mode prohibits it and presents ParentExecutionGrant instead.
 //
 // Configure defaults at construction with NewClient(baseURL, httpClient,
 // WithHeaders(headers)). The headers are copied, endpoint credentials take

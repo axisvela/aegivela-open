@@ -34,7 +34,7 @@ func TestEvaluateRawOutcome(t *testing.T) {
 	}
 }
 
-func TestEvaluateRejectsUnsupportedVersionAndInvalidPrincipal(t *testing.T) {
+func TestEvaluateRejectsUnsupportedVersionAndIncompletePrincipal(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		t.Error("invalid input reached server")
 		_, _ = w.Write([]byte(`{"decision_id":"d1","outcome":"allow","policy_version":"v1"}`))
@@ -42,9 +42,9 @@ func TestEvaluateRejectsUnsupportedVersionAndInvalidPrincipal(t *testing.T) {
 	defer srv.Close()
 	for _, input := range []AuthorizationInput{
 		{Mode: ModeHumanWeb, BearerToken: "bt", APIVersion: "unknown"},
-		{Mode: ModeHumanWeb, BearerToken: "bt", APIVersion: APIVersionV2, Principal: json.RawMessage(`[]`)},
-		{Mode: ModeHumanWeb, BearerToken: "bt", APIVersion: APIVersionV2, Principal: json.RawMessage(`null`)},
-		{Mode: ModeHumanWeb, BearerToken: "bt", APIVersion: APIVersionV2, Principal: json.RawMessage(`{`)},
+		{Mode: ModeHumanWeb, BearerToken: "bt", APIVersion: APIVersionV2},
+		{Mode: ModeHumanWeb, BearerToken: "bt", APIVersion: APIVersionV2, Principal: &PolicyPrincipalV2{Namespace: "ns"}},
+		{Mode: ModeHumanWeb, BearerToken: "bt", APIVersion: APIVersionV2, Principal: &PolicyPrincipalV2{ActorRef: "actor"}},
 	} {
 		_, err := NewClient(srv.URL, srv.Client()).Evaluate(context.Background(),
 			Route{Audience: "au", Action: "read", Scope: []string{"read"}, Kind: "tool", Reference: "t1"}, input)
@@ -66,7 +66,7 @@ func TestEvaluateAndAuthorizeV2OutcomeSemantics(t *testing.T) {
 			defer srv.Close()
 			c := NewClient(srv.URL, srv.Client())
 			route := Route{Audience: "au", Action: "read", Scope: []string{"read"}, Kind: "tool", Reference: "t1"}
-			input := AuthorizationInput{Mode: ModeHumanWeb, BearerToken: "bt", APIVersion: APIVersionV2}
+			input := evaluationInput(APIVersionV2)
 			res, err := c.Evaluate(context.Background(), route, input)
 			if err != nil || res.Outcome != outcome || res.SignedDecision != "unverified-artifact" {
 				t.Fatalf("Evaluate = %+v, %v", res, err)
@@ -112,7 +112,7 @@ func TestEvaluateRejectsMalformedV2Envelope(t *testing.T) {
 			defer srv.Close()
 			_, err := NewClient(srv.URL, srv.Client()).Evaluate(context.Background(),
 				Route{Audience: "au", Action: "read", Scope: []string{"read"}, Kind: "tool", Reference: "t1"},
-				AuthorizationInput{Mode: ModeHumanWeb, BearerToken: "bt", APIVersion: APIVersionV2})
+				evaluationInput(APIVersionV2))
 			if err == nil {
 				t.Fatal("malformed response accepted")
 			}
@@ -129,7 +129,7 @@ func TestEvaluateForbiddenIsDenied(t *testing.T) {
 	for _, version := range []string{APIVersionV1Alpha1, APIVersionV2} {
 		_, err := NewClient(srv.URL, srv.Client()).Evaluate(context.Background(),
 			Route{Audience: "au", Action: "read", Scope: []string{"read"}, Kind: "tool", Reference: "t1"},
-			AuthorizationInput{Mode: ModeHumanWeb, BearerToken: "bt", APIVersion: version})
+			evaluationInput(version))
 		if !errors.Is(err, ErrDenied) {
 			t.Errorf("version %s: error = %v, want ErrDenied", version, err)
 		}
@@ -146,7 +146,7 @@ func TestEvaluateFailureClassification(t *testing.T) {
 			defer srv.Close()
 			_, err := NewClient(srv.URL, srv.Client()).Evaluate(context.Background(),
 				Route{Audience: "au", Action: "read", Scope: []string{"read"}, Kind: "tool", Reference: "t1"},
-				AuthorizationInput{Mode: ModeHumanWeb, BearerToken: "bt", APIVersion: APIVersionV2})
+				evaluationInput(APIVersionV2))
 			var apiErr *APIError
 			if !errors.As(err, &apiErr) || apiErr.StatusCode != status {
 				t.Fatalf("error = %v, want APIError status %d", err, status)
@@ -172,9 +172,17 @@ func TestEvaluateMalformedIsClassified(t *testing.T) {
 	for _, version := range []string{APIVersionV1Alpha1, APIVersionV2} {
 		_, err := NewClient(srv.URL, srv.Client()).Evaluate(context.Background(),
 			Route{Audience: "au", Action: "read", Scope: []string{"read"}, Kind: "tool", Reference: "t1"},
-			AuthorizationInput{Mode: ModeHumanWeb, BearerToken: "bt", APIVersion: version})
+			evaluationInput(version))
 		if !errors.Is(err, ErrMalformed) {
 			t.Errorf("version %s: error = %v, want ErrMalformed", version, err)
 		}
 	}
+}
+
+func evaluationInput(version string) AuthorizationInput {
+	input := AuthorizationInput{Mode: ModeHumanWeb, BearerToken: "bt", APIVersion: version}
+	if version == APIVersionV2 {
+		input.Principal = &PolicyPrincipalV2{Namespace: "ns", ActorRef: "actor", SubjectRef: "user"}
+	}
+	return input
 }

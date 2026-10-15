@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"slices"
 	"time"
 )
 
@@ -47,17 +48,38 @@ func (c *Client) Evaluate(ctx context.Context, route Route, input AuthorizationI
 	if apiVersion == "" {
 		apiVersion = APIVersionV1Alpha1
 	}
-	if apiVersion == APIVersionV2 && (input.Mode == ModeServiceAgentAPI || input.Mode == ModeTwinAgentAPI) {
+	traceID := input.TraceID
+	if traceID == "" {
+		traceID = generateTraceID()
+	}
+	now := time.Now()
+	requestedExpiresAt := input.RequestedExpiresAt
+	if requestedExpiresAt.IsZero() {
+		requestedExpiresAt = now.Add(5 * time.Minute)
+		if parent := input.ParentAuthority; parent != nil && requestedExpiresAt.After(parent.ExpiresAt) {
+			requestedExpiresAt = parent.ExpiresAt
+		}
+	}
+	if !requestedExpiresAt.After(now) {
 		return nil, ErrInvalidInput
 	}
-	traceID := generateTraceID()
-	requestedExpiresAt := time.Now().Add(5 * time.Minute)
+	if parent := input.ParentAuthority; parent != nil {
+		if requestedExpiresAt.After(parent.ExpiresAt) || !slices.Contains(parent.Audience, route.Audience) {
+			return nil, ErrInvalidInput
+		}
+		for _, scope := range route.Scope {
+			if !slices.Contains(parent.Scope, scope) {
+				return nil, ErrInvalidInput
+			}
+		}
+	}
 
 	var reqBody any
 	if apiVersion == APIVersionV2 {
 		reqBody = evaluateRequestV2{
-			APIVersion: apiVersion, AuthorizationMode: modeV2(input.Mode), Principal: buildV2Principal(input),
-			BearerToken: input.BearerToken, WorkloadAssertion: input.WorkloadAssertion,
+			APIVersion: apiVersion, AuthorizationMode: modeV2(input.Mode), Principal: input.Principal,
+			ParentAuthority: input.ParentAuthority,
+			BearerToken:     input.BearerToken, WorkloadAssertion: input.WorkloadAssertion,
 			ParentExecutionGrant: input.ParentExecutionGrant, Action: route.Action,
 			Resource: Resource{Kind: route.Kind, Reference: route.Reference}, RequestedScope: route.Scope,
 			Audience: route.Audience, RequestedExpiresAt: requestedExpiresAt,
