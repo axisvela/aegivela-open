@@ -18,6 +18,20 @@ import (
 // Client is the workload-identity client.
 type Client struct {
 	HC *httpx.Client
+	// Authority is the caller-asserted trusted authority sent alongside the
+	// internal token. AEGIVELA's internal resolver requires the tenant, actor and
+	// authority-root headers (its binding/assertion handlers compare the request's
+	// subject/organization against the resolved actor/authority), so a client that
+	// sends only the internal token is answered 401. Zero values are omitted, so a
+	// client that does not set them behaves exactly as before.
+	Authority TrustedAuthority
+}
+
+// TrustedAuthority is the caller-asserted authority for internal-token calls.
+type TrustedAuthority struct {
+	TenantID      string
+	ActorID       string
+	AuthorityRoot string
 }
 
 // New creates a workload-identity client.
@@ -25,8 +39,31 @@ func New(baseURL string, httpClient *http.Client) *Client {
 	return &Client{HC: httpx.New(baseURL, httpClient)}
 }
 
+// WithTrustedAuthority sets the authority headers sent with internal-token
+// calls and returns the client for chaining.
+func (c *Client) WithTrustedAuthority(a TrustedAuthority) *Client {
+	c.Authority = a
+	return c
+}
+
 func internalHeader(token string) map[string]string {
 	return map[string]string{"X-Aegivela-Internal-Token": token}
+}
+
+// headers builds the request headers: the internal token plus any configured
+// trusted-authority headers.
+func (c *Client) headers(token string) map[string]string {
+	h := internalHeader(token)
+	if v := strings.TrimSpace(c.Authority.TenantID); v != "" {
+		h["X-Aegivela-Tenant-ID"] = v
+	}
+	if v := strings.TrimSpace(c.Authority.ActorID); v != "" {
+		h["X-Aegivela-Actor-ID"] = v
+	}
+	if v := strings.TrimSpace(c.Authority.AuthorityRoot); v != "" {
+		h["X-Aegivela-Authority-Root"] = v
+	}
+	return h
 }
 
 // WorkloadAssertionRequest is the input to IssueWorkloadAssertion.
@@ -85,7 +122,7 @@ func (c *Client) IssueWorkloadAssertion(ctx context.Context, internalToken strin
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
-	resp, err := c.HC.Request(ctx, http.MethodPost, "/v1/workload-assertions/issue", internalHeader(internalToken), body)
+	resp, err := c.HC.Request(ctx, http.MethodPost, "/v1/workload-assertions/issue", c.headers(internalToken), body)
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
@@ -155,7 +192,7 @@ func (c *Client) CreateWorkloadBinding(ctx context.Context, internalToken string
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}
-	resp, err := c.HC.Request(ctx, http.MethodPost, "/v1/workload-bindings", internalHeader(internalToken), body)
+	resp, err := c.HC.Request(ctx, http.MethodPost, "/v1/workload-bindings", c.headers(internalToken), body)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", pepsdk.ErrUnavailable, err)
 	}

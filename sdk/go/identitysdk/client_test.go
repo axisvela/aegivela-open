@@ -59,3 +59,41 @@ func TestCreateWorkloadBindingAndJWKS(t *testing.T) {
 	}
 	_ = json.Marshal
 }
+
+// TestTrustedAuthorityHeaders pins the internal-token contract AEGIVELA's
+// resolver enforces: the assertion/binding calls must carry the caller's
+// tenant/actor/authority-root headers when configured, and must omit them when
+// not, so an unconfigured client behaves exactly as before.
+func TestTrustedAuthorityHeaders(t *testing.T) {
+	var tenant, actor, root string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		tenant = r.Header.Get("X-Aegivela-Tenant-ID")
+		actor = r.Header.Get("X-Aegivela-Actor-ID")
+		root = r.Header.Get("X-Aegivela-Authority-Root")
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"workload_assertion":"jwt-1"}`))
+	}))
+	defer srv.Close()
+
+	c := New(srv.URL, srv.Client()).WithTrustedAuthority(TrustedAuthority{
+		TenantID: "tenant-dev", ActorID: "axond-dev-subject", AuthorityRoot: "did:axisrobo:dev",
+	})
+	if _, err := c.IssueWorkloadAssertion(context.Background(), "itok", WorkloadAssertionRequest{
+		BindingID: "b", ClientID: "c", WorkloadRef: "w", Audience: "rheovela",
+	}); err != nil {
+		t.Fatalf("issue: %v", err)
+	}
+	if tenant != "tenant-dev" || actor != "axond-dev-subject" || root != "did:axisrobo:dev" {
+		t.Fatalf("authority headers = tenant:%q actor:%q root:%q", tenant, actor, root)
+	}
+
+	bare := New(srv.URL, srv.Client())
+	if _, err := bare.IssueWorkloadAssertion(context.Background(), "itok", WorkloadAssertionRequest{
+		BindingID: "b", ClientID: "c", WorkloadRef: "w", Audience: "rheovela",
+	}); err != nil {
+		t.Fatalf("bare issue: %v", err)
+	}
+	if tenant != "" || actor != "" || root != "" {
+		t.Fatalf("an unconfigured client must omit the authority headers, got %q/%q/%q", tenant, actor, root)
+	}
+}
