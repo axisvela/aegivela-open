@@ -108,7 +108,10 @@ func (c *Client) IssueWorkloadAssertion(ctx context.Context, internalToken strin
 	}
 	expiresAt := req.ExpiresAt
 	if expiresAt.IsZero() {
-		expiresAt = time.Now().Add(10 * time.Minute)
+		// The server bounds an assertion's lifetime (AEGIVELA maxAssertionTTL =
+		// 5m) and rejects a request beyond it, so the default must sit inside the
+		// contract rather than at a value the server always refuses.
+		expiresAt = time.Now().Add(5 * time.Minute)
 	}
 	traceID := req.TraceID
 	if traceID == "" {
