@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package moduregis.v1alpha1;
 
-option go_package = "github.com/axisvela/aegivela/backend/internal/moduregiscontract/pb/v1alpha1;v1alpha1";
+option go_package = "github.com/axisvela/aegivela/backend/v3/internal/moduregiscontract/pb/v1alpha1;v1alpha1";
 
 import "google/protobuf/timestamp.proto";
 

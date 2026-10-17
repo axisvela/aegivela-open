@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/axisvela/aegivela-open/sdk/go/internal/httpx"
+	"github.com/axisvela/aegivela-open/sdk/go/v3/internal/httpx"
 )
 
 const maxResponseBytes = httpx.MaxResponseBytes

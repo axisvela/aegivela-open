@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package identity.v1alpha1;
 
-option go_package = "github.com/axisvela/aegivela/backend/internal/identitycontract/pb;pb";
+option go_package = "github.com/axisvela/aegivela/backend/v3/internal/identitycontract/pb;pb";
 
 service IdentityBridgeService {
   rpc Resolve(IdentityResolveRequest) returns (IdentityResolveResponse);

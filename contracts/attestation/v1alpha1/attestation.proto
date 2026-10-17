@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package attestation.v1alpha1;
 
-option go_package = "github.com/axisvela/aegivela/backend/internal/attestationcontract/pb;pb";
+option go_package = "github.com/axisvela/aegivela/backend/v3/internal/attestationcontract/pb;pb";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";

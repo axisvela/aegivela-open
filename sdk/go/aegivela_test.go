@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	aegivela "github.com/axisvela/aegivela-open/sdk/go"
+	aegivela "github.com/axisvela/aegivela-open/sdk/go/v3"
 )
 
 func TestRootExposesEvaluateConfigurationAndErrors(t *testing.T) {

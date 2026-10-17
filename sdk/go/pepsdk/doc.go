@@ -9,7 +9,7 @@
 // assertions + JWKS), grantsdk (execution grants + approvals + pre-auth +
 // token-exchange), attestationsdk (attestations), governancesdk (policies, web
 // resources, risk signals). The product-named root package
-// github.com/axisvela/aegivela-open/sdk/go re-exports them all.
+// github.com/axisvela/aegivela-open/sdk/go/v3 re-exports them all.
 //
 // Evaluate owns the shared request/response path and returns valid deny/approval
 // outcomes as data. Authorize rejects all non-allow outcomes. Neither method

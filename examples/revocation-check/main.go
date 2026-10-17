@@ -12,7 +12,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/axisvela/aegivela-open/sdk/go/pepsdk"
+	"github.com/axisvela/aegivela-open/sdk/go/v3/pepsdk"
 )
 
 func main() {

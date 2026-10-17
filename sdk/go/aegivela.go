@@ -11,11 +11,11 @@
 package aegivela
 
 import (
-	"github.com/axisvela/aegivela-open/sdk/go/attestationsdk"
-	"github.com/axisvela/aegivela-open/sdk/go/governancesdk"
-	"github.com/axisvela/aegivela-open/sdk/go/grantsdk"
-	"github.com/axisvela/aegivela-open/sdk/go/identitysdk"
-	"github.com/axisvela/aegivela-open/sdk/go/pepsdk"
+	"github.com/axisvela/aegivela-open/sdk/go/v3/attestationsdk"
+	"github.com/axisvela/aegivela-open/sdk/go/v3/governancesdk"
+	"github.com/axisvela/aegivela-open/sdk/go/v3/grantsdk"
+	"github.com/axisvela/aegivela-open/sdk/go/v3/identitysdk"
+	"github.com/axisvela/aegivela-open/sdk/go/v3/pepsdk"
 )
 
 // Core client.
