@@ -384,7 +384,7 @@ alongside the frozen v1alphaN transports, which are not modified.
 
 Open Core is synchronized — `aegivela` and `aegivela-open` share `v1.2.0`. The
 Enterprise Edition counts independently: it releases `v1.2.1`, which pins the
-Open Core backend module at `github.com/axisrobo/aegivela/backend v1.2.0` and
+Open Core backend module at `github.com/axisvela/aegivela/backend v1.2.0` and
 builds standalone (no shared Go workspace required).
 
 ## Patch Release — `1.2.1`

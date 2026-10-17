@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package risk.v1alpha1;
 
-option go_package = "github.com/axisrobo/aegivela/backend/internal/risksignal/pb/v1alpha1;v1alpha1";
+option go_package = "github.com/axisvela/aegivela/backend/internal/risksignal/pb/v1alpha1;v1alpha1";
 
 service RiskSignalService {
   rpc Process(RiskSignalRequest) returns (RiskSignalResponse);

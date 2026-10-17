@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/axisrobo/aegivela-open/contracts/identity-source/v1alpha1/verified-principal.schema.json",
+  "$id": "https://github.com/axisvela/aegivela-open/contracts/identity-source/v1alpha1/verified-principal.schema.json",
   "title": "VerifiedPrincipal",
   "description": "AEGIVELA's normalized verified agent identity context. It carries references and normalized fields only; raw credentials and unrestricted claims never appear here. Only an identity-source Provider may produce this value.",
   "type": "object",

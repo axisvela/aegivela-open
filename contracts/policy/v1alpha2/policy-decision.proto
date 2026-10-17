@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package policy.v1alpha2;
 
-option go_package = "github.com/axisrobo/aegivela/backend/internal/policycontract/pb/v1alpha2;v1alpha2";
+option go_package = "github.com/axisvela/aegivela/backend/internal/policycontract/pb/v1alpha2;v1alpha2";
 
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";

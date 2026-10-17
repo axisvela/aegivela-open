@@ -1,4 +1,4 @@
-module github.com/axisrobo/aegivela-open/examples/web-api-pep
+module github.com/axisvela/aegivela-open/examples/web-api-pep
 
 go 1.21
 

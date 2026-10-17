@@ -57,5 +57,5 @@ The current `aegivela` repository is private. An open-source release of the OSS 
 | Repository | License |
 | --- | --- |
 | `aegivela` (core implementation) | [GNU Affero General Public License v3.0](../LICENSE) |
-| `aegivela-open` (public-facing) | [Apache License 2.0](https://github.com/axisrobo/aegivela-open/blob/main/LICENSE) |
+| `aegivela-open` (public-facing) | [Apache License 2.0](https://github.com/axisvela/aegivela-open/blob/main/LICENSE) |
 | `aegivela-ee` (enterprise extensions) | Commercial / Enterprise License |

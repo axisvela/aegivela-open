@@ -56,7 +56,7 @@ All endpoints require the `X-AEGIVELA-PEP` internal header. This is the first pu
 The schema and fixtures in this directory ship byte-identically inside the
 Go module as `backend/pepsdk/moduregiscontract` (embedded under `files/`),
 kept in parity by `syncTest.go`. Downstream repositories (MODUREGIS)
-consume the contract by requiring `github.com/axisrobo/aegivela/backend` at
+consume the contract by requiring `github.com/axisvela/aegivela/backend` at
 a `backend/v*` module tag and must not copy these files. Changes here
 require re-running the parity sync (copy into
 `backend/pepsdk/moduregiscontract/files/`) and a new module tag before

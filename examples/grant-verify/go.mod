@@ -1,4 +1,4 @@
-module github.com/axisrobo/aegivela-open/examples/grant-verify
+module github.com/axisvela/aegivela-open/examples/grant-verify
 
 go 1.21
 

@@ -21,32 +21,32 @@ AEGIVELA provides profile-neutral security primitives for any agentic system:
 
 The Open Core edition includes every profile-neutral security primitive and versioned integration contract. The Enterprise Edition (`aegivela-ee`) adds enterprise infrastructure integration: SAML federation, SCIM enrichment, SPIFFE/SVID, CAEP risk signals, SIEM export, policy simulation, key rotation, and tenant administration.
 
-See [OSS/EE Boundary](https://github.com/axisrobo/aegivela-open/blob/main/docs/oss-ee-boundary.md) for the full split.
+See [OSS/EE Boundary](https://github.com/axisvela/aegivela-open/blob/main/docs/oss-ee-boundary.md) for the full split.
 
 ## Quick Start
 
 ### Binary Download
 
-Download the latest `aegivela-api` binary for your platform from [GitHub Releases](https://github.com/axisrobo/aegivela-open/releases):
+Download the latest `aegivela-api` binary for your platform from [GitHub Releases](https://github.com/axisvela/aegivela-open/releases):
 
 ```bash
 # Linux amd64 / arm64
-curl -L -o aegivela-api https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api-linux-amd64
+curl -L -o aegivela-api https://github.com/axisvela/aegivela-open/releases/latest/download/aegivela-api-linux-amd64
 chmod +x aegivela-api
-curl -L -o aegivela-api https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api-linux-arm64
+curl -L -o aegivela-api https://github.com/axisvela/aegivela-open/releases/latest/download/aegivela-api-linux-arm64
 chmod +x aegivela-api
 
 # macOS amd64 / arm64
-curl -L -o aegivela-api https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api-darwin-amd64
+curl -L -o aegivela-api https://github.com/axisvela/aegivela-open/releases/latest/download/aegivela-api-darwin-amd64
 chmod +x aegivela-api
-curl -L -o aegivela-api https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api-darwin-arm64
+curl -L -o aegivela-api https://github.com/axisvela/aegivela-open/releases/latest/download/aegivela-api-darwin-arm64
 chmod +x aegivela-api
 
 # Windows amd64 (PowerShell)
-Invoke-WebRequest -Uri "https://github.com/axisrobo/aegivela-open/releases/latest/download/aegivela-api-windows-amd64.exe" -OutFile aegivela-api.exe
+Invoke-WebRequest -Uri "https://github.com/axisvela/aegivela-open/releases/latest/download/aegivela-api-windows-amd64.exe" -OutFile aegivela-api.exe
 ```
 
-Verify integrity against the [`SHA256SUMS`](https://github.com/axisrobo/aegivela-open/releases/latest/download/SHA256SUMS) manifest.
+Verify integrity against the [`SHA256SUMS`](https://github.com/axisvela/aegivela-open/releases/latest/download/SHA256SUMS) manifest.
 
 ### Docker Image
 
@@ -95,21 +95,21 @@ AEGIVELA is consumed through three integration profiles that share the same iden
 ## Go SDK
 
 ```go
-import "github.com/axisrobo/aegivela-open/sdk/go/pepsdk"
+import "github.com/axisvela/aegivela-open/sdk/go/pepsdk"
 
 client := pepsdk.NewClient("https://aegivela.internal:1886", http.DefaultClient)
 result, err := client.Authorize(ctx, route, input)
 ```
 
-Full SDK reference: [docs/sdk/](https://github.com/axisrobo/aegivela-open/blob/main/docs/sdk/)
+Full SDK reference: [docs/sdk/](https://github.com/axisvela/aegivela-open/blob/main/docs/sdk/)
 
 ## Documentation
 
-- [Architecture](https://github.com/axisrobo/aegivela-open/blob/main/docs/architecture.md)
-- [Roadmap](https://github.com/axisrobo/aegivela-open/blob/main/docs/roadmap.md)
-- [Authorization Modes](https://github.com/axisrobo/aegivela-open/blob/main/docs/authorization-modes.md)
-- [OSS/EE Boundary](https://github.com/axisrobo/aegivela-open/blob/main/docs/oss-ee-boundary.md)
-- [ADR Index](https://github.com/axisrobo/aegivela-open/blob/main/docs/adr/)
+- [Architecture](https://github.com/axisvela/aegivela-open/blob/main/docs/architecture.md)
+- [Roadmap](https://github.com/axisvela/aegivela-open/blob/main/docs/roadmap.md)
+- [Authorization Modes](https://github.com/axisvela/aegivela-open/blob/main/docs/authorization-modes.md)
+- [OSS/EE Boundary](https://github.com/axisvela/aegivela-open/blob/main/docs/oss-ee-boundary.md)
+- [ADR Index](https://github.com/axisvela/aegivela-open/blob/main/docs/adr/)
 
 ## Repository Layout
 
@@ -120,7 +120,7 @@ aegivela-open/        ← You are here. Project homepage, docs, SDK reference, e
 ├── docs/              Architecture, roadmap, ADRs, API contracts
 ├── contracts/         Versioned JSON Schema / OpenAPI / protobuf contracts
 ├── sdk/go/
-│   ├── go.mod         Go module (github.com/axisrobo/aegivela-open/sdk/go)
+│   ├── go.mod         Go module (github.com/axisvela/aegivela-open/sdk/go)
 │   └── pepsdk/        PEP middleware and authorization client
 └── examples/
     └── web-api-pep/   HTTP API protected by the PEP SDK
