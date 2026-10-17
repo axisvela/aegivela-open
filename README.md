@@ -149,3 +149,7 @@ The `aegivela-open` repository is synced from the private `aegivela` core reposi
 Test files are excluded from sync (they reference internal packages). The open SDK is tested via the examples.
 
 Open documentation edits may be made directly in this repository. Contract and SDK files are authoritative in the core repository and should be synced rather than manually edited here.
+
+## Core status (recorded here; no external links)
+
+No core change in this cycle; the open SDK and contract surfaces are unchanged.
