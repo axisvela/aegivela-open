@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/axisrobo/aegivela-open/sdk/go/internal/httpx"
-	"github.com/axisrobo/aegivela-open/sdk/go/pepsdk"
+	"github.com/axisvela/aegivela-open/sdk/go/internal/httpx"
+	"github.com/axisvela/aegivela-open/sdk/go/pepsdk"
 )
 
 // Client is the attestation client.

@@ -14,7 +14,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/axisrobo/aegivela-open/sdk/go/pepsdk"
+	"github.com/axisvela/aegivela-open/sdk/go/pepsdk"
 )
 
 func main() {
