@@ -76,14 +76,14 @@ func TestTrustedAuthorityHeaders(t *testing.T) {
 	defer srv.Close()
 
 	c := New(srv.URL, srv.Client()).WithTrustedAuthority(TrustedAuthority{
-		TenantID: "tenant-dev", ActorID: "axond-dev-subject", AuthorityRoot: "did:axisrobo:dev",
+		TenantID: "tenant-dev", ActorID: "axond-dev-subject", AuthorityRoot: "did:axisvela:dev",
 	})
 	if _, err := c.IssueWorkloadAssertion(context.Background(), "itok", WorkloadAssertionRequest{
 		BindingID: "b", ClientID: "c", WorkloadRef: "w", Audience: "rheovela",
 	}); err != nil {
 		t.Fatalf("issue: %v", err)
 	}
-	if tenant != "tenant-dev" || actor != "axond-dev-subject" || root != "did:axisrobo:dev" {
+	if tenant != "tenant-dev" || actor != "axond-dev-subject" || root != "did:axisvela:dev" {
 		t.Fatalf("authority headers = tenant:%q actor:%q root:%q", tenant, actor, root)
 	}
 

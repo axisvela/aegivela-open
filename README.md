@@ -1,6 +1,6 @@
 # AEGIVELA Open
 
-**AEGIVELA** is the AxisRobo Agent Identity, Authorization, and Security Fabric — a general-purpose security platform for agentic systems.
+**AEGIVELA** is the AxisVela Agent Identity, Authorization, and Security Fabric — a general-purpose security platform for agentic systems.
 
 This is the public-facing repository for the AEGIVELA Open Core (OSS) edition. It contains the project overview, installation guide, Go SDK reference, quickstart examples, and links to binary releases. The core implementation lives in a private repository pending an open-source decision.
 
@@ -52,7 +52,7 @@ Verify integrity against the [`SHA256SUMS`](https://github.com/axisvela/aegivela
 
 ```bash
 # Coming soon
-docker pull ghcr.io/axisrobo/aegivela:latest
+docker pull ghcr.io/axisvela/aegivela:latest
 ```
 
 ### Runtime Configuration
