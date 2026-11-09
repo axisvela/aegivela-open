@@ -117,6 +117,7 @@ message OfflineArtifact {
 message IssueRequest {
   string apiVersion = 1;
   string signedParentGrant = 2;
+  string audience = 11;
   Scope requestedScope = 3;
   DeviceBinding device = 4;
   OperationConstraints operations = 5;

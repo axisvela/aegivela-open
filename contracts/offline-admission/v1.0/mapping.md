@@ -91,6 +91,13 @@ must be derived from or no greater than it, and both must reference the same
 authority identity. Two issued artifacts referring to one parent must not create
 two independent spending pools.
 
+## Issue Request Audience
+
+`issue_request.audience` is required. It is the client-declared expected device
+and parent-grant audience. AEGIVELA verifies the parent grant against that exact
+audience and rejects a mismatch before reserving or signing. A service must not
+derive the expected audience from an unverified parent payload.
+
 ## Fixed in the Local Draft
 
 - Protected header string, artifact purpose, canonicalization subset and

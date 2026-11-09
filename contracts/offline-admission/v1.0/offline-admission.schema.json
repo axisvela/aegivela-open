@@ -227,6 +227,7 @@
       "required": [
         "apiVersion",
         "signedParentGrant",
+        "audience",
         "requestedScope",
         "device",
         "operations",
@@ -239,6 +240,7 @@
       "properties": {
         "apiVersion": { "const": "aegivela.io/offline-admission/v1.0" },
         "signedParentGrant": { "type": "string", "minLength": 1 },
+        "audience": { "type": "string", "minLength": 1 },
         "requestedScope": { "$ref": "#/$defs/scope" },
         "device": { "$ref": "#/$defs/device_binding" },
         "operations": { "$ref": "#/$defs/operation_constraints" },
