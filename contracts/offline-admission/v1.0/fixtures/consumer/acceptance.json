@@ -1,0 +1,130 @@
+{
+  "manifestVersion": "1",
+  "owner": "AKROVELA",
+  "aegivelaContract": "aegivela.io/offline-admission/v1.0",
+  "status": "not-executed",
+  "executedBy": "AKROVELA",
+  "requiredEvidence": ["consumerRevision", "aegivelaRevision", "trustProfileRef", "environment", "observedResult", "limitations"],
+  "cases": [
+    {
+      "id": "valid-admit",
+      "category": "authorization",
+      "scenario": "Valid artifact, pinned trust root, authenticated submitter, committed reservation",
+      "expectedOutcome": "admit"
+    },
+    {
+      "id": "unknown-key",
+      "category": "trust",
+      "scenario": "Artifact kid absent from the accepted trust bundle",
+      "expectedOutcome": "reject"
+    },
+    {
+      "id": "audience-mismatch",
+      "category": "authorization",
+      "scenario": "Artifact audience differs from the device expectation",
+      "expectedOutcome": "reject"
+    },
+    {
+      "id": "device-epoch-mismatch",
+      "category": "authorization",
+      "scenario": "Artifact sourceEpoch differs from the trusted boot epoch",
+      "expectedOutcome": "reject"
+    },
+    {
+      "id": "operation-not-allowed",
+      "category": "authorization",
+      "scenario": "Requested operation type is outside the signed allowlist",
+      "expectedOutcome": "reject"
+    },
+    {
+      "id": "clock-deadline",
+      "category": "validity",
+      "scenario": "Authority time interval crosses expiry or the offline stop deadline",
+      "expectedOutcome": "reject"
+    },
+    {
+      "id": "no-reservation",
+      "category": "budget",
+      "scenario": "Signature valid but no committed reservation exists",
+      "expectedOutcome": "reject"
+    },
+    {
+      "id": "concurrent-final-credit",
+      "category": "budget",
+      "scenario": "Two concurrent admissions compete for the final credit",
+      "expectedOutcome": "at-most-one-admit"
+    },
+    {
+      "id": "identical-retry",
+      "category": "idempotency",
+      "scenario": "Identical request identity and digest is retried",
+      "expectedOutcome": "no-duplicate-effect"
+    },
+    {
+      "id": "conflicting-retry",
+      "category": "idempotency",
+      "scenario": "Same request identity is reused with a different digest",
+      "expectedOutcome": "reject"
+    },
+    {
+      "id": "persistence-failure",
+      "category": "persistence",
+      "scenario": "Admission or reservation persistence fails before execution",
+      "expectedOutcome": "reject"
+    },
+    {
+      "id": "uncertain-commit",
+      "category": "recovery",
+      "scenario": "Commit outcome is unknown after a crash",
+      "expectedOutcome": "quarantine"
+    },
+    {
+      "id": "crash-before-start-intent",
+      "category": "recovery",
+      "scenario": "Crash before durable execution-start intent",
+      "expectedOutcome": "no-duplicate-effect"
+    },
+    {
+      "id": "crash-after-start-intent",
+      "category": "recovery",
+      "scenario": "Crash after durable execution-start intent",
+      "expectedOutcome": "quarantine"
+    },
+    {
+      "id": "restart-started-not-terminal",
+      "category": "recovery",
+      "scenario": "Restart finds started-but-not-terminal work",
+      "expectedOutcome": "quarantine"
+    },
+    {
+      "id": "drain-before-new-work",
+      "category": "recovery",
+      "scenario": "Reconnect uploads pending facts before accepting new work",
+      "expectedOutcome": "no-duplicate-effect"
+    },
+    {
+      "id": "journal-rollback",
+      "category": "trust",
+      "scenario": "Restored journal cannot be distinguished from the current device state",
+      "expectedOutcome": "reject"
+    },
+    {
+      "id": "device-clone",
+      "category": "trust",
+      "scenario": "Cloned device presents a valid key and matching epoch",
+      "expectedOutcome": "reject"
+    },
+    {
+      "id": "parent-revoked-disconnected",
+      "category": "revocation",
+      "scenario": "Parent is revoked while the consumer is disconnected",
+      "expectedOutcome": "reject"
+    },
+    {
+      "id": "late-receipt-after-revocation",
+      "category": "revocation",
+      "scenario": "A receipt arrives after parent revocation",
+      "expectedOutcome": "no-new-authority"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "apiVersion": "aegivela.io/offline-admission/v1.0",
+  "signedParentGrant": "eyJhbGciOiJFZERTQSIsImtpZCI6ImdyYW50LWtleS0xIn0.eyJleGFtcGxlIjp0cnVlfQ.c2lnbmF0dXJl",
+  "requestedScope": ["robotics:navigate"],
+  "device": {
+    "deviceRef": "akrovela-node-wh3-01",
+    "deviceKeyId": "device-key-1",
+    "sourceEpoch": 7,
+    "workspaceRef": "wh3",
+    "siteRef": "site-wh3"
+  },
+  "operations": {
+    "allowlist": ["ros2.nav2.navigate_to_pose@1"],
+    "targetRefs": ["robot:tb4-01"],
+    "mapRefs": ["map:wh3/aisle-a"],
+    "frameRefs": ["map"]
+  },
+  "requestedBudget": {
+    "maxOperations": 5,
+    "totalDurationMs": 600000,
+    "totalGoalDistanceMm": 200000,
+    "totalPathLengthMm": 300000,
+    "maxSpeedMmPerS": 450,
+    "maxPayloadBytes": 16384
+  },
+  "submitter": {
+    "submitterRef": "workload:akrovela-satellite",
+    "proofProfile": "device-local-v1",
+    "proofProfileVersion": "1"
+  },
+  "revocation": {
+    "policy": "connectedOnly",
+    "revocationRef": "revocation:parent-1"
+  },
+  "idempotencyKey": "issue:opaque-1",
+  "traceId": "trace-1"
+}

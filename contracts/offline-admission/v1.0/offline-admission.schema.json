@@ -1,0 +1,353 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/offline-admission/v1.0/offline-admission.schema.json",
+  "title": "AEGIVELA Offline Admission (DRAFT - NOT PUBLISHED)",
+  "description": "Local machine-contract draft approved only for internal drafting. Not published, not synced to aegivela-open, and not an implementation.",
+  "oneOf": [
+    { "$ref": "#/$defs/offline_artifact" },
+    { "$ref": "#/$defs/issue_request" },
+    { "$ref": "#/$defs/issue_response" },
+    { "$ref": "#/$defs/verify_request" },
+    { "$ref": "#/$defs/verify_response" },
+    { "$ref": "#/$defs/error" }
+  ],
+  "$defs": {
+    "scope": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "resourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actorRef"],
+      "properties": {
+        "namespace": { "type": "string", "minLength": 1 },
+        "subjectRef": { "type": "string", "minLength": 1 },
+        "actorRef": { "type": "string", "minLength": 1 },
+        "clientId": { "type": "string", "minLength": 1 },
+        "workloadRef": { "type": "string", "minLength": 1 },
+        "agentId": { "type": "string", "minLength": 1 },
+        "agentClass": { "type": "string" },
+        "masterId": { "type": "string", "minLength": 1 },
+        "organizationAuthorityRoot": { "type": "string", "minLength": 1 },
+        "attestationRef": { "type": "string", "minLength": 1 },
+        "authorityBinding": { "type": "string", "enum": ["humanMaster", "organizationRoot"] },
+        "agentEpoch": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+        "identityEpoch": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+        "instanceId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "device_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deviceRef", "deviceKeyId", "sourceEpoch"],
+      "properties": {
+        "deviceRef": { "type": "string", "minLength": 1 },
+        "deviceKeyId": { "type": "string", "minLength": 1 },
+        "sourceEpoch": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+        "workspaceRef": { "type": "string", "minLength": 1 },
+        "siteRef": { "type": "string", "minLength": 1 }
+      }
+    },
+    "operation_constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowlist", "targetRefs", "mapRefs", "frameRefs"],
+      "properties": {
+        "allowlist": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "targetRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "mapRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "frameRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxOperations",
+        "totalDurationMs",
+        "totalGoalDistanceMm",
+        "totalPathLengthMm",
+        "maxSpeedMmPerS",
+        "maxPayloadBytes"
+      ],
+      "properties": {
+        "maxOperations": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+        "totalDurationMs": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+        "totalGoalDistanceMm": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+        "totalPathLengthMm": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+        "maxSpeedMmPerS": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+        "maxPayloadBytes": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 }
+      }
+    },
+    "submitter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["submitterRef", "proofProfile", "proofProfileVersion"],
+      "properties": {
+        "submitterRef": { "type": "string", "minLength": 1 },
+        "proofProfile": { "type": "string", "minLength": 1 },
+        "proofProfileVersion": { "type": "string", "minLength": 1 }
+      }
+    },
+    "revocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy", "revocationRef"],
+      "properties": {
+        "policy": { "type": "string", "enum": ["connectedOnly", "boundedDisconnected"] },
+        "revocationRef": { "type": "string", "minLength": 1 },
+        "maxOfflineStalenessMs": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "policy": { "const": "boundedDisconnected" } } },
+          "then": { "required": ["maxOfflineStalenessMs"] }
+        },
+        {
+          "if": { "properties": { "policy": { "const": "connectedOnly" } } },
+          "then": { "not": { "required": ["maxOfflineStalenessMs"] } }
+        }
+      ]
+    },
+    "validity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["notBefore", "expiresAt", "clockDomain", "maxClockSkewMs"],
+      "properties": {
+        "notBefore": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "clockDomain": { "const": "authority-utc" },
+        "maxClockSkewMs": { "type": "integer", "minimum": 0, "maximum": 5000 }
+      }
+    },
+    "offline_artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "offlineGrantId",
+        "purpose",
+        "issuer",
+        "issuedAt",
+        "parentGrantRef",
+        "parentGrantDigest",
+        "namespace",
+        "principal",
+        "audience",
+        "action",
+        "resourceRef",
+        "structuredResourceDigest",
+        "taskBinding",
+        "scope",
+        "device",
+        "operations",
+        "budget",
+        "submitter",
+        "validity",
+        "revocation",
+        "trust",
+        "offlineDelegation",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "apiVersion": { "const": "aegivela.io/offline-admission/v1.0" },
+        "offlineGrantId": { "type": "string", "minLength": 1 },
+        "purpose": { "const": "offline-admission" },
+        "issuer": { "type": "string", "minLength": 1 },
+        "issuedAt": { "type": "string", "format": "date-time" },
+        "parentGrantRef": { "type": "string", "minLength": 1 },
+        "parentGrantDigest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "namespace": { "type": "string", "minLength": 1 },
+        "principal": { "$ref": "#/$defs/principal" },
+        "audience": { "type": "string", "minLength": 1 },
+        "action": { "type": "string", "minLength": 1 },
+        "resourceRef": { "$ref": "#/$defs/resourceRef" },
+        "structuredResourceDigest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "taskBinding": { "type": "string", "minLength": 1 },
+        "scope": { "$ref": "#/$defs/scope" },
+        "device": { "$ref": "#/$defs/device_binding" },
+        "operations": { "$ref": "#/$defs/operation_constraints" },
+        "budget": { "$ref": "#/$defs/budget" },
+        "submitter": { "$ref": "#/$defs/submitter" },
+        "validity": { "$ref": "#/$defs/validity" },
+        "revocation": { "$ref": "#/$defs/revocation" },
+        "trust": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["trustProfileRef", "trustProfileVersion"],
+          "properties": {
+            "trustProfileRef": { "type": "string", "minLength": 1 },
+            "trustProfileVersion": { "type": "string", "minLength": 1 }
+          }
+        },
+        "offlineDelegation": { "const": false },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        }
+      }
+    },
+    "issue_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "signedParentGrant",
+        "requestedScope",
+        "device",
+        "operations",
+        "requestedBudget",
+        "submitter",
+        "revocation",
+        "idempotencyKey",
+        "traceId"
+      ],
+      "properties": {
+        "apiVersion": { "const": "aegivela.io/offline-admission/v1.0" },
+        "signedParentGrant": { "type": "string", "minLength": 1 },
+        "requestedScope": { "$ref": "#/$defs/scope" },
+        "device": { "$ref": "#/$defs/device_binding" },
+        "operations": { "$ref": "#/$defs/operation_constraints" },
+        "requestedBudget": { "$ref": "#/$defs/budget" },
+        "submitter": { "$ref": "#/$defs/submitter" },
+        "revocation": { "$ref": "#/$defs/revocation" },
+        "idempotencyKey": { "type": "string", "minLength": 1 },
+        "traceId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "issue_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "offlineGrantId",
+        "signedOfflineGrant",
+        "parentGrantRef",
+        "audience",
+        "expiresAt",
+        "budget",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "apiVersion": { "const": "aegivela.io/offline-admission/v1.0" },
+        "offlineGrantId": { "type": "string", "minLength": 1 },
+        "signedOfflineGrant": { "type": "string", "minLength": 1 },
+        "parentGrantRef": { "type": "string", "minLength": 1 },
+        "audience": { "type": "string", "minLength": 1 },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "budget": { "$ref": "#/$defs/budget" },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        }
+      }
+    },
+    "verify_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apiVersion", "signedOfflineGrant", "expected", "traceId"],
+      "properties": {
+        "apiVersion": { "const": "aegivela.io/offline-admission/v1.0" },
+        "signedOfflineGrant": { "type": "string", "minLength": 1 },
+        "expected": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["audience", "deviceRef", "sourceEpoch", "operationType"],
+          "properties": {
+            "audience": { "type": "string", "minLength": 1 },
+            "deviceRef": { "type": "string", "minLength": 1 },
+            "sourceEpoch": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+            "operationType": { "type": "string", "minLength": 1 }
+          }
+        },
+        "traceId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "verify_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apiVersion", "valid", "offlineGrantId", "expiresAt"],
+      "properties": {
+        "apiVersion": { "const": "aegivela.io/offline-admission/v1.0" },
+        "valid": { "type": "boolean" },
+        "offlineGrantId": { "type": "string", "minLength": 1 },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "revoked": { "type": "boolean" }
+      }
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apiVersion", "errorCode", "reasonCode", "message"],
+      "properties": {
+        "apiVersion": { "const": "aegivela.io/offline-admission/v1.0" },
+        "errorCode": {
+          "type": "string",
+          "enum": [
+            "invalid_offline_admission_request",
+            "unauthenticated",
+            "authorization_denied",
+            "revocation_unavailable"
+          ]
+        },
+        "reasonCode": {
+          "type": "string",
+          "enum": [
+            "offline_grant_invalid",
+            "offline_grant_expired",
+            "offline_grant_not_yet_valid",
+            "offline_grant_revoked",
+            "offline_grant_audience_mismatch",
+            "offline_grant_device_epoch_stale",
+            "offline_grant_scope_widening",
+            "offline_grant_budget_exhausted",
+            "offline_grant_not_delegable",
+            "offline_grant_submitter_unauthenticated",
+            "offline_grant_signature_invalid",
+            "offline_grant_recovery_required",
+            "revocation_unavailable",
+            "invalid_offline_admission_request",
+            "unauthenticated",
+            "authorization_denied"
+          ]
+        },
+        "message": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

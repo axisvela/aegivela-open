@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/offline-admission/v1.0/consumer-results.schema.json",
+  "title": "Offline Admission Consumer Acceptance Results (DRAFT - NOT PUBLISHED)",
+  "description": "AKROVELA-owned execution results for the published acceptance manifest. A schema-valid document is structural evidence only; it does not prove the observed behavior.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifestVersion",
+    "owner",
+    "aegivelaRevision",
+    "consumerRevision",
+    "trustProfileRef",
+    "environment",
+    "executedAt",
+    "cases"
+  ],
+  "properties": {
+    "manifestVersion": { "const": "1" },
+    "owner": { "const": "AKROVELA" },
+    "aegivelaRevision": { "type": "string", "minLength": 1 },
+    "consumerRevision": { "type": "string", "minLength": 1 },
+    "trustProfileRef": { "type": "string", "minLength": 1 },
+    "environment": { "type": "string", "minLength": 1 },
+    "executedAt": { "type": "string", "format": "date-time" },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/case_result" }
+    }
+  },
+  "$defs": {
+    "case_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "category", "outcome", "observedResult", "evidenceRefs", "limitations"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "category": {
+          "type": "string",
+          "enum": [
+            "authorization",
+            "trust",
+            "validity",
+            "budget",
+            "idempotency",
+            "persistence",
+            "recovery",
+            "revocation"
+          ]
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "admit",
+            "reject",
+            "quarantine",
+            "at-most-one-admit",
+            "no-duplicate-effect",
+            "no-new-authority"
+          ]
+        },
+        "observedResult": { "type": "string", "minLength": 1 },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        },
+        "limitations": { "type": "string" }
+      }
+    }
+  }
+}

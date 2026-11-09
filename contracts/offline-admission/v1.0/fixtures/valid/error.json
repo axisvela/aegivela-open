@@ -1,0 +1,6 @@
+{
+  "apiVersion": "aegivela.io/offline-admission/v1.0",
+  "errorCode": "authorization_denied",
+  "reasonCode": "offline_grant_budget_exhausted",
+  "message": "the reserved offline budget is exhausted"
+}

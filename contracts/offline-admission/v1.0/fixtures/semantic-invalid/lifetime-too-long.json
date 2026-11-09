@@ -1,0 +1,43 @@
+{
+  "apiVersion": "aegivela.io/offline-admission/v1.0",
+  "offlineGrantId": "0192f0f2-7d6f-7c2a-9d1e-2b6f0f7a9c31",
+  "purpose": "offline-admission",
+  "issuer": "https://aegivela.example",
+  "issuedAt": "2026-11-09T10:00:00Z",
+  "parentGrantRef": "0192f0f2-7d6f-7c2a-9d1e-2b6f0f7a9c32",
+  "parentGrantDigest": "0cd4455440ee8abf71778b62ed7166b91f3c2ed0bbc763a64cd69617aac7059c",
+  "namespace": "akrovela-wh3",
+  "principal": {"actorRef": "service:akrovela-coordinator"},
+  "audience": "akrovela-satellite-wh3-01",
+  "action": "robot:navigate",
+  "resourceRef": {"kind": "robot", "id": "tb4-01", "version": "v1"},
+  "structuredResourceDigest": "0cd4455440ee8abf71778b62ed7166b91f3c2ed0bbc763a64cd69617aac7059c",
+  "taskBinding": "task:patrol-17",
+  "scope": ["robotics:navigate"],
+  "device": {"deviceRef": "akrovela-node-wh3-01", "deviceKeyId": "device-key-1", "sourceEpoch": 7},
+  "operations": {
+    "allowlist": ["ros2.nav2.navigate_to_pose@1"],
+    "targetRefs": ["robot:tb4-01"],
+    "mapRefs": ["map:wh3/aisle-a"],
+    "frameRefs": ["map"]
+  },
+  "budget": {
+    "maxOperations": 5,
+    "totalDurationMs": 600000,
+    "totalGoalDistanceMm": 200000,
+    "totalPathLengthMm": 300000,
+    "maxSpeedMmPerS": 450,
+    "maxPayloadBytes": 16384
+  },
+  "submitter": {"submitterRef": "workload:akrovela-satellite", "proofProfile": "device-local-v1", "proofProfileVersion": "1"},
+  "validity": {
+    "notBefore": "2026-11-09T10:00:00Z",
+    "expiresAt": "2026-11-09T10:20:00Z",
+    "clockDomain": "authority-utc",
+    "maxClockSkewMs": 5000
+  },
+  "revocation": {"policy": "connectedOnly", "revocationRef": "revocation:parent-1"},
+  "trust": {"trustProfileRef": "trust:device-local-v1", "trustProfileVersion": "1"},
+  "offlineDelegation": false,
+  "evidenceRefs": ["evidence:offline-grant/1"]
+}

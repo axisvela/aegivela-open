@@ -1,0 +1,122 @@
+openapi: 3.1.0
+info:
+  title: AEGIVELA Offline Admission (DRAFT - NOT PUBLISHED)
+  version: v1.0-draft
+  description: >
+    Local draft only. The paths below are proposals, not published or
+    implemented endpoints. The machine schema is authoritative for this draft.
+paths:
+  /v1/offline-admissions/issue:
+    post:
+      operationId: issueOfflineAdmission
+      summary: Reserve online authority for one device-bound offline allocation
+      description: >
+        Draft proposal. Requires a verified parent execution grant and online
+        reservation. No runtime implementation exists.
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './offline-admission.schema.json#/$defs/issue_request'
+      responses:
+        '200':
+          description: Issued offline allocation
+          content:
+            application/json:
+              schema:
+                $ref: './offline-admission.schema.json#/$defs/issue_response'
+        '400':
+          description: invalid_offline_admission_request
+          content:
+            application/json:
+              schema:
+                $ref: './offline-admission.schema.json#/$defs/error'
+        '401':
+          description: unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: './offline-admission.schema.json#/$defs/error'
+        '403':
+          description: authorization_denied
+          content:
+            application/json:
+              schema:
+                $ref: './offline-admission.schema.json#/$defs/error'
+        '503':
+          description: revocation_unavailable
+          content:
+            application/json:
+              schema:
+                $ref: './offline-admission.schema.json#/$defs/error'
+  /v1/offline-admissions/verify:
+    post:
+      operationId: verifyOfflineAdmission
+      summary: Verify a signed offline allocation against expected bindings
+      parameters:
+        - name: X-AEGIVELA-PEP
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './offline-admission.schema.json#/$defs/verify_request'
+      responses:
+        '200':
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                $ref: './offline-admission.schema.json#/$defs/verify_response'
+        '400':
+          description: invalid_offline_admission_request
+          content:
+            application/json:
+              schema:
+                $ref: './offline-admission.schema.json#/$defs/error'
+        '401':
+          description: unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: './offline-admission.schema.json#/$defs/error'
+        '403':
+          description: authorization_denied
+          content:
+            application/json:
+              schema:
+                $ref: './offline-admission.schema.json#/$defs/error'
+        '503':
+          description: revocation_unavailable
+          content:
+            application/json:
+              schema:
+                $ref: './offline-admission.schema.json#/$defs/error'
+  /v1/offline-admissions/jwks:
+    get:
+      operationId: getOfflineAdmissionJWKS
+      summary: Publish offline-admission verification keys
+      description: >
+        Draft proposal. Key domain separation from ordinary execution grants is
+        still under review; do not assume grant keys are reusable.
+      responses:
+        '200':
+          description: Public JWKS
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true

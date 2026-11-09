@@ -1,0 +1,173 @@
+// DRAFT - NOT PUBLISHED. Local machine-contract draft for bounded offline
+// admission. Do not treat this file as an enabled wire contract.
+syntax = "proto3";
+
+package aegivela.offlineadmission.v1_0;
+
+option go_package = "github.com/axisvela/aegivela/backend/v3/internal/offlineadmissioncontract/pb;offlineadmissioncontractpb";
+
+enum RevocationPolicy {
+  REVOCATION_POLICY_UNSPECIFIED = 0;
+  CONNECTED_ONLY = 1;
+  BOUNDED_DISCONNECTED = 2;
+}
+
+message Scope {
+  repeated string values = 1;
+}
+
+message ResourceRef {
+  string kind = 1;
+  string id = 2;
+  string version = 3;
+}
+
+message Principal {
+  string namespace = 1;
+  string subjectRef = 2;
+  string actorRef = 3;
+  string clientId = 4;
+  string workloadRef = 5;
+  string agentId = 6;
+  string agentClass = 7;
+  string masterId = 8;
+  string organizationAuthorityRoot = 9;
+  string attestationRef = 10;
+  string authorityBinding = 11;
+  int64 agentEpoch = 12;
+  int64 identityEpoch = 13;
+  string instanceId = 14;
+}
+
+message DeviceBinding {
+  string deviceRef = 1;
+  string deviceKeyId = 2;
+  int64 sourceEpoch = 3;
+  string workspaceRef = 4;
+  string siteRef = 5;
+}
+
+message OperationConstraints {
+  repeated string allowlist = 1;
+  repeated string targetRefs = 2;
+  repeated string mapRefs = 3;
+  repeated string frameRefs = 4;
+}
+
+message Budget {
+  int64 maxOperations = 1;
+  int64 totalDurationMs = 2;
+  int64 totalGoalDistanceMm = 3;
+  int64 totalPathLengthMm = 4;
+  int64 maxSpeedMmPerS = 5;
+  int64 maxPayloadBytes = 6;
+}
+
+message Submitter {
+  string submitterRef = 1;
+  string proofProfile = 2;
+  string proofProfileVersion = 3;
+}
+
+message Validity {
+  string notBefore = 1;
+  string expiresAt = 2;
+  string clockDomain = 3;
+  int64 maxClockSkewMs = 4;
+}
+
+message Revocation {
+  RevocationPolicy policy = 1;
+  string revocationRef = 2;
+  int64 maxOfflineStalenessMs = 3;
+}
+
+message Trust {
+  string trustProfileRef = 1;
+  string trustProfileVersion = 2;
+}
+
+message OfflineArtifact {
+  string apiVersion = 1;
+  string offlineGrantId = 2;
+  string purpose = 3;
+  string issuer = 4;
+  string issuedAt = 5;
+  string parentGrantRef = 6;
+  string parentGrantDigest = 7;
+  string namespace = 8;
+  Principal principal = 9;
+  string audience = 10;
+  string action = 11;
+  ResourceRef resourceRef = 12;
+  string structuredResourceDigest = 13;
+  string taskBinding = 14;
+  Scope scope = 15;
+  DeviceBinding device = 16;
+  OperationConstraints operations = 17;
+  Budget budget = 18;
+  Submitter submitter = 19;
+  Validity validity = 20;
+  Revocation revocation = 21;
+  Trust trust = 22;
+  bool offlineDelegation = 23;
+  repeated string evidenceRefs = 24;
+}
+
+message IssueRequest {
+  string apiVersion = 1;
+  string signedParentGrant = 2;
+  Scope requestedScope = 3;
+  DeviceBinding device = 4;
+  OperationConstraints operations = 5;
+  Budget requestedBudget = 6;
+  Submitter submitter = 7;
+  Revocation revocation = 8;
+  string idempotencyKey = 9;
+  string traceId = 10;
+}
+
+message IssueResponse {
+  string apiVersion = 1;
+  string offlineGrantId = 2;
+  string signedOfflineGrant = 3;
+  string parentGrantRef = 4;
+  string audience = 5;
+  string expiresAt = 6;
+  Budget budget = 7;
+  repeated string evidenceRefs = 8;
+}
+
+message VerifyExpectation {
+  string audience = 1;
+  string deviceRef = 2;
+  int64 sourceEpoch = 3;
+  string operationType = 4;
+}
+
+message VerifyRequest {
+  string apiVersion = 1;
+  string signedOfflineGrant = 2;
+  VerifyExpectation expected = 3;
+  string traceId = 4;
+}
+
+message Error {
+  string apiVersion = 1;
+  string errorCode = 2;
+  string reasonCode = 3;
+  string message = 4;
+}
+
+message VerifyResponse {
+  string apiVersion = 1;
+  bool valid = 2;
+  string offlineGrantId = 3;
+  string expiresAt = 4;
+  bool revoked = 5;
+}
+
+service OfflineAdmissionService {
+  rpc IssueOfflineAdmission(IssueRequest) returns (IssueResponse);
+  rpc VerifyOfflineAdmission(VerifyRequest) returns (VerifyResponse);
+}

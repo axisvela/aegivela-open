@@ -1,0 +1,13 @@
+{
+  "keys": [
+    {
+      "kty": "OKP",
+      "crv": "Ed25519",
+      "kid": "offline-key-1",
+      "use": "sig",
+      "alg": "EdDSA",
+      "purpose": "offline-admission",
+      "x": "EcsS_4dY2wKkZy-DX_2o-vcusF--GyrSTarpQAlNMFw"
+    }
+  ]
+}

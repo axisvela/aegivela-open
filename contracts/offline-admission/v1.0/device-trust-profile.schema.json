@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/offline-admission/v1.0/device-trust-profile.schema.json",
+  "title": "Offline Admission Device Trust Profile (DRAFT - NOT PUBLISHED)",
+  "description": "Structural requirements for a named device trust profile. Schema validity is not hardware proof; an identity/device owner must verify the mechanism and failure behavior.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profileRef",
+    "profileVersion",
+    "deviceClass",
+    "keyCustody",
+    "sourceEpochSource",
+    "singleConsumer",
+    "rollbackResistance",
+    "cloneResistance",
+    "enforceableBounds",
+    "rejectWhenUnproven",
+    "evidenceRefs",
+    "approver",
+    "approvedAt"
+  ],
+  "properties": {
+    "profileRef": { "type": "string", "minLength": 1 },
+    "profileVersion": { "type": "string", "minLength": 1 },
+    "deviceClass": { "type": "string", "minLength": 1 },
+    "keyCustody": { "type": "string", "minLength": 1 },
+    "sourceEpochSource": { "type": "string", "minLength": 1 },
+    "singleConsumer": { "type": "string", "minLength": 1 },
+    "rollbackResistance": { "type": "string", "minLength": 1 },
+    "cloneResistance": { "type": "string", "minLength": 1 },
+    "enforceableBounds": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["clock", "key", "budget", "epoch", "operation", "payload"]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "rejectWhenUnproven": { "const": true },
+    "evidenceRefs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1
+    },
+    "approver": { "type": "string", "minLength": 1 },
+    "approvedAt": { "type": "string", "format": "date-time" }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "status": "DRAFT - NOT PUBLISHED",
+  "seedDerivation": "SHA-256('aegivela-offline-admission-test-vector-v1')",
+  "note": "Publicly derivable non-production test key; never use for real authority.",
+  "publicKeyJwk": {
+    "crv": "Ed25519",
+    "x": "EcsS_4dY2wKkZy-DX_2o-vcusF--GyrSTarpQAlNMFw",
+    "kty": "OKP"
+  },
+  "signature": "tidZ_2WTsNPnsx0IzEiEqDadTW8l2yZ2dohahOLCtvF0MDTAJm3nXjPtHRhyVcmT9PTCkeNJ_lpDnx7b1tubDw",
+  "signingInputSha256": "2f646b115fec4a02f2ac98a8167c1bace987e51f77729d0413b4dc53d7473e31"
+}

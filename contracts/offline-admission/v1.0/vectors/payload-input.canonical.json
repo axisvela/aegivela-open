@@ -1,0 +1,1 @@
+{"operationType":"ros2.nav2.navigate_to_pose@1","payload":{"frameId":"map","goal":{"xMm":12400,"yMm":-3100,"yawMilliRad":1571}}}
