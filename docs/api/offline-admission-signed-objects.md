@@ -46,6 +46,16 @@ and every binding above; no unsigned field may affect admission.
 Golden bytes, digests and a verification vector are under
 `contracts/offline-admission/v1.0/vectors/`.
 
+### Reservation Attestation
+
+The signed artifact **is** the authenticated committed-reservation evidence.
+`offlineGrantId` identifies the AEGIVELA allocation and the signed budget binds
+its exact limits. AEGIVELA signs only after the reservation transaction commits;
+a signing or delivery failure may strand capacity but cannot produce an artifact
+for an uncommitted allocation. There is no separate reservation-proof field, and
+a consumer must not accept a locally asserted reservation without a valid
+artifact signature. Scope strings are never numeric reservation proof.
+
 ## Offline Trust Bundle
 
 The verifier needs keys before disconnecting, so the bundle itself must be a

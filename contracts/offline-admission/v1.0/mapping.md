@@ -46,6 +46,12 @@ Overflow, unsafe rounding, negatives and unapproved unit conversion reject.
 Resource-owner confirmation of the first-profile vocabulary remains required
 before publication.
 
+The signed artifact is the committed-reservation attestation: `offlineGrantId`
+plus the signed `budget` prove the allocation and its limits. AEGIVELA signs only
+after the reservation commits. No separate reservation-proof field exists, and a
+consumer must reject locally asserted reservations without a valid artifact
+signature.
+
 ## Identity, Scope and Canonicalization (M1/M4/M5/M7)
 
 - AKROVELA `tenant_id` must equal the internal tenant mapped from `namespace`;
@@ -64,9 +70,17 @@ before publication.
 
 - Clock domain `authority-utc`; `maxClockSkewMs` is at most 5000.
 - Lifetime is at most 900 seconds and never exceeds the parent.
-- Default revocation policy is `connectedOnly`; no offline staleness is implied.
-- `boundedDisconnected` requires a positive `maxOfflineStalenessMs` and a reviewed
-  non-resettable freshness anchor. It is not enabled by this draft.
+- Default revocation policy is `connectedOnly`; a consumer must reject it for
+  disconnected admission. There is no offline staleness allowance.
+- `boundedDisconnected` requires a positive `maxOfflineStalenessMs` and a trusted
+  local freshness anchor recording the last authoritative revocation observation.
+  Admission is allowed only while `now - anchor.checkedAt <= maxOfflineStalenessMs`,
+  the anchor is not revoked, the anchor is not from the future beyond the clock
+  skew, and the artifact remains within validity/stop bounds. Missing anchor
+  rejects.
+- An undelivered remote revocation event is not observable offline. The bounded
+  policy limits exposure; reconnection records late facts and never restores
+  revoked authority.
 - Uncertain execution retains its reservation; expiry or reconnect alone does
   not release it.
 
