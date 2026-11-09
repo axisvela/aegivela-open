@@ -2,6 +2,7 @@
   "apiVersion": "aegivela.io/offline-admission/v1.0",
   "signedParentGrant": "eyJhbGciOiJFZERTQSIsImtpZCI6ImdyYW50LWtleS0xIn0.eyJleGFtcGxlIjp0cnVlfQ.c2lnbmF0dXJl",
   "audience": "akrovela-satellite-wh3-01",
+  "taskBinding": "task:patrol-17",
   "requestedScope": ["robotics:navigate"],
   "device": {
     "deviceRef": "akrovela-node-wh3-01",
