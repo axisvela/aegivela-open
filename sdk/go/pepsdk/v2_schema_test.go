@@ -15,7 +15,7 @@ import (
 )
 
 func TestEvaluateV2RequestsConformToPublishedSchema(t *testing.T) {
-	path := filepath.Join("..", "..", "..", "contracts", "policy", "v2.0", "policy-decision.schema.json")
+	path := filepath.Join(repositoryRoot(t), "contracts", "policy", "v2.0", "policy-decision.schema.json")
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
