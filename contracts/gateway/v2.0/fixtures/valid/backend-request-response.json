@@ -1,0 +1,15 @@
+{
+  "outcome": "allow",
+  "offline_eligible": true,
+  "apiVersion": "aegivela.io/v2.0",
+  "decisionId": "decision-backend-001",
+  "policyVersion": "policy-v1",
+  "expiresAt": "2099-01-01T01:00:00Z",
+  "ttlSeconds": 60,
+  "evidenceRefs": [
+    "evidence://gateway/backend-001"
+  ],
+  "allowedTargetPaths": [
+    "/v1/results"
+  ]
+}

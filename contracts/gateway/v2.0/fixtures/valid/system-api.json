@@ -1,0 +1,14 @@
+{
+  "action": "connection:open",
+  "workload_assertion": "eyJhbGciOiJFZERTQSJ9.eyJ3b3JrbG9hZCI6Indvcmtsb2FkLXByb2QifQ.c2lnbmF0dXJlLXN5c3RlbQ",
+  "target_scheme": "https",
+  "audience": "server-gateway",
+  "apiVersion": "aegivela.io/v2.0",
+  "authorizationMode": "system_api",
+  "targetHost": "api.example.com",
+  "targetPath": "/v1/data",
+  "requestedScope": [
+    "data.read"
+  ],
+  "traceId": "trace-system-001"
+}

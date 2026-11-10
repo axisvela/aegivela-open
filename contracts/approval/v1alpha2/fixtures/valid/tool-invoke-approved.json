@@ -1,0 +1,18 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha2",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.signature",
+    "action": "tool:invoke",
+    "resource": { "kind": "moduregis:capability-version", "reference": "cap-123" },
+    "scope": ["tool:invoke"],
+    "expiry": "2099-01-01T01:00:00Z",
+    "reason": "Tool invocation approved",
+    "policy_version": "policy-v3",
+    "trace_id": "trace-approval-tool-1"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha2",
+    "approval_id": "approval-tool-1",
+    "approval_artifact": "eyJhbGciOiJFZERTQSJ9.eyJqdGkiOiJhcHByb3ZhbC10b29sLTEifQ.c2ln"
+  }
+}

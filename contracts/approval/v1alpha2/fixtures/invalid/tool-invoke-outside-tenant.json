@@ -1,0 +1,14 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha2",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.signature",
+    "action": "tool:invoke",
+    "resource": { "kind": "moduregis:capability-version", "reference": "cap-123" },
+    "scope": ["tool:invoke"],
+    "expiry": "2099-01-01T01:00:00Z",
+    "reason": "Cross-tenant tool invocation",
+    "policy_version": "policy-v3",
+    "tenant_id": "tenant-evil",
+    "trace_id": "trace-approval-tool-2"
+  }
+}

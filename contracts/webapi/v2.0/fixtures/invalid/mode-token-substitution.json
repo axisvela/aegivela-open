@@ -1,0 +1,11 @@
+{
+  "mode": "systemApi",
+  "bearerToken": "eyJhbGciOiJFZERTQSJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.c2lnbmF0dXJlLWV4YW1wbGU",
+  "workloadAssertion": "eyJhbGciOiJFZERTQSJ9.eyJ3b3JrbG9hZCI6Indvcmtsb2FkLXByb2QifQ.c2lnbmF0dXJlLXN5cw",
+  "audience": "research-api",
+  "apiVersion": "aegivela.io/v2.0",
+  "requestedScope": [
+    "datasets.read"
+  ],
+  "traceId": "trace-sys-invalid-001"
+}

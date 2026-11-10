@@ -1,0 +1,14 @@
+{
+  "action": "connection:open",
+  "target_scheme": "https",
+  "audience": "server-gateway",
+  "apiVersion": "aegivela.io/v2.0",
+  "agentId": "twin-agent-1",
+  "agentClass": "twin",
+  "targetHost": "api.example.com",
+  "targetPath": "/v1/data",
+  "requestedScope": [
+    "data.read"
+  ],
+  "traceId": "trace-no-assertion-001"
+}

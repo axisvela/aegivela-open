@@ -1,0 +1,39 @@
+{
+  "mode": "delegatedApi",
+  "bearerToken": "eyJhbGciOiJFZERTQSJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.c2lnbmF0dXJlLWRlbGVnYXRl",
+  "workloadAssertion": "eyJhbGciOiJFZERTQSJ9.eyJ3b3JrbG9hZCI6Indvcmtsb2FkLXByb2QifQ.c2lnbmF0dXJlLXdvcmtsb2Fk",
+  "audience": "research-api",
+  "route": {
+    "path": "/api/v1/datasets",
+    "method": "GET",
+    "audience": "research-api",
+    "apiVersion": "aegivela.io/v2.0",
+    "traceId": "trace-delegated-001"
+  },
+  "apiVersion": "aegivela.io/v1alpha3",
+  "parentExecutionGrant": {
+    "principal": {
+      "actorRef": "user-ada",
+      "subjectRef": "user-ada",
+      "clientId": "research-client",
+      "workloadRef": "workload-research-prod"
+    },
+    "scope": [
+      "datasets.read",
+      "datasets.list"
+    ],
+    "audience": "research-api",
+    "apiVersion": "aegivela.io/v2.0",
+    "grantId": "grant-parent-delegated-001",
+    "expiresAt": "2099-01-03T02:00:00Z",
+    "issuedAt": "2026-07-24T00:00:00Z",
+    "taskBinding": "task-delegated-001",
+    "evidenceRefs": [
+      "evidence://tenant-acme/grant-parent-delegated-001"
+    ]
+  },
+  "requestedScope": [
+    "datasets.read"
+  ],
+  "traceId": "trace-delegated-001"
+}

@@ -1,0 +1,14 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha2",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.signature",
+    "action": "capability:publish",
+    "resource": { "kind": "moduregis:capability-version", "reference": "cap-123" },
+    "scope": ["capability:publish"],
+    "expiry": "2099-01-01T01:00:00Z",
+    "reason": "Approved via manager review",
+    "policy_version": "policy-v3",
+    "structured_resource_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "trace_id": "trace-approval-125"
+  }
+}

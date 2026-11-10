@@ -1,0 +1,16 @@
+{
+  "outcome": "allow",
+  "offline_eligible": false,
+  "apiVersion": "aegivela.io/v2.0",
+  "decisionId": "decision-mitm-001",
+  "policyVersion": "policy-v1",
+  "expiresAt": "2099-01-01T01:00:00Z",
+  "ttlSeconds": 60,
+  "evidenceRefs": [
+    "evidence://gateway/mitm-001"
+  ],
+  "mitmRequired": true,
+  "mitmScope": [
+    "data.read"
+  ]
+}

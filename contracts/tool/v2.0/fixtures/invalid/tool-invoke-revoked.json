@@ -1,0 +1,20 @@
+{
+  "request": {
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.signature",
+    "action": "tool:invoke",
+    "resource": {
+      "kind": "moduregis:capability",
+      "reference": "cap-123"
+    },
+    "scope": [
+      "tool:invoke"
+    ],
+    "execution_id": "exec-tool-10",
+    "revocation_hint": "revoked",
+    "apiVersion": "aegivela.io/v2.0",
+    "toolId": "tool-calculator",
+    "skillHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "implementationDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "traceId": "trace-tool-10"
+  }
+}

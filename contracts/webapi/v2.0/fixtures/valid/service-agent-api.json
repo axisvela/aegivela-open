@@ -1,0 +1,17 @@
+{
+  "mode": "serviceAgentApi",
+  "workloadAssertion": "eyJhbGciOiJFZERTQSJ9.eyJ3b3JrbG9hZCI6Indvcmtsb2FkLXByb2QifQ.c2lnbmF0dXJlLXNlcnZpY2U",
+  "audience": "research-api",
+  "route": {
+    "path": "/api/v1/datasets",
+    "method": "GET",
+    "audience": "research-api",
+    "apiVersion": "aegivela.io/v2.0",
+    "traceId": "trace-service-agent-001"
+  },
+  "apiVersion": "aegivela.io/v2.0",
+  "requestedScope": [
+    "datasets.read"
+  ],
+  "traceId": "trace-service-agent-001"
+}

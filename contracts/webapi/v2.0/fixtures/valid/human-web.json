@@ -1,0 +1,17 @@
+{
+  "mode": "humanWeb",
+  "bearerToken": "eyJhbGciOiJFZERTQSJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.c2lnbmF0dXJlLWV4YW1wbGU",
+  "audience": "research-api",
+  "route": {
+    "path": "/api/v1/datasets",
+    "method": "GET",
+    "audience": "research-api",
+    "apiVersion": "aegivela.io/v2.0",
+    "traceId": "trace-hw-001"
+  },
+  "apiVersion": "aegivela.io/v2.0",
+  "requestedScope": [
+    "datasets.read"
+  ],
+  "traceId": "trace-hw-001"
+}

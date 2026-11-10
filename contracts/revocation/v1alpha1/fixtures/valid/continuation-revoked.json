@@ -1,0 +1,17 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "class": "continuation",
+    "selectors": [
+      {"kind": "grant_jti", "value": "223e4567-e89b-42d3-a456-426614174000"}
+    ],
+    "trace_id": "trace-check-2"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "class": "continuation",
+    "outcome": "revoked",
+    "checked_at": "2026-07-25T00:00:05Z",
+    "trace_id": "trace-check-2"
+  }
+}

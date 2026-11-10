@@ -1,0 +1,31 @@
+{
+  "request": {
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLWFkYSJ9.signature",
+    "action": "tool:invoke",
+    "resource": {
+      "kind": "moduregis:capability",
+      "reference": "cap-123"
+    },
+    "scope": [
+      "tool:invoke"
+    ],
+    "execution_id": "exec-tool-1",
+    "apiVersion": "aegivela.io/v2.0",
+    "toolId": "tool-calculator",
+    "skillHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "implementationDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "traceId": "trace-tool-1"
+  },
+  "response": {
+    "outcome": "allow",
+    "actor_id": "actor-1",
+    "grant_token": "grant-token",
+    "apiVersion": "aegivela.io/v2.0",
+    "decisionId": "d-tool-1",
+    "policyVersion": "p-1",
+    "toolId": "tool-calculator",
+    "evidenceRefs": [
+      "evidence://e/1"
+    ]
+  }
+}

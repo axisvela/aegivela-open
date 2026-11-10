@@ -1,0 +1,13 @@
+{
+  "request": {
+    "class": "pre_dispatch",
+    "selectors": [
+      {
+        "kind": "grantJti",
+        "value": "123e4567-e89b-42d3-a456-426614174000"
+      }
+    ],
+    "apiVersion": "aegivela.io/v2.0",
+    "traceId": "trace-check-4"
+  }
+}

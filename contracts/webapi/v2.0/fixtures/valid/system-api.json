@@ -1,0 +1,17 @@
+{
+  "mode": "systemApi",
+  "workloadAssertion": "eyJhbGciOiJFZERTQSJ9.eyJ3b3JrbG9hZCI6Indvcmtsb2FkLXByb2QifQ.c2lnbmF0dXJlLXN5cw",
+  "audience": "research-api",
+  "route": {
+    "path": "/api/v1/datasets",
+    "method": "GET",
+    "audience": "research-api",
+    "apiVersion": "aegivela.io/v2.0",
+    "traceId": "trace-sys-001"
+  },
+  "apiVersion": "aegivela.io/v2.0",
+  "requestedScope": [
+    "datasets.read"
+  ],
+  "traceId": "trace-sys-001"
+}
