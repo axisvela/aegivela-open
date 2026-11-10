@@ -56,7 +56,7 @@ aegivela-ee/           Enterprise extensions (private; licensed)
 | --- | --- |
 | `docs/` | Selected architecture/contract documents plus all `docs/api/*`; ADRs, `superpowers/` and internal intake are excluded |
 | `contracts/` | Every listed contract domain; directories named `fixtures`/`compatibility` are excluded, except the explicit `contracts/offline-admission/v1.0/fixtures` include |
-| `sdk/go/pepsdk/` | `backend/pepsdk` with `*_test.go` removed; includes the `ossverify` command |
+| `sdk/go/pepsdk/` | `backend/pepsdk`; public-safe tests are published, while core-internal or path-dependent tests (`integration_test.go`, `contract_test.go`, `ossverify` tests, `moduregiscontract` tests) are excluded; includes the `ossverify` command |
 | Excluded | `backend/` implementation, deployment configuration, `paper/` and internal workflow material |
 
 From a clean `aegivela-open` checkout, verify the published offline-admission

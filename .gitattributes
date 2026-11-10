@@ -1,0 +1,2 @@
+# Keep the SDK source byte-stable across Windows checkouts.
+sdk/go/** text eol=lf

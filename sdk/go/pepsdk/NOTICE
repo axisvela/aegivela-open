@@ -1,7 +1,7 @@
 AEGIVELA PEP SDK
 
-The Go runtime-enforcement SDK under backend/pepsdk is distributed as part of
-the public aegivela-open repository under the Apache License, Version 2.0.
+The Go runtime-enforcement SDK in this package is distributed as part of the
+public aegivela-open repository under the Apache License, Version 2.0.
 
 The aegivela core repository itself remains licensed under the GNU Affero
 General Public License v3.0.
