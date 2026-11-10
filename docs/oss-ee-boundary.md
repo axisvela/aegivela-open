@@ -48,6 +48,27 @@ aegivela-ee/           Enterprise extensions (private; licensed)
 - **`aegivela`** is the core Go implementation. All OSS edition features are implemented here.
 - **`aegivela-ee`** contains EE-specific packages: SAML bridge, SCIM enrichment, SPIFFE SVID verifier, CAEP signal ingestion adapters, SIEM export formats, policy simulation, key rotation automation, and tenant administration. EE code imports OSS packages from `aegivela` and adds enterprise extension points.
 
+## Distribution Selection
+
+`scripts/sync-oss.ps1` publishes the OSS surfaces from the core repository:
+
+| Surface | Rule |
+| --- | --- |
+| `docs/` | Selected architecture/contract documents plus all `docs/api/*`; ADRs, `superpowers/` and internal intake are excluded |
+| `contracts/` | Every listed contract domain; directories named `fixtures`/`compatibility` are excluded, except the explicit `contracts/offline-admission/v1.0/fixtures` include |
+| `sdk/go/pepsdk/` | `backend/pepsdk` with `*_test.go` removed; includes the `ossverify` command |
+| Excluded | `backend/` implementation, deployment configuration, `paper/` and internal workflow material |
+
+From a clean `aegivela-open` checkout, verify the published offline-admission
+contract:
+
+```bash
+go run ./sdk/go/pepsdk/ossverify -contracts contracts/offline-admission/v1.0
+```
+
+A non-zero exit means at least one check failed; the command prints one
+`PASS`/`FAIL` line per check.
+
 ## Horizon
 
 The current `aegivela` repository is private. An open-source release of the OSS core is under evaluation. The OSS/EE boundary documented here will govern what ships in each distribution when the decision is made.
