@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/axisvela/aegivela-open/sdk/go/v3/internal/httpx"
+	"github.com/axisvela/aegivela-open/sdk/go/v3/httpx"
 	"github.com/axisvela/aegivela-open/sdk/go/v3/pepsdk"
 )
 
