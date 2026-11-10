@@ -1,7 +1,7 @@
-// Package httpx is the module-internal HTTP transport shared by the AEGIVELA
-// SDK packages (pepsdk, identitysdk, grantsdk, attestationsdk). It lives under
-// internal/ so it is importable by the module's packages but not by external
-// consumers — the transport is not part of the public SDK surface.
+// Package httpx is the shared HTTP transport used by the AEGIVELA SDK packages
+// (pepsdk, identitysdk, grantsdk, attestationsdk, governancesdk). It is a
+// public SDK package so sibling modules, including the AEGIVELA core module,
+// reuse the same transport. It is not itself an authorization API.
 package httpx
 
 import (

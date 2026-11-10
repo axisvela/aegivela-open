@@ -1,0 +1,21 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEifQ.sig",
+    "action": "capability:invoke",
+    "resource": { "kind": "moduregis:capability-version", "reference": "cap-123@2.0.0" },
+    "scope": ["capability:invoke"],
+    "execution_id": "exec-001",
+    "trace_id": "trace-invoke-1"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "decision_id": "dec-invoke-1",
+    "outcome": "allow",
+    "policy_version": "moduregis-invoke-v1",
+    "tenant_id": "tenant-acme",
+    "actor_id": "user-1",
+    "evidence_refs": ["aegivela://evidence/dec-invoke-1"],
+    "grant_token": "eyJhbGciOiJFZERTQSJ9.eyJhdWQiOiJtb2R1cmVnaXM6cHJheG92ZWxhLmV4ZWN1dGlvbiJ9.c2ln"
+  }
+}

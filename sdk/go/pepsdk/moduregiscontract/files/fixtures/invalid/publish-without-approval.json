@@ -1,0 +1,10 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEifQ.sig",
+    "action": "capability:publish",
+    "resource": { "kind": "moduregis:capability-version", "reference": "cap-123@2.0.0" },
+    "scope": ["capability:publish"],
+    "trace_id": "trace-publish-2"
+  }
+}

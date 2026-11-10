@@ -1,0 +1,10 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEifQ.sig",
+    "action": "adapter:activate",
+    "resource": { "kind": "moduregis:adapter", "reference": "praxovela.execution" },
+    "adapter_id": "praxovela.execution",
+    "trace_id": "trace-activate-2"
+  }
+}

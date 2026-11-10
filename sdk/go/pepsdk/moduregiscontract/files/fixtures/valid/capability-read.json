@@ -1,0 +1,18 @@
+{
+  "request": {
+    "api_version": "aegivela.io/v1alpha1",
+    "bearer_token": "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEifQ.sig",
+    "action": "capability:read",
+    "resource": { "kind": "moduregis:capability", "reference": "cap-123" },
+    "trace_id": "trace-read-1"
+  },
+  "response": {
+    "api_version": "aegivela.io/v1alpha1",
+    "decision_id": "dec-read-1",
+    "outcome": "allow",
+    "policy_version": "moduregis-catalog-v1",
+    "tenant_id": "tenant-acme",
+    "actor_id": "user-1",
+    "evidence_refs": ["aegivela://evidence/dec-read-1"]
+  }
+}
