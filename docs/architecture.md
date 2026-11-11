@@ -41,6 +41,16 @@ The PDP evaluates a versioned action and resource contract. `POST /v1/policy/dec
 
 Policy evaluation is fail-closed. An unavailable issuer, unknown policy version, expired credential, missing tenant binding, or revocation-check failure must not be interpreted as allow.
 
+The production v2 evaluator now signs one PDP result using trusted principal
+metadata: credential expiry is retained by resolution, not accepted from JSON
+or synthesized from requested TTL. Human and workload proof lifetimes intersect;
+agent context may further narrow the workload bound. The signed artifact binds
+the real organization root or human master, dual epochs, instance/attestation,
+resource, scope and time. Raw evaluation does not itself confer execution rights.
+See [v2 artifact semantics](../contracts/decision/v2.0/signed-artifact.md) and
+[authorization modes](authorization-modes.md) for verification and acceptance
+limits; in particular, grant/PEP migration and deployed freshness remain separate.
+
 Workload bindings are tenant-scoped, append-only records that bind a client and workload to an organization authority root. A workload assertion is a separately signed, audience-bound, five-minute proof of an active binding; it is verified with its own JWKS and subject to binding and JTI revocation. A forged or invalid trusted-principal source is unauthenticated (`401`); an unavailable identity, binding, policy, or revocation dependency is unavailable (`503`) and must deny.
 
 Policy Decision v1alpha1 is immutable and accepts only legacy resource kind/reference pairs. v1alpha2 is a separate, explicitly routed contract that can carry legacy resources during migration or an all-or-none descriptor-bound structured resource. For structured resources, the PDP validates the registered descriptor and returns a canonical `structured_resource_digest` bound to the resource identity and validated attributes. A partial resource, unknown descriptor, invalid attributes, or unavailable descriptor validation fails closed.

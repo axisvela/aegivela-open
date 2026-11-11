@@ -68,6 +68,15 @@ Structural validation is available at
 `contracts/offline-admission/v1.0/device-trust-profile.schema.json`. Passing it
 means the profile is complete, not that the mechanism works.
 
+## Validation Tooling
+
+- Template: [`device-trust-profile.template.json`](../operations/offline-admission/device-trust-profile.template.json).
+- CLI: the Core OSS `aegivela-profile-check` tool validates a file with
+  `-file <path>`. It exits non-zero for invalid, duplicate, unproven or
+  unapproved entries and prints the accepted keys.
+- The file source still loads at process start; the CLI checks the file before
+  deployment, it does not reload a running process.
+
 ## Current State
 
 No hardware profile has been independently accepted. The reference verifier

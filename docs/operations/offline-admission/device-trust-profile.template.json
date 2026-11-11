@@ -1,0 +1,17 @@
+[
+  {
+    "profileRef": "<immutable-profile-ref>",
+    "profileVersion": "<version>",
+    "deviceClass": "<exact-supported-hardware-or-os-class>",
+    "keyCustody": "<where the key lives; what can export or copy it>",
+    "sourceEpochSource": "<how the durable boot epoch is read; why restart preserves it>",
+    "singleConsumer": "<what prevents two consumers using one allocation>",
+    "rollbackResistance": "<concrete journal/state rollback mechanism>",
+    "cloneResistance": "<concrete device/key cloning mechanism>",
+    "enforceableBounds": ["clock", "key", "budget", "epoch"],
+    "rejectWhenUnproven": true,
+    "evidenceRefs": ["evidence://device/profile/<profileRef>"],
+    "approver": "<named identity-device-owner>",
+    "approvedAt": "2026-01-01T00:00:00Z"
+  }
+]

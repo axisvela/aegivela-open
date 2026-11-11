@@ -13,8 +13,8 @@ cryptographic signatures.
 | Object | Signer | Key domain | Status |
 | --- | --- | --- | --- |
 | Parent execution grant | AEGIVELA | Existing execution-grant Ed25519 domain | Existing; F4b verifies and references it |
-| Offline-admission artifact | AEGIVELA | Purpose-separated `offline-admission` Ed25519 domain | Implemented in the unwired reference |
-| Offline trust bundle | Trust-root operator | Purpose-separated offline trust-signing domain | Implemented in the unwired reference |
+| Offline-admission artifact | AEGIVELA | Purpose-separated `offline-admission` Ed25519 domain | Implemented in the reference (default-off mount) |
+| Offline trust bundle | Trust-root operator | Purpose-separated offline trust-signing domain | Implemented in the reference (default-off mount) |
 | Device/local submitter proof | Device or local workload | Device-local credential/key | Consumer-owned; AEGIVELA only defines the binding |
 | Consumer receipt / consumption fact | AKROVELA satellite (optional) | AKROVELA-owned key | Consumer-owned; not part of this contract |
 | Approval artifact | AEGIVELA | Existing approval Ed25519 domain | Existing; referenced through the parent lineage |

@@ -8,11 +8,20 @@ Identity / authentication = EIDOVELA
 Authorization / delegation = AEGIVELA
 ```
 
-AEGIVELA is the **Agent Authorization & Delegation Fabric**. It does not own an
-Agent registry, an Agent lifecycle, an authentication authority, a password
-store, MFA, a directory, or browser sessions. It consumes a verified principal
-and owns authorization, delegation, approval, execution grants, the PEP seam,
-authorization revocation and audit evidence.
+AEGIVELA is the **Agent Authorization & Delegation Fabric**. In the family
+integration boundary it consumes a verified principal, rather than owning
+Agent registry records, Agent lifecycle or the Agent authentication authority.
+It owns authorization, delegation, approval, execution grants, the PEP seam,
+authorization revocation and audit evidence. Enterprise IdPs retain human
+authentication, passwords, MFA and directory ownership.
+
+This is the target responsibility split, not a claim that all identity code
+has been removed. The retained default `builtin` mode and local registration
+handlers are described below. EE console sessions are local application
+sessions, not Agent identity credentials or a family-wide browser session center.
+Cross-product conclusions are maintained in
+[Cross-Product Authority Boundaries](https://github.com/axisvela/axisvela/blob/main/AUTHORITY-BOUNDARIES.md).
+The [F0 identity-authority design](agent-identity-authority.md) is historical.
 
 ## The identity-source seam
 
@@ -37,9 +46,11 @@ A verified context carries both registry epochs:
 - `agent_epoch` — the NOMIVELA Agent business lifecycle.
 - `identity_epoch` — the NOMIVELA Agent ID security lifecycle.
 
-AEGIVELA writes no lifecycle. It binds both epochs to decisions, delegation
-contracts and execution grants. A change in either epoch invalidates or forces a
-recheck of the affected artifacts.
+For externally sourced Agent identity, AEGIVELA consumes rather than writes
+the NOMIVELA lifecycle. It binds both epochs to decisions, delegation contracts
+and execution grants. A change in either epoch invalidates or forces a recheck
+of the affected artifacts. This does not describe removal of the standalone
+local lifecycle implementation.
 
 A context missing dual state, dual epoch, `attestation_ref` or
 `credential_generation` is rejected (`ErrInvalidContext`).
@@ -60,7 +71,7 @@ equality or caller input:
 | Adapter | Source | Status |
 |---|---|---|
 | `builtin` | Current identity bridge, agent identity and workload identity | Existing behavior; kept as the standalone default |
-| `oidc` | Generic enterprise OIDC/JWKS IdP | Extracted from the identity bridge |
+| OIDC bridge | Generic enterprise OIDC/JWKS IdP | Identity bridge component, not an `AEGIVELA_IDENTITY_SOURCE=oidc` selector value |
 | `eidovela` | EIDOVELA verified agent context and introspection | Implemented: `identitysrc/eidovela` |
 
 ### EIDOVELA adapter
@@ -99,6 +110,18 @@ selected, the agent authorization modes resolve identity, authority binding and
 both registry epochs only from the source; the local agent registry is not
 consulted for them.
 
+This selection is limited to the Agent authorization identity-resolution path.
+The composition root still constructs the local identity service and HTTP
+handlers. It does not disable registration/lifecycle routes, migrate their
+records or prove that no other path can write local identity state. Do not
+configure a second writer for the same NOMIVELA-owned records.
+
+Before claiming deployment convergence, record the selected source, supported
+contract versions, remaining local write paths and their enforcement boundary.
+Verify single-writer behavior, stale-epoch and revocation rejection, and
+unavailable-source fail-closed behavior. Static configuration review or AgentIAM
+fixture ownership alone does not establish those properties.
+
 ## Identity is not authorization
 
 An identity credential proves who is calling and the current identity state; it
@@ -116,7 +139,9 @@ A raw identity token is never accepted as an execution grant.
 This document describes an implementation mapping to the Agent IAM Series Part 3
 `Verified Agent Identity Context` and Part 4 authorization/delegation boundary.
 The `agent-iam-spec` normative text governs on any conflict
-([ADR-0016](adr/0016-agent-iam-spec-conformance-authority.md)). Remaining AEGIVELA
-Part 4 blockers stay tracked in `docs/roadmap.md`: canonical allow lineage in
-token exchange, namespace- and freshness-consistent revocation checks, unified
-lifecycle schema, and evidence rejection-event persistence.
+([ADR-0016](adr/0016-agent-iam-spec-conformance-authority.md)). Canonical allow
+lineage, namespace/freshness-aware revocation, lifecycle schema alignment and
+sanitized evidence persistence are implemented. Current verification limits and
+consumer-owned acceptance remain tracked in [Conformance Status](conformance-status.md)
+and the [roadmap](roadmap.md). In-repo conformance does not establish deployment
+single-writer convergence or certify the identity components' own behavior.

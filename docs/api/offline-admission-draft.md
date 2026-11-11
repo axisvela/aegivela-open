@@ -235,17 +235,19 @@ blocked. The user explicitly permitted this draft while those independent
 decisions remain open. Publishing/enabling the feature needs separate evidence
 and approval, not a status-field edit.
 
-## Local Machine Draft
+## Published Contract
 
-The approved M1-M8 proposals now have a local machine draft at
-`contracts/offline-admission/v1.0`:
+The approved M1-M8 proposals produced the contract at
+`contracts/offline-admission/v1.0`, published as G1 at `aegivela-open`
+`1b101f2`:
 
-- `offline-admission.schema.json` — authoritative structural draft;
-- `offline-admission.openapi.yaml` — proposed paths, not implemented;
+- `offline-admission.schema.json` — authoritative structural schema;
+- `offline-admission.openapi.yaml` — paths implemented behind a default-off mount;
 - `offline-admission.proto` and generated bindings;
 - valid, invalid and semantic-invalid fixtures;
 - `backend/internal/offlineadmissioncontract` tests for fixtures, boundary
   invariants, OpenAPI presence and schema/protobuf field parity.
 
-The directory is not in `scripts/sync-oss.ps1`, is not published, and has no
-runtime issuer or verifier. Its version literal and paths remain draft values.
+The directory is in `scripts/sync-oss.ps1`. A reference issuer/verifier and HTTP
+composition exist, mounted only behind a reviewed default-off gate; deployment
+and offline enablement remain unapproved.

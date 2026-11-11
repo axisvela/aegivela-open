@@ -1,5 +1,24 @@
 # Agent Identity Authority
 
+## Historical Scope Notice (2026-11-06)
+
+This page preserves the F0 identity-authority design and its original stage
+claims. The decision, schema and future flows below are historical, not the
+current family ownership contract or a current release capability inventory.
+Retained standalone identity behavior must not be mistaken for its removal.
+
+Use [Identity Boundary](identity-boundary.md) for the identity-source modes and
+[Cross-Product Authority Boundaries](https://github.com/axisvela/axisvela/blob/main/AUTHORITY-BOUNDARIES.md)
+for family ownership: NOMIVELA owns registry records and lifecycle epochs,
+EIDOVELA owns Agent authentication and identity credentials, and AEGIVELA owns
+authorization and execution grants.
+
+The default `builtin` mode still retains local registry and workload identity
+behavior. Selecting `eidovela` changes identity resolution for Agent
+authorization modes; it does not itself remove local registration handlers,
+migrate records, or establish a single registry writer. Deployment convergence
+requires separate verification. This notice changes no route or default.
+
 ## Decision
 
 AEGIVELA owns an **Agent Identity Authority** and its security-scoped Agent Identity Registry. This is not a second enterprise human IdP and not a product Agent/Capability Registry.
