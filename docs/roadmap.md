@@ -36,8 +36,9 @@ must not be conflated. Source pins, local test evidence, tag discrepancies and
 external acceptance live in [Conformance Status](conformance-status.md).
 
 Historical GA and v1.x release records have moved to
-[Release History](release-history.md). They do not certify the current checkout.
-No synchronized Core/Open release or new tag is asserted by this review.
+[Release History](release-history.md). `v1.2.13` (Core/Open) and `v1.2.5` (EE)
+were released on 2026-11-11; they do not certify consumer deployment or
+enablement.
 
 **Active execution policy:** local CI first, as directed by the user on
 2026-11-09. Core/EE/SDK tests and real PostgreSQL integration are the current
