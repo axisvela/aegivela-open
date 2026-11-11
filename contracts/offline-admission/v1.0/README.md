@@ -23,11 +23,12 @@ publication, not an in-place edit.
 | `fixtures/invalid` | Structurally invalid examples |
 | `fixtures/semantic-invalid` | Schema-valid examples that violate the approved boundary |
 
-Device trust profile management is a separate draft surface under
-`contracts/device-trust-profile/v1.0/`. It mirrors the published
-`device-trust-profile.schema.json` content fields; the management contract test
-enforces required-field and descriptive-validator parity. It does not mutate the
-published v1.0 artifact bytes or import the object schema by `$ref`.
+Device trust profile management is a separate published surface under
+`contracts/device-trust-profile/v1.0/` (Open Core `v1.2.13`). It mirrors the
+published `device-trust-profile.schema.json` content fields; the management
+contract test enforces required-field and descriptive-validator parity. It does
+not mutate the published v1.0 artifact bytes or import the object schema by
+`$ref`.
 
 Fixed strings and canonicalization are documented in
 `docs/api/offline-admission-canonicalization.md`; stable errors are in

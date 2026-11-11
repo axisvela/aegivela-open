@@ -1,0 +1,13 @@
+{
+  "profileRef": "akrovela-device-profile",
+  "profileVersion": "1",
+  "deviceClass": "akrovela-satellite",
+  "keyCustody": "TPM-backed non-exportable key",
+  "sourceEpochSource": "secure-element monotonic boot counter",
+  "singleConsumer": "exclusive local executor lock",
+  "rollbackResistance": "monotonic NV counter checked before admission",
+  "cloneResistance": "device certificate bound to secure element",
+  "enforceableBounds": ["clock", "key", "budget", "epoch"],
+  "rejectWhenUnproven": true,
+  "evidenceRefs": ["evidence:device-profile/1"]
+}

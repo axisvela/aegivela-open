@@ -1,0 +1,118 @@
+openapi: 3.1.0
+info:
+  title: Device Trust Profile Management
+  version: 1.0.0
+  description: |
+    Tenant-scoped management surface for device trust profiles.
+    The internal token and one X-Aegivela-Tenant-ID plus one
+    X-Aegivela-Actor-ID identify the caller. The browser never supplies
+    these authority headers.
+servers:
+  - url: https://aegivela.example
+paths:
+  /v1/device-trust-profiles:
+    get:
+      operationId: listDeviceTrustProfiles
+      summary: List device trust profiles for the tenant
+      parameters:
+        - { name: state, in: query, required: false, schema: { enum: [draft, approved, retired] } }
+        - { name: X-Aegivela-Tenant-ID, in: header, required: true, schema: { type: string } }
+        - { name: X-Aegivela-Actor-ID, in: header, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Profiles
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [profiles]
+                properties:
+                  profiles:
+                    type: array
+                    items: { $ref: "./management.schema.json#/$defs/record" }
+        "401": { description: Unauthenticated }
+        "503": { description: Store unavailable }
+    post:
+      operationId: createDeviceTrustProfile
+      summary: Create a draft profile
+      parameters:
+        - { name: X-Aegivela-Tenant-ID, in: header, required: true, schema: { type: string } }
+        - { name: X-Aegivela-Actor-ID, in: header, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "./management.schema.json#/$defs/createRequest" }
+      responses:
+        "201":
+          description: Draft created
+          content:
+            application/json:
+              schema: { $ref: "./management.schema.json#/$defs/record" }
+        "400": { description: Invalid content }
+        "401": { description: Unauthenticated }
+        "409": { description: Duplicate profile version }
+        "503": { description: Store unavailable }
+  /v1/device-trust-profiles/{profileRef}/{profileVersion}:
+    get:
+      operationId: getDeviceTrustProfile
+      summary: Read one profile record
+      parameters:
+        - { name: profileRef, in: path, required: true, schema: { type: string } }
+        - { name: profileVersion, in: path, required: true, schema: { type: string } }
+        - { name: X-Aegivela-Tenant-ID, in: header, required: true, schema: { type: string } }
+        - { name: X-Aegivela-Actor-ID, in: header, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Record
+          content:
+            application/json:
+              schema: { $ref: "./management.schema.json#/$defs/record" }
+        "401": { description: Unauthenticated }
+        "404": { description: Absent or cross-tenant }
+        "503": { description: Store unavailable }
+  /v1/device-trust-profiles/{profileRef}/{profileVersion}/approve:
+    post:
+      operationId: approveDeviceTrustProfile
+      summary: Approve a draft profile
+      parameters:
+        - { name: profileRef, in: path, required: true, schema: { type: string } }
+        - { name: profileVersion, in: path, required: true, schema: { type: string } }
+        - { name: X-Aegivela-Tenant-ID, in: header, required: true, schema: { type: string } }
+        - { name: X-Aegivela-Actor-ID, in: header, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Approved record
+          content:
+            application/json:
+              schema: { $ref: "./management.schema.json#/$defs/record" }
+        "401": { description: Unauthenticated }
+        "403": { description: Creator cannot approve }
+        "404": { description: Absent or cross-tenant }
+        "409": { description: Not a draft }
+        "503": { description: Store or evidence unavailable }
+  /v1/device-trust-profiles/{profileRef}/{profileVersion}/retire:
+    post:
+      operationId: retireDeviceTrustProfile
+      summary: Retire an approved profile
+      parameters:
+        - { name: profileRef, in: path, required: true, schema: { type: string } }
+        - { name: profileVersion, in: path, required: true, schema: { type: string } }
+        - { name: X-Aegivela-Tenant-ID, in: header, required: true, schema: { type: string } }
+        - { name: X-Aegivela-Actor-ID, in: header, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Retired record
+          content:
+            application/json:
+              schema: { $ref: "./management.schema.json#/$defs/record" }
+        "401": { description: Unauthenticated }
+        "404": { description: Absent or cross-tenant }
+        "409": { description: Not approved }
+        "503": { description: Store or evidence unavailable }
+components:
+  schemas:
+    createRequest: { $ref: "./management.schema.json#/$defs/createRequest" }
+    record: { $ref: "./management.schema.json#/$defs/record" }
+    error: { $ref: "./management.schema.json#/$defs/error" }

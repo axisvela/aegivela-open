@@ -74,7 +74,7 @@ components:
       properties:
         apiVersion: { const: aegivela.io/v2.0 }
         action: { $ref: '#/components/schemas/GatewayAction' }
-        authorizationMode: { $ref: '#/components/schemas/GatewayAuthorizationMode' }
+        authorizationMode: { $ref: '#/components/schemas/GatewayAuthorizationMode' }
         agentId: { type: string, minLength: 1 }
         agentClass: { $ref: '#/components/schemas/GatewayAgentClass' }
         workloadAssertion: { type: string, minLength: 1 }

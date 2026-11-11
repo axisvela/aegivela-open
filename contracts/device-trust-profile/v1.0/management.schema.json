@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegivela.io/contracts/device-trust-profile/v1.0/management.schema.json",
+  "title": "Device Trust Profile Management Contract",
+  "description": "Management surface for the published offline-admission v1.0 device trust profile content; it does not replace that object schema.",
+  "type": "object",
+  "$defs": {
+    "createRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileRef",
+        "profileVersion",
+        "deviceClass",
+        "keyCustody",
+        "sourceEpochSource",
+        "singleConsumer",
+        "rollbackResistance",
+        "cloneResistance",
+        "enforceableBounds",
+        "rejectWhenUnproven",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "profileRef": { "type": "string", "minLength": 1 },
+        "profileVersion": { "type": "string", "minLength": 1 },
+        "deviceClass": { "type": "string", "minLength": 1 },
+        "keyCustody": { "type": "string", "minLength": 1 },
+        "sourceEpochSource": { "type": "string", "minLength": 1 },
+        "singleConsumer": { "type": "string", "minLength": 1 },
+        "rollbackResistance": { "type": "string", "minLength": 1 },
+        "cloneResistance": { "type": "string", "minLength": 1 },
+        "enforceableBounds": {
+          "type": "array",
+          "items": {
+            "enum": ["clock", "key", "budget", "epoch", "operation", "payload"]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "rejectWhenUnproven": { "const": true },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        }
+      }
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileRef",
+        "profileVersion",
+        "deviceClass",
+        "keyCustody",
+        "sourceEpochSource",
+        "singleConsumer",
+        "rollbackResistance",
+        "cloneResistance",
+        "enforceableBounds",
+        "rejectWhenUnproven",
+        "evidenceRefs",
+        "state",
+        "createdBy",
+        "createdAt"
+      ],
+      "properties": {
+        "profileRef": { "type": "string", "minLength": 1 },
+        "profileVersion": { "type": "string", "minLength": 1 },
+        "deviceClass": { "type": "string", "minLength": 1 },
+        "keyCustody": { "type": "string", "minLength": 1 },
+        "sourceEpochSource": { "type": "string", "minLength": 1 },
+        "singleConsumer": { "type": "string", "minLength": 1 },
+        "rollbackResistance": { "type": "string", "minLength": 1 },
+        "cloneResistance": { "type": "string", "minLength": 1 },
+        "enforceableBounds": {
+          "type": "array",
+          "items": {
+            "enum": ["clock", "key", "budget", "epoch", "operation", "payload"]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "rejectWhenUnproven": { "const": true },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        },
+        "state": { "enum": ["draft", "approved", "retired"] },
+        "createdBy": { "type": "string", "minLength": 1 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "approvedBy": { "type": "string", "minLength": 1 },
+        "approvedAt": { "type": "string", "format": "date-time" },
+        "retiredBy": { "type": "string", "minLength": 1 },
+        "retiredAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string" }
+      }
+    }
+  }
+}

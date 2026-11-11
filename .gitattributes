@@ -1,2 +1,6 @@
 # Keep the SDK source byte-stable across Windows checkouts.
 sdk/go/** text eol=lf
+
+# Synced contracts and docs are normalized to LF by scripts/sync-oss.ps1.
+contracts/** text eol=lf
+docs/** text eol=lf

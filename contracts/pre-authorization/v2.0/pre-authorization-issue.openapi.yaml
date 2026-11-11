@@ -80,7 +80,7 @@ components:
           type: object
           additionalProperties: false
           required: [actorRef]
-          properties:
+          properties:
             subjectRef: { type: string, minLength: 1 }
             actorRef: { type: string, minLength: 1 }
             clientId: { type: string, minLength: 1 }
@@ -88,7 +88,7 @@ components:
             agentId: { type: string, minLength: 1 }
             agentClass: { type: string }
             masterId: { type: string, minLength: 1 }
-            organizationAuthorityRoot: { type: string, minLength: 1 }
+            organizationAuthorityRoot: { type: string, minLength: 1 }
             attestationRef: { type: string, minLength: 1 }
         action: { type: string, minLength: 1 }
         resource:
