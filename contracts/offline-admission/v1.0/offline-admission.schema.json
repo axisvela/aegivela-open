@@ -252,6 +252,30 @@
         "traceId": { "type": "string", "minLength": 1 }
       }
     },
+    "parent_facts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref",
+        "digest",
+        "tenantId",
+        "principalRef",
+        "audience",
+        "scope",
+        "expiresAt",
+        "revoked"
+      ],
+      "properties": {
+        "ref": { "type": "string", "minLength": 1 },
+        "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "tenantId": { "type": "string", "minLength": 1 },
+        "principalRef": { "type": "string", "minLength": 1 },
+        "audience": { "type": "string", "minLength": 1 },
+        "scope": { "$ref": "#/$defs/scope" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "revoked": { "type": "boolean" }
+      }
+    },
     "issue_response": {
       "type": "object",
       "additionalProperties": false,
@@ -277,7 +301,8 @@
           "type": "array",
           "items": { "type": "string", "minLength": 1 },
           "minItems": 1
-        }
+        },
+        "parentFacts": { "$ref": "#/$defs/parent_facts" }
       }
     },
     "verify_request": {

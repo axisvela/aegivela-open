@@ -40,7 +40,7 @@ The EE edition layers enterprise infrastructure integration on top of the OSS co
 
 ```
 aegivela-open/         Public-facing: README, binary releases, Go SDK, examples, docs
-aegivela/              Core implementation (private; open-source decision pending)
+aegivela/              Core implementation (private source repository; Open Core releases publish from it)
 aegivela-ee/           Enterprise extensions (private; licensed)
 ```
 
@@ -71,7 +71,7 @@ A non-zero exit means at least one check failed; the command prints one
 
 ## Horizon
 
-The current `aegivela` repository is private. An open-source release of the OSS core is under evaluation. The OSS/EE boundary documented here will govern what ships in each distribution when the decision is made.
+The current `aegivela` source repository remains private. The Open Core (OSS) distribution is released in synchronized `vX.Y.Z` versions (`v1.2.13` at the time of this review); only the core source repository itself remains private. The OSS/EE boundary documented here governs what ships in each distribution.
 
 ## Licensing
 

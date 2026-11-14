@@ -1,7 +1,8 @@
 # Offline-Admission Canonicalization and Golden Vectors
 
-**Status:** local draft contract decision, 2026-11-09. Not published; no signer
-or verifier is enabled.
+**Status:** published G1 contract at `aegivela-open` `1b101f2` and shipped in
+`v1.2.13`. A reference signer/verifier exists only behind a default-off mount;
+no deployment or offline enablement is approved.
 
 ## Fixed Strings
 

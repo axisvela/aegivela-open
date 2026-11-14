@@ -5,12 +5,19 @@
 This directory is the v1.0 machine contract for bounded offline admission. It was
 approved for drafting by the user on 2026-11-09 (M1-M8 proposals) and published
 as G1 (`684886a`, clarified at `8c0c69f`, issue audience `e5f1645`, task binding
-`1b101f2`). It is in the `scripts/sync-oss.ps1` publication list. It is not an
+`1b101f2`) and shipped unchanged in `v1.2.13` (`08d48d4`). It is in the
+`scripts/sync-oss.ps1` publication list. It is not an
 enabled wire surface and does not authorize runtime deployment, device acceptance
 or offline execution. The embedded schema/proto/OpenAPI titles and vector status
 fields still carry the `DRAFT - NOT PUBLISHED` maturity marker from the published
 `1b101f2` revision; correcting them requires a reviewed contract revision and
 publication, not an in-place edit.
+
+Local working tree (2026-11-14) adds an optional `IssueResponse.parentFacts`
+field for parent-facts relay. It is additive and is **not** part of the
+published `1b101f2` revision. It must be reviewed and published, or moved to a
+new contract version, before external consumers rely on it. The field is not
+part of the signed offline artifact.
 
 | File | Purpose |
 | --- | --- |

@@ -129,6 +129,17 @@ message IssueRequest {
   string traceId = 10;
 }
 
+message ParentFacts {
+  string ref = 1;
+  string digest = 2;
+  string tenantId = 3;
+  string principalRef = 4;
+  string audience = 5;
+  repeated string scope = 6;
+  string expiresAt = 7;
+  bool revoked = 8;
+}
+
 message IssueResponse {
   string apiVersion = 1;
   string offlineGrantId = 2;
@@ -138,6 +149,7 @@ message IssueResponse {
   string expiresAt = 6;
   Budget budget = 7;
   repeated string evidenceRefs = 8;
+  ParentFacts parentFacts = 9;
 }
 
 message VerifyExpectation {

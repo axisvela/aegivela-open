@@ -52,6 +52,24 @@ after the reservation commits. No separate reservation-proof field exists, and a
 consumer must reject locally asserted reservations without a valid artifact
 signature.
 
+## Issue Response Parent Facts (Additive)
+
+`IssueResponse.parentFacts` is an optional, additive transport field. It is not
+part of the signed offline artifact. Consumers must treat it as untrusted until
+they either accept the AEGIVELA-verified coordinator relay or re-verify
+`signedParentGrant` with the execution-grant keys.
+
+| Field | Source / invariant |
+| --- | --- |
+| `ref` | Verified parent execution-grant `jti` |
+| `digest` | Lowercase SHA-256 hex over the exact `signedParentGrant` bytes |
+| `tenantId` | Verified parent tenant |
+| `principalRef` | Verified parent `subject_ref` |
+| `audience` | Verified parent audience |
+| `scope` | Parent scope, copied without widening |
+| `expiresAt` | Parent grant expiry, truncated to seconds |
+| `revoked` | Must be `false`; revoked parents are rejected before issue |
+
 ## Identity, Scope and Canonicalization (M1/M4/M5/M7)
 
 - AKROVELA `tenant_id` must equal the internal tenant mapped from `namespace`;

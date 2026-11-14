@@ -1,11 +1,12 @@
 # Offline-Admission Contract Draft
 
-**Status:** technical draft, 2026-11-09; not a published API or implementation.
-The user explicitly approved the conservative boundary for technical review
-and new-version drafting. The approval record is maintained in the internal
-owner-review register.
-That approval does not establish device acceptance, an independently reviewed
-trust profile, a stable wire version or permission to enable offline execution.
+**Status:** superseded by the published `contracts/offline-admission/v1.0`
+contract (G1 at `aegivela-open` `1b101f2`, shipped in `v1.2.13`) and retained as
+the design record. The user approved the conservative boundary for technical
+review and new-version drafting; the approval record is maintained in the
+internal owner-review register. That approval does not establish device
+acceptance, an independently reviewed trust profile or permission to enable
+offline execution.
 
 ## Approved First-Profile Boundary
 

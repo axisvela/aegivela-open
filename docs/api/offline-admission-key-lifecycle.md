@@ -1,7 +1,8 @@
 # Offline-Admission Key Purpose and Lifecycle
 
-**Status:** local draft contract decision, 2026-11-09. Not published; no key
-service, JWKS endpoint or verifier is enabled.
+**Status:** published G1 contract at `aegivela-open` `1b101f2`, shipped in
+`v1.2.13`. A reference key lifecycle/JWKS and verifier exist only behind a
+default-off mount; no deployment is approved.
 
 ## Purpose Separation
 

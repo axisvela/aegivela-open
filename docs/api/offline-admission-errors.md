@@ -1,6 +1,7 @@
 # Offline-Admission Stable Errors
 
-**Status:** local draft contract decision, 2026-11-09. Not published.
+**Status:** published G1 contract at `aegivela-open` `1b101f2`, shipped in
+`v1.2.13`; the reference transport remains default-off.
 
 The error envelope has `apiVersion`, `errorCode`, `reasonCode` and `message`
 (see `contracts/offline-admission/v1.0/offline-admission.schema.json#/$defs/error`).
