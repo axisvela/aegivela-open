@@ -1,6 +1,6 @@
 # AEGIVELA Delivery Roadmap
 
-**Reviewed:** 2026-11-11; updated 2026-11-14 for F6 TPM evidence. This is the current delivery view, not a release
+**Reviewed:** 2026-11-11; updated 2026-11-15 for the `v1.2.14` release and F6 TPM evidence. This is the current delivery view, not a release
 announcement or approval of a new authorization contract.
 
 ## Delivery Rules
@@ -36,9 +36,9 @@ must not be conflated. Source pins, local test evidence, tag discrepancies and
 external acceptance live in [Conformance Status](conformance-status.md).
 
 Historical GA and v1.x release records have moved to
-[Release History](release-history.md). `v1.2.13` (Core/Open) and `v1.2.5` (EE)
-were released on 2026-11-11; they do not certify consumer deployment or
-enablement.
+[Release History](release-history.md). `v1.2.14` (Core/Open) was released on
+2026-11-15; `v1.2.13` (Core/Open) and `v1.2.5` (EE) were released on
+2026-11-11. None certifies consumer deployment or enablement.
 
 **Active execution policy:** local CI first, as directed by the user on
 2026-11-09. Core/EE/SDK tests and real PostgreSQL integration are the current
@@ -217,7 +217,7 @@ distribution artifact); it starts with G0. Deployment requires the remaining app
 
 | Priority | Work | Owner | Completion evidence |
 | --- | --- | --- | --- |
-| P1 | Release/module/dependency convergence (WI-18) | AEGIVELA + EE/Open maintainers | Exact source/module/public pins, reachable public CI checkouts and clean-checkout CI; no historical tag fabrication. Published `backend/v3.0.0` at `v1.2.13` content and `sdk/go/v3.1.0` at public `5619b9d`; EE CI pin updated to `fc1a423`; public SDK `v3.1.0` registry download verified and consumer requirements bumped. Local development/CI uses sibling `replace` (no private module download or `CORE_TOKEN`). Remaining: remote private-core credentials if remote EE CI is re-enabled, and the orphaned public SDK `v3.0.0` tag |
+| P1 | Release/module/dependency convergence (WI-18) | AEGIVELA + EE/Open maintainers | Exact source/module/public pins, reachable public CI checkouts and clean-checkout CI; no historical tag fabrication. Published `backend/v3.0.0` at `v1.2.13` content, `backend/v3.0.1` at `7a9c093` and `sdk/go/v3.1.0` at public `5619b9d`; EE CI pin updated to `fc1a423`; public SDK `v3.1.0` registry download verified and consumer requirements bumped. Local development/CI uses sibling `replace` (no private module download or `CORE_TOKEN`). Remaining: remote private-core credentials if remote EE CI is re-enabled, and the orphaned public SDK `v3.0.0` tag |
 | P1 | F6-G0 review (WI-19) | AEGIVELA + AKROVELA + identity/resource owners | Design/owner review accepted (R1-R11, M1-M8); requester freeze confirmed 2026-11-11 in [offline-admission-freeze-request.md](offline-admission-freeze-request.md) at `aegivela-ee` `9a88299` / `akrovela-ee` `e064f50` / `akrovela` `af16a01`, with the AEGIVELA defaults for M1-M8; the owner-approved `tpm2-akrovela-v1` hardware profile (evidence/runtime wiring) and enablement remain |
 | P1 | Existing consumer acceptance (WI-01..04, WI-13..15) | MODUREGIS, LIMENORA, product PEPs, PRAXOVELA | Revision-pinned path-specific rejection and effect-gating evidence |
 | Baseline complete | Database verification (WI-20) | AEGIVELA | Local PostgreSQL 18.1 Core/EE suites and all 13 owned conformance behaviors passed; preserve coverage limits and keep the repaired key fixture enabled in CI |
